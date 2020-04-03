@@ -17,7 +17,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @Entity
-public class ToDoList {
+public class ToDoListEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
