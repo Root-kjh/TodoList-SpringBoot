@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @Entity
+@Table(name = "User")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,8 +34,4 @@ public class UserEntity {
 
     @Column(length = 20, nullable = false)
     private String nickName;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "TodoList_id")
-    private List<ToDoListEntity> toDoList;
 }
