@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -35,5 +36,6 @@ public class UserEntity {
     private String nick_name;
 
     @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "toDoList_idx")
     private List<ToDoListEntity> toDoListEntities;
 }

@@ -28,8 +28,4 @@ public class ToDoListEntity {
 
     @Column(length = 500,nullable = true)
     private String context;
-
-    @ManyToOne
-    @JoinColumn(name = "USER_IDX")
-    UserEntity userEntity;
 }
