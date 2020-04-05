@@ -48,7 +48,6 @@ public class User extends RepositoryTest{
     @Test
     public void updateTest() {
         final String updateUserName = "updateTest";
-
         try {
             final UserEntity testUserEntity = makeTestUser();
             testUserEntity.setUser_name(updateUserName);

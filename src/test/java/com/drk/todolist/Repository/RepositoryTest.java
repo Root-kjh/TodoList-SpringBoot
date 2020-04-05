@@ -15,10 +15,10 @@ public class RepositoryTest {
     public UserRepository userRepository;
 
     @Autowired
-    public ToDoListRepository todoDoListRepository;
+    public ToDoListRepository toDoListRepository;
 
     public void clearToDoListDB(){
-        todoDoListRepository.deleteAll();
+        toDoListRepository.deleteAll();
     }
 
     public void clearUserDB(){
