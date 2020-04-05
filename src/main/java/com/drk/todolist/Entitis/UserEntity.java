@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -20,18 +19,21 @@ import lombok.ToString;
 @Getter
 @Setter
 @Entity
-@Table(name = "User")
+@Table(name = "\"user\"")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idx;
 
     @Column(length = 20, nullable = false)
-    private String userName;
+    private String user_name;
 
     @Column(length = 128, nullable = false)
     private String password;
 
     @Column(length = 20, nullable = false)
-    private String nickName;
+    private String nick_name;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<ToDoListEntity> toDoListEntities;
 }

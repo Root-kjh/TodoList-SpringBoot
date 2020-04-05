@@ -17,11 +17,11 @@ import lombok.ToString;
 @Getter
 @Setter
 @Entity
-@Table(name = "ToDoList")
+@Table(name = "toDoList")
 public class ToDoListEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idx;
 
     @Column(length = 50,nullable = false)
     private String title;
@@ -30,6 +30,6 @@ public class ToDoListEntity {
     private String context;
 
     @ManyToOne
-    @JoinColumn(name = "User_id")
+    @JoinColumn(name = "USER_IDX")
     UserEntity userEntity;
 }
