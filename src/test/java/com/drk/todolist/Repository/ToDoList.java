@@ -16,6 +16,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class ToDoList extends RepositoryTest{
 
+    private UserEntity testUserEntity;
+    private ToDoListEntity todoListEntity;
+
     @Override
     @BeforeEach
     @AfterEach
@@ -28,7 +31,7 @@ public class ToDoList extends RepositoryTest{
     @Test
     public void insertTest() {
         try {
-            UserEntity testUserEntity = makeTestUser();
+            this.testUserEntity = makeTestUser();
             makeTodoList(testUserEntity);
         } catch (Exception e) {
             e.printStackTrace();
@@ -39,8 +42,8 @@ public class ToDoList extends RepositoryTest{
     @Test
     public void selectTest() {        
         try {
-            UserEntity testUserEntity = makeTestUser();
-            ToDoListEntity todoListEntity = makeTodoList(testUserEntity);
+            this.testUserEntity = makeTestUser();
+            this.todoListEntity = makeTodoList(testUserEntity);
             final boolean isToDoListSelected = toDoListRepository.findById(todoListEntity.getIdx()).isPresent();
             assertEquals(isToDoListSelected, true);
         } catch (Exception e) {
@@ -53,8 +56,8 @@ public class ToDoList extends RepositoryTest{
     public void updateTest() {
         final String updateToDoListTitle = "update title";
         try {
-            UserEntity testUserEntity = makeTestUser();
-            ToDoListEntity todoListEntity = makeTodoList(testUserEntity);
+            this.testUserEntity = makeTestUser();
+            this.todoListEntity = makeTodoList(testUserEntity);
             todoListEntity.setTitle(updateToDoListTitle);
             final ToDoListEntity updatedToDoList = toDoListRepository.save(todoListEntity);
             assertEquals(updatedToDoList.getTitle(), updateToDoListTitle);
@@ -67,8 +70,8 @@ public class ToDoList extends RepositoryTest{
     @Test
     public void deleteTest() {
         try {
-            UserEntity testUserEntity = makeTestUser();
-            ToDoListEntity todoListEntity = makeTodoList(testUserEntity);
+            this.testUserEntity = makeTestUser();
+            this.todoListEntity = makeTodoList(testUserEntity);
             toDoListRepository.deleteById(todoListEntity.getIdx());
             final boolean isToDoListSelected = toDoListRepository.findById(todoListEntity.getIdx()).isPresent();
             assertEquals(isToDoListSelected, false);

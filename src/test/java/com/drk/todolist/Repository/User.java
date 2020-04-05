@@ -14,6 +14,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class User extends RepositoryTest{
+
+    private UserEntity testUserEntity;
+
     @Override
     @BeforeEach
     @AfterEach
@@ -36,7 +39,7 @@ public class User extends RepositoryTest{
     @Test
     public void selectTest() {
         try {
-            final UserEntity testUserEntity = makeTestUser();
+            this.testUserEntity = makeTestUser();
             final boolean isUserSelected = userRepository.findById(testUserEntity.getIdx()).isPresent();
             assertEquals(isUserSelected, true);
         } catch (final Exception e) {
@@ -49,7 +52,7 @@ public class User extends RepositoryTest{
     public void updateTest() {
         final String updateUserName = "updateTest";
         try {
-            final UserEntity testUserEntity = makeTestUser();
+            this.testUserEntity = makeTestUser();
             testUserEntity.setUser_name(updateUserName);
             final UserEntity updateUserEntity = userRepository.save(testUserEntity);
             assertEquals(updateUserEntity.getUser_name(), updateUserName);
@@ -62,7 +65,7 @@ public class User extends RepositoryTest{
     @Test
     public void deleteTest() {
         try {
-            final UserEntity testUserEntity = makeTestUser();
+            this.testUserEntity = makeTestUser();
             userRepository.deleteById(testUserEntity.getIdx());
             final boolean isUserSelected = userRepository.findById(testUserEntity.getIdx()).isPresent();
             assertEquals(isUserSelected, false);
