@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
 
@@ -38,7 +37,7 @@ public class User {
     @BeforeEach
     private void DBClear(){
         try{
-            userRepository.deleteByUser_name(test_user_name);
+            userRepository.deleteByUserName(test_user_name);
         }catch (Exception e){}
     } 
 
@@ -70,13 +69,13 @@ public class User {
             signupTestUser();
             userService.signin(session, test_user_name, test_user_password);
             LoginedUserSessionEntity sessionEntity = (LoginedUserSessionEntity) session.getAttribute("user");
-            assertEquals(sessionEntity.getUser_nick_name(), test_user_nick_name);
-        
+            assertEquals(sessionEntity.getUserNickName(), test_user_nick_name);
+
             session = new MockHttpSession();
             final String wrong_user_name = "wrong_user_name";
             userService.signin(session, wrong_user_name, test_user_password);
             sessionEntity = (LoginedUserSessionEntity) session.getAttribute("user");
-            assertNotEquals(sessionEntity.getUser_nick_name(), test_user_nick_name);
+            assertNotEquals(sessionEntity.getUserNickName(), test_user_nick_name);
         }catch(Exception e){
             e.printStackTrace();
         }

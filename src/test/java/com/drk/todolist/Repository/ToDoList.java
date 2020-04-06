@@ -2,7 +2,7 @@ package com.drk.todolist.Repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.drk.todolist.Entitis.ToDoListEntity;
+import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 
 import org.junit.jupiter.api.AfterEach;
@@ -17,14 +17,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 public class ToDoList extends RepositoryTest{
 
     private UserEntity testUserEntity;
-    private ToDoListEntity todoListEntity;
+    private TodoEntity todoEntity;
 
     @Override
     @BeforeEach
     @AfterEach
     public void clearDB() {
         clearUserDB();
-        clearToDoListDB();
+        clearTodoDB();
     }
 
     @Override
@@ -43,8 +43,8 @@ public class ToDoList extends RepositoryTest{
     public void selectTest() {        
         try {
             this.testUserEntity = makeTestUser();
-            this.todoListEntity = makeTodoList(testUserEntity);
-            final boolean isToDoListSelected = toDoListRepository.findById(todoListEntity.getIdx()).isPresent();
+            this.todoEntity = makeTodoList(testUserEntity);
+            final boolean isToDoListSelected = todoRepository.findById(todoEntity.getIdx()).isPresent();
             assertEquals(isToDoListSelected, true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,13 +54,13 @@ public class ToDoList extends RepositoryTest{
     @Override
     @Test
     public void updateTest() {
-        final String updateToDoListTitle = "update title";
+        final String updatedTodoTitle = "update title";
         try {
             this.testUserEntity = makeTestUser();
-            this.todoListEntity = makeTodoList(testUserEntity);
-            todoListEntity.setTitle(updateToDoListTitle);
-            final ToDoListEntity updatedToDoList = toDoListRepository.save(todoListEntity);
-            assertEquals(updatedToDoList.getTitle(), updateToDoListTitle);
+            this.todoEntity = makeTodoList(testUserEntity);
+            todoEntity.setTitle(updatedTodoTitle);
+            final TodoEntity updatedTodo = todoRepository.save(todoEntity);
+            assertEquals(updatedTodo.getTitle(), updatedTodoTitle);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -71,9 +71,9 @@ public class ToDoList extends RepositoryTest{
     public void deleteTest() {
         try {
             this.testUserEntity = makeTestUser();
-            this.todoListEntity = makeTodoList(testUserEntity);
-            toDoListRepository.deleteById(todoListEntity.getIdx());
-            final boolean isToDoListSelected = toDoListRepository.findById(todoListEntity.getIdx()).isPresent();
+            this.todoEntity = makeTodoList(testUserEntity);
+            todoRepository.deleteById(todoEntity.getIdx());
+            final boolean isToDoListSelected = todoRepository.findById(todoEntity.getIdx()).isPresent();
             assertEquals(isToDoListSelected, false);
         } catch (Exception e) {
             e.printStackTrace();

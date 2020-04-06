@@ -15,8 +15,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @Entity
-@Table(name = "to_do_list")
-public class ToDoListEntity {
+@Table(name = "TODO")
+public class TodoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;

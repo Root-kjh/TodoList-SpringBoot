@@ -28,13 +28,13 @@ public class UserServicelmpl implements UserService {
     
 
     @Override
-    public boolean signin(HttpSession session, String user_name, String password){
+    public boolean signin(HttpSession session, String userName, String password) {
         password=sha512_class.hash(password);
-        UserEntity loginUser = userRepository.findByUser_nameAndPassword(user_name, password);
-        if (loginUser.getUser_name() == user_name){
+        UserEntity loginUser = userRepository.findByUserNameAndPassword(userName, password);
+        if (loginUser.getUserName() == userName) {
             LoginedUserSessionEntity loginedUserSessionEntity = new LoginedUserSessionEntity();
-            loginedUserSessionEntity.setUser_idx(loginUser.getIdx());
-            loginedUserSessionEntity.setUser_nick_name(loginUser.getNick_name());
+            loginedUserSessionEntity.setUserIdx(loginUser.getIdx());
+            loginedUserSessionEntity.setUserNickName(loginUser.getNickName());
             session.setAttribute("user", loginedUserSessionEntity);
             return true;
         }
@@ -42,52 +42,57 @@ public class UserServicelmpl implements UserService {
     }
 
     @Override
-    public boolean signup(String user_name, String password, String nick_name){
-        try{
-            password=sha512_class.hash(password);
+    public boolean signup(String userName, String password, String nickName) {
+        try {
+            password = sha512_class.hash(password);
             UserEntity userEntity = new UserEntity();
-            userEntity.setUser_name(user_name);
+            userEntity.setUserName(userName);
             userEntity.setPassword(password);
-            userEntity.setNick_name(nick_name);
+            userEntity.setNickName(nickName);
             userRepository.save(userEntity);
             return true;
-        }catch(Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
     @Override
     public boolean logout(HttpSession session) {
-        try{
+        try {
             session.removeAttribute("user");
             return true;
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
     @Override
-    public boolean userinfoUpdate(HttpSession session,String new_user_name, String new_nick_name, String new_password, String password) {
+    public boolean userinfoUpdate(
+                HttpSession session, 
+                String newUserName, 
+                String newNickName, 
+                String newPassword, 
+                String password
+            ) {
         try {
 
             LoginedUserSessionEntity loginedUserSessionEntity = (LoginedUserSessionEntity) session.getAttribute("user");
-            UserEntity loginedUser = userRepository.findById(loginedUserSessionEntity.getUser_idx()).get();
+            UserEntity loginedUser = userRepository.findById(loginedUserSessionEntity.getUserIdx()).get();
             String loginedUserPassword = loginedUser.getPassword();
-            if (loginedUserPassword!=password)
+            if (loginedUserPassword != password)
                 return false;
-            else{
-                if (isSet(new_nick_name))
-                    loginedUser.setNick_name(new_nick_name);
-                if (isSet(new_user_name) && !userRepository.isExistUser(new_user_name)){
-                    loginedUser.setUser_name(new_user_name);
+            else {
+                if (isSet(newNickName))
+                    loginedUser.setNickName(newNickName);
+                if (isSet(newUserName) && !userRepository.isExistUser(newUserName)) {
+                    loginedUser.setUserName(newUserName);
                 }
-                if (isSet(new_password))
-                    loginedUser.setPassword(new_password);
+                if (isSet(newPassword))
+                    loginedUser.setPassword(newPassword);
 
                 userRepository.save(loginedUser);
-                if (isSet(new_nick_name))
-                    loginedUserSessionEntity.setUser_nick_name(new_nick_name);
+                if (isSet(newNickName))
+                    loginedUserSessionEntity.setUserNickName(newNickName);
                 return true;
             }
         } catch (Exception e) {

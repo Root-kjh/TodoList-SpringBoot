@@ -53,9 +53,9 @@ public class User extends RepositoryTest{
         final String updateUserName = "updateTest";
         try {
             this.testUserEntity = makeTestUser();
-            testUserEntity.setUser_name(updateUserName);
+            testUserEntity.setUserName(updateUserName);
             final UserEntity updateUserEntity = userRepository.save(testUserEntity);
-            assertEquals(updateUserEntity.getUser_name(), updateUserName);
+            assertEquals(updateUserEntity.getUserName(), updateUserName);
         } catch (final Exception e) {
             e.printStackTrace();
         }

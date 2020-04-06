@@ -20,22 +20,22 @@ import lombok.ToString;
 @Getter
 @Setter
 @Entity
-@Table(name = "\"user\"")
+@Table(name = "\"USER\"")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
-    @Column(length = 20, nullable = false)
-    private String user_name;
+    @Column(name = "userName", length = 20, nullable = false)
+    private String userName;
 
     @Column(length = 128, nullable = false)
     private String password;
 
-    @Column(length = 20, nullable = false)
-    private String nick_name;
+    @Column(name = "nickName", length = 20, nullable = false)
+    private String nickName;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "toDoList_idx")
-    private List<ToDoListEntity> toDoListEntities;
+    @JoinColumn(name = "todo_idx")
+    private List<TodoEntity> todoEntityList;
 }

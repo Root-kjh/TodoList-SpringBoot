@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    UserEntity findByUser_nameAndPassword(String user_name, String password);
-    void deleteByUser_name(String user_name);
-    @Query("select count(user_name)>0 from User where user_name=?1")
-    public boolean isExistUser(String user_name);
+    UserEntity findByUserNameAndPassword(String userName, String password);
+    void deleteByUserName(String userName);
+    @Query("select count(u.userName)>0 from UserEntity u where u.userName = ?1")
+    public boolean isExistUser(String userName);
 }
