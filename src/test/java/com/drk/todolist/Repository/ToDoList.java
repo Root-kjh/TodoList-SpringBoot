@@ -1,6 +1,8 @@
 package com.drk.todolist.Repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
@@ -40,7 +42,7 @@ public class ToDoList extends RepositoryTest{
         this.testUserEntity = makeTestUser();
         this.todoEntity = makeTodo(testUserEntity);
         final boolean isToDoListSelected = todoRepository.findById(todoEntity.getIdx()).isPresent();
-        assertEquals(isToDoListSelected, true);
+        assertTrue(isToDoListSelected);
     }
 
     @Override
@@ -61,6 +63,6 @@ public class ToDoList extends RepositoryTest{
         this.todoEntity = makeTodo(testUserEntity);
         todoRepository.deleteById(todoEntity.getIdx());
         final boolean isToDoListSelected = todoRepository.findById(todoEntity.getIdx()).isPresent();
-        assertEquals(isToDoListSelected, false);
+        assertFalse(isToDoListSelected);
     }
 }

@@ -31,26 +31,32 @@ public class UserServicelmpl implements UserService {
     public boolean signin(HttpSession session, String userName, String password) {
         password=sha512_class.hash(password);
         UserEntity loginUser = userRepository.findByUsernameAndPassword(userName, password);
-        if (loginUser.getUsername() == userName) {
+        try{
             UserSessionEntity userSessionEntity = new UserSessionEntity();
             userSessionEntity.setUserIdx(loginUser.getIdx());
             userSessionEntity.setUserNickName(loginUser.getNickname());
             session.setAttribute("user", userSessionEntity);
             return true;
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     @Override
     public boolean signup(String userName, String password, String nickName) {
         try {
-            password = sha512_class.hash(password);
-            UserEntity userEntity = new UserEntity();
-            userEntity.setUsername(userName);
-            userEntity.setPassword(password);
-            userEntity.setNickname(nickName);
-            userRepository.save(userEntity);
-            return true;
+            if(userRepository.isExistUser(userName))
+                return false;
+            else{
+                password = sha512_class.hash(password);
+                UserEntity userEntity = new UserEntity();
+                userEntity.setUsername(userName);
+                userEntity.setPassword(password);
+                userEntity.setNickname(nickName);
+                userRepository.save(userEntity);
+                return true;
+            }
         } catch (Exception e) {
             return false;
         }
@@ -67,10 +73,13 @@ public class UserServicelmpl implements UserService {
     }
 
     @Override
-    public boolean userinfoUpdate(HttpSession session, String newUserName, String newNickName, String newPassword,
+    public boolean userinfoUpdate(
+            HttpSession session, 
+            String newUserName, 
+            String newNickName, 
+            String newPassword,
             String password) {
         try {
-
             UserSessionEntity UserSessionEntity = (UserSessionEntity) session.getAttribute("user");
             UserEntity loginedUser = userRepository.findById(UserSessionEntity.getUserIdx()).get();
             String loginedUserPassword = loginedUser.getPassword();
@@ -90,6 +99,21 @@ public class UserServicelmpl implements UserService {
                     UserSessionEntity.setUserNickName(newNickName);
                 return true;
             }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean userinfoDelete(HttpSession session, String password) {
+        try {
+            UserSessionEntity sessionEntity = (UserSessionEntity) session.getAttribute("user");
+            Long userIdx = sessionEntity.getUserIdx();
+            if (userRepository.deleteByIdxAndPassword(userIdx, password)){
+                session.removeAttribute("user");
+                return true;
+            }else
+                return false;
         } catch (Exception e) {
             return false;
         }
