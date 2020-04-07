@@ -3,7 +3,7 @@ package com.drk.todolist.Services.User;
 import javax.servlet.http.HttpSession;
 
 import com.drk.todolist.Crypto.sha512;
-import com.drk.todolist.Entitis.LoginedUserSessionEntity;
+import com.drk.todolist.Entitis.UserSessionEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.UserRepository;
 
@@ -30,12 +30,12 @@ public class UserServicelmpl implements UserService {
     @Override
     public boolean signin(HttpSession session, String userName, String password) {
         password=sha512_class.hash(password);
-        UserEntity loginUser = userRepository.findByUserNameAndPassword(userName, password);
-        if (loginUser.getUserName() == userName) {
-            LoginedUserSessionEntity loginedUserSessionEntity = new LoginedUserSessionEntity();
-            loginedUserSessionEntity.setUserIdx(loginUser.getIdx());
-            loginedUserSessionEntity.setUserNickName(loginUser.getNickName());
-            session.setAttribute("user", loginedUserSessionEntity);
+        UserEntity loginUser = userRepository.findByUsernameAndPassword(userName, password);
+        if (loginUser.getUsername() == userName) {
+            UserSessionEntity userSessionEntity = new UserSessionEntity();
+            userSessionEntity.setUserIdx(loginUser.getIdx());
+            userSessionEntity.setUserNickName(loginUser.getNickname());
+            session.setAttribute("user", userSessionEntity);
             return true;
         }
         return false;
@@ -46,9 +46,9 @@ public class UserServicelmpl implements UserService {
         try {
             password = sha512_class.hash(password);
             UserEntity userEntity = new UserEntity();
-            userEntity.setUserName(userName);
+            userEntity.setUsername(userName);
             userEntity.setPassword(password);
-            userEntity.setNickName(nickName);
+            userEntity.setNickname(nickName);
             userRepository.save(userEntity);
             return true;
         } catch (Exception e) {
@@ -67,32 +67,27 @@ public class UserServicelmpl implements UserService {
     }
 
     @Override
-    public boolean userinfoUpdate(
-                HttpSession session, 
-                String newUserName, 
-                String newNickName, 
-                String newPassword, 
-                String password
-            ) {
+    public boolean userinfoUpdate(HttpSession session, String newUserName, String newNickName, String newPassword,
+            String password) {
         try {
 
-            LoginedUserSessionEntity loginedUserSessionEntity = (LoginedUserSessionEntity) session.getAttribute("user");
-            UserEntity loginedUser = userRepository.findById(loginedUserSessionEntity.getUserIdx()).get();
+            UserSessionEntity UserSessionEntity = (UserSessionEntity) session.getAttribute("user");
+            UserEntity loginedUser = userRepository.findById(UserSessionEntity.getUserIdx()).get();
             String loginedUserPassword = loginedUser.getPassword();
             if (loginedUserPassword != password)
                 return false;
             else {
                 if (isSet(newNickName))
-                    loginedUser.setNickName(newNickName);
+                    loginedUser.setNickname(newNickName);
                 if (isSet(newUserName) && !userRepository.isExistUser(newUserName)) {
-                    loginedUser.setUserName(newUserName);
+                    loginedUser.setUsername(newUserName);
                 }
                 if (isSet(newPassword))
                     loginedUser.setPassword(newPassword);
 
                 userRepository.save(loginedUser);
                 if (isSet(newNickName))
-                    loginedUserSessionEntity.setUserNickName(newNickName);
+                    UserSessionEntity.setUserNickName(newNickName);
                 return true;
             }
         } catch (Exception e) {

@@ -1,5 +1,6 @@
 package com.drk.todolist.Entitis;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -19,23 +20,23 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
-@Entity
-@Table(name = "\"USER\"")
+@Entity(name = "user")
+@Table(name = "user")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
-    @Column(name = "userName", length = 20, nullable = false)
-    private String userName;
+    @Column(name = "user_name", length = 20, nullable = false)
+    private String username;
 
     @Column(length = 128, nullable = false)
     private String password;
 
-    @Column(name = "nickName", length = 20, nullable = false)
-    private String nickName;
+    @Column(name = "nick_name", length = 20, nullable = false)
+    private String nickname;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "todo_idx")
-    private List<TodoEntity> todoEntityList;
+    @JoinColumn(name = "user_idx")
+    private List<TodoEntity> todoEntityList = new ArrayList<>();
 }

@@ -26,51 +26,34 @@ public class User extends RepositoryTest{
 
     @Override
     @Test 
-    public void insertTest(){
-        try {
-            makeTestUser();
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
-
+    public void insertTest() throws Exception {
+        makeTestUser();
     }
 
     @Override
     @Test
-    public void selectTest() {
-        try {
-            this.testUserEntity = makeTestUser();
-            final boolean isUserSelected = userRepository.findById(testUserEntity.getIdx()).isPresent();
-            assertEquals(isUserSelected, true);
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+    public void selectTest() throws Exception {
+        this.testUserEntity = makeTestUser();
+        final boolean isUserSelected = userRepository.findById(testUserEntity.getIdx()).isPresent();
+        assertEquals(isUserSelected, true);
     }
 
     @Override
     @Test
-    public void updateTest() {
+    public void updateTest() throws Exception {
         final String updateUserName = "updateTest";
-        try {
-            this.testUserEntity = makeTestUser();
-            testUserEntity.setUserName(updateUserName);
-            final UserEntity updateUserEntity = userRepository.save(testUserEntity);
-            assertEquals(updateUserEntity.getUserName(), updateUserName);
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+        this.testUserEntity = makeTestUser();
+        testUserEntity.setUsername(updateUserName);
+        final UserEntity updateUserEntity = userRepository.save(testUserEntity);
+        assertEquals(updateUserEntity.getUsername(), updateUserName);
     }
 
     @Override
     @Test
-    public void deleteTest() {
-        try {
-            this.testUserEntity = makeTestUser();
-            userRepository.deleteById(testUserEntity.getIdx());
-            final boolean isUserSelected = userRepository.findById(testUserEntity.getIdx()).isPresent();
-            assertEquals(isUserSelected, false);
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+    public void deleteTest() throws Exception {
+        this.testUserEntity = makeTestUser();
+        userRepository.deleteById(testUserEntity.getIdx());
+        final boolean isUserSelected = userRepository.findById(testUserEntity.getIdx()).isPresent();
+        assertEquals(isUserSelected, false);
     }
 }

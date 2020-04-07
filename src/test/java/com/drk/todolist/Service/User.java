@@ -3,7 +3,7 @@ package com.drk.todolist.Service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import com.drk.todolist.Entitis.LoginedUserSessionEntity;
+import com.drk.todolist.Entitis.UserSessionEntity;
 import com.drk.todolist.Repositories.UserRepository;
 import com.drk.todolist.Services.User.UserService;
 
@@ -21,9 +21,9 @@ import org.springframework.mock.web.MockHttpSession;
 @SpringBootTest
 public class User {
 
-    final private String test_user_name="test_user";
-    final private String test_user_nick_name="test_nick_name";
-    final private String test_user_password="test_pw";
+    final private String testUserName="test_user";
+    final private String testUserNickName="test_nick_name";
+    final private String testUserPassword="test_pw";
 
     private MockHttpSession session = new MockHttpSession();
 
@@ -37,61 +37,49 @@ public class User {
     @BeforeEach
     private void DBClear(){
         try{
-            userRepository.deleteByUserName(test_user_name);
-        }catch (Exception e){}
-    } 
+            userRepository.deleteByUsername(testUserName);
+        } catch (Exception e) {
+        }
+    }
 
     @AfterEach
     @BeforeEach
-    private void sessionClear(){
+    private void sessionClear() {
         session = new MockHttpSession();
     }
 
-    public void signupTestUser() throws Exception{
+    public void signupTestUser() throws Exception {
         System.out.println(userService);
-        userService.signup(test_user_name, test_user_password, test_user_nick_name);
+        userService.signup(testUserName, testUserPassword, testUserNickName);
     }
 
     @Test
-    public void signupTest(){
-        try{
-            signupTestUser();
-            final boolean isSignupUser = userRepository.isExistUser(test_user_name);
-            assertEquals(isSignupUser, true);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+    public void signupTest() throws Exception{
+        signupTestUser();
+        final boolean isSignupUser = userRepository.isExistUser(testUserName);
+        assertEquals(isSignupUser, true);
     }
 
     @Test
-    public void signinTest(){
-        try{
-            signupTestUser();
-            userService.signin(session, test_user_name, test_user_password);
-            LoginedUserSessionEntity sessionEntity = (LoginedUserSessionEntity) session.getAttribute("user");
-            assertEquals(sessionEntity.getUserNickName(), test_user_nick_name);
+    public void signinTest() throws Exception{
+        signupTestUser();
+        userService.signin(session, testUserName, testUserPassword);
+        UserSessionEntity userSessionEntity = (UserSessionEntity) session.getAttribute("user");
+        assertEquals(userSessionEntity.getUserNickName(), testUserNickName);
 
-            session = new MockHttpSession();
-            final String wrong_user_name = "wrong_user_name";
-            userService.signin(session, wrong_user_name, test_user_password);
-            sessionEntity = (LoginedUserSessionEntity) session.getAttribute("user");
-            assertNotEquals(sessionEntity.getUserNickName(), test_user_nick_name);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+        session = new MockHttpSession();
+        final String wrong_user_name = "wrong_user_name";
+        userService.signin(session, wrong_user_name, testUserPassword);
+        userSessionEntity = (UserSessionEntity) session.getAttribute("user");
+        assertNotEquals(userSessionEntity.getUserNickName(), testUserNickName);
     }
 
     @Test
-    public void logoutTest(){
-        try{
-            signupTestUser();
-            userService.signin(session, test_user_name, test_user_password);
-            userService.logout(session);
-            LoginedUserSessionEntity sessionEntity = (LoginedUserSessionEntity) session.getAttribute("user");
-            System.out.println(sessionEntity);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
+    public void logoutTest() throws Exception{
+        signupTestUser();
+        userService.signin(session, testUserName, testUserPassword);
+        userService.logout(session);
+        UserSessionEntity userSessionEntity = (UserSessionEntity) session.getAttribute("user");
+        System.out.println(userSessionEntity);
     }
 }

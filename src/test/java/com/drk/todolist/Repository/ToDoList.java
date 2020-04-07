@@ -29,54 +29,38 @@ public class ToDoList extends RepositoryTest{
 
     @Override
     @Test
-    public void insertTest() {
-        try {
-            this.testUserEntity = makeTestUser();
-            makeTodoList(testUserEntity);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void insertTest() throws Exception {
+        this.testUserEntity = makeTestUser();
+        makeTodo(testUserEntity);
     }
 
     @Override
     @Test
-    public void selectTest() {        
-        try {
-            this.testUserEntity = makeTestUser();
-            this.todoEntity = makeTodoList(testUserEntity);
-            final boolean isToDoListSelected = todoRepository.findById(todoEntity.getIdx()).isPresent();
-            assertEquals(isToDoListSelected, true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void selectTest() throws Exception {
+        this.testUserEntity = makeTestUser();
+        this.todoEntity = makeTodo(testUserEntity);
+        final boolean isToDoListSelected = todoRepository.findById(todoEntity.getIdx()).isPresent();
+        assertEquals(isToDoListSelected, true);
     }
 
     @Override
     @Test
-    public void updateTest() {
+    public void updateTest() throws Exception {
         final String updatedTodoTitle = "update title";
-        try {
-            this.testUserEntity = makeTestUser();
-            this.todoEntity = makeTodoList(testUserEntity);
-            todoEntity.setTitle(updatedTodoTitle);
-            final TodoEntity updatedTodo = todoRepository.save(todoEntity);
-            assertEquals(updatedTodo.getTitle(), updatedTodoTitle);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.testUserEntity = makeTestUser();
+        this.todoEntity = makeTodo(testUserEntity);
+        todoEntity.setTitle(updatedTodoTitle);
+        final TodoEntity updatedTodo = todoRepository.save(todoEntity);
+        assertEquals(updatedTodo.getTitle(), updatedTodoTitle);
     }
 
     @Override
     @Test
-    public void deleteTest() {
-        try {
-            this.testUserEntity = makeTestUser();
-            this.todoEntity = makeTodoList(testUserEntity);
-            todoRepository.deleteById(todoEntity.getIdx());
-            final boolean isToDoListSelected = todoRepository.findById(todoEntity.getIdx()).isPresent();
-            assertEquals(isToDoListSelected, false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void deleteTest() throws Exception {
+        this.testUserEntity = makeTestUser();
+        this.todoEntity = makeTodo(testUserEntity);
+        todoRepository.deleteById(todoEntity.getIdx());
+        final boolean isToDoListSelected = todoRepository.findById(todoEntity.getIdx()).isPresent();
+        assertEquals(isToDoListSelected, false);
     }
 }

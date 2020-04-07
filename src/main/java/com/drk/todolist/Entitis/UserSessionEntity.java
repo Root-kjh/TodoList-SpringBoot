@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class LoginedUserSessionEntity {
+public class UserSessionEntity {
     private Long userIdx;
     private String userNickName;
 }
