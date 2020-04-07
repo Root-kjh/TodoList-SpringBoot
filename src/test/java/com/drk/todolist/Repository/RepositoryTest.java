@@ -1,8 +1,5 @@
 package com.drk.todolist.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.TodoRepository;

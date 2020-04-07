@@ -5,14 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.drk.todolist.Entitis.UserSessionEntity;
-import com.drk.todolist.Repositories.UserRepository;
-import com.drk.todolist.Services.User.UserService;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import com.drk.todolist.Entitis.UserSessionEntity;
+
+
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,42 +20,7 @@ import org.springframework.mock.web.MockHttpSession;
 
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @SpringBootTest
-public class User {
-
-    final private String testUserName="test_user";
-    final private String testUserNickName="test_nick_name";
-    final private String testUserPassword="test_pw";
-    private UserSessionEntity userSessionEntity;
-
-    private MockHttpSession session = new MockHttpSession();
-
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    UserRepository userRepository;
-
-    @AfterEach
-    @BeforeEach
-    private void clearDBAndSession(){
-        DBClear();
-        sessionClear();
-    }
-
-    private void DBClear(){
-        try{
-            userRepository.deleteAll();
-        } catch (Exception e) {}
-    }
-
-    private void sessionClear() {
-        this.session = new MockHttpSession();
-    }
-
-    public void signupTestUser() throws Exception {
-        System.out.println(userService);
-        userService.signup(testUserName, testUserPassword, testUserNickName);
-    }
+public class User extends ServiceTest{
 
     @Test
     public void signupTest() throws Exception{
