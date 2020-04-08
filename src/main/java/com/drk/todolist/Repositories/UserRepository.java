@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     UserEntity findByUsernameAndPassword(String userName, String password);
+    UserEntity findByNickname(String nickname);
     boolean deleteByUsername(String userName);
     boolean deleteByIdxAndPassword(Long idx, String password);
 

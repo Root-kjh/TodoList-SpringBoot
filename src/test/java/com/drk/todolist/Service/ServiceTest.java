@@ -59,8 +59,8 @@ public class ServiceTest {
 
     public void insertTodo() throws Exception{
         signupTestUser();
-        Long userIdx = userRepository.findByUsernameAndPassword(testUserName, testUserPassword).getIdx();
-        System.out.println(userIdx);
+        userService.signin(this.session, testUserName, testUserPassword);
+        Long userIdx = ((UserSessionEntity) this.session.getAttribute("user")).getUserIdx();
         todoService.insertTodo(userIdx, testTodoTitle, testTodoContext);
     }
 
