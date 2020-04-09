@@ -2,16 +2,18 @@ package com.drk.todolist.Controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 
-@Controller(value = "/user")
-public class User {
+@Controller
+@RequestMapping("user")
+public class UserController {
 
     @RequestMapping("/")
     public String index(){
-        return "userIndex";
+        return "User/index";
     }
 
     @GetMapping("/signin")
@@ -44,7 +46,7 @@ public class User {
         return "withdrawForm";
     }
 
-    @PostMapping("withdraw")
+    @PostMapping("/withdraw")
     public void withdrawProcess(){
 
     }
