@@ -6,7 +6,12 @@
 <body>
     <section layout:fragment="list">
         <!-- page content body-->
-        
+        <ul>
+            <li th:each="todoEntity : ${todoList}">
+                <div class="todoTitle" th:text="${todoEntity.title}"></div>
+                <div class="todoContext"th:text="${todoEntity.context}"></div>
+            </li>
+        </ul>
     </section>
 </body>
 </html>

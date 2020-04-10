@@ -6,12 +6,12 @@
 <body>
     <section layout:fragment="form">
         <!-- page content body-->
-        <form action="signup" method="POST">
-            <input type="text" name="userName" placeholder="user name"/>
-            <input type="text" name="nickName" placeholder="nick name"/>
+        <form action="updateUserInfo" method="POST">
+            <input type="text" name="newUserName" placeholder="new user name"/>
+            <input type="text" name="newNickName" placeholder="new nickname"/>
+            <input type="text" name="newPassword" placeholder="new password"/>
             <input type="password" name="password" placeholder="password"/>
-            <input type="password" name="passwordRetry" placeholder="password retry"/>
-            <button type="submit">signUp</button>
+            <button type="submit">update User Info</button>
         </form>
     </section>
 </body>
