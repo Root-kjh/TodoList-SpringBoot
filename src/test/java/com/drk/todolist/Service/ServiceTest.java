@@ -1,6 +1,6 @@
 package com.drk.todolist.Service;
 
-import com.drk.todolist.Entitis.UserSessionEntity;
+import com.drk.todolist.DTO.UserSessionDTO;
 import com.drk.todolist.Repositories.TodoRepository;
 import com.drk.todolist.Repositories.UserRepository;
 import com.drk.todolist.Services.ToDoList.TodoService;
@@ -21,7 +21,7 @@ public class ServiceTest {
     final public String testTodoContext = "testTodoContext";
 
     public MockHttpSession session = new MockHttpSession();
-    public UserSessionEntity userSessionEntity;
+    public UserSessionDTO userSessionDTO;
 
     @Autowired
     public UserService userService;
@@ -60,7 +60,7 @@ public class ServiceTest {
     public void insertTodo() throws Exception{
         signupTestUser();
         userService.signin(this.session, testUserName, testUserPassword);
-        Long userIdx = ((UserSessionEntity) this.session.getAttribute("user")).getUserIdx();
+        Long userIdx = ((UserSessionDTO) this.session.getAttribute("user")).getUserIdx();
         todoService.insertTodo(userIdx, testTodoTitle, testTodoContext);
     }
 

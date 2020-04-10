@@ -3,7 +3,7 @@ package com.drk.todolist.Services.User;
 import javax.servlet.http.HttpSession;
 
 import com.drk.todolist.Crypto.sha512;
-import com.drk.todolist.Entitis.UserSessionEntity;
+import com.drk.todolist.DTO.UserSessionDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.UserRepository;
 
@@ -15,7 +15,7 @@ public class UserServicelmpl implements UserService {
 
     private sha512 sha512_class=new sha512();
     
-    UserSessionEntity userSessionEntity;
+    UserSessionDTO userSessionDTO;
 
     @Autowired
     UserRepository userRepository;
@@ -29,8 +29,8 @@ public class UserServicelmpl implements UserService {
     }
     
     @Override
-    public UserSessionEntity getUserSession(HttpSession session) throws Exception{
-        return (UserSessionEntity) session.getAttribute("user");
+    public UserSessionDTO getUserSession(HttpSession session) throws Exception{
+        return (UserSessionDTO) session.getAttribute("user");
     }
 
     @Override
@@ -38,11 +38,11 @@ public class UserServicelmpl implements UserService {
         password=sha512_class.hash(password);
         UserEntity loginUser = userRepository.findByUsernameAndPassword(userName, password);
         try{
-            userSessionEntity = new UserSessionEntity();
-            userSessionEntity.setUserIdx(loginUser.getIdx());
-            userSessionEntity.setUserNickName(loginUser.getNickname());
-            userSessionEntity.setUserName(loginUser.getUsername());
-            session.setAttribute("user", userSessionEntity);
+            userSessionDTO = new UserSessionDTO();
+            userSessionDTO.setUserIdx(loginUser.getIdx());
+            userSessionDTO.setUserNickName(loginUser.getNickname());
+            userSessionDTO.setUserName(loginUser.getUsername());
+            session.setAttribute("user",userSessionDTO);
             return true;
         }catch(Exception e){
             e.printStackTrace();
@@ -87,8 +87,8 @@ public class UserServicelmpl implements UserService {
             String newPassword,
             String password) {
         try {
-            userSessionEntity = getUserSession(session);
-            UserEntity loginedUser = userRepository.findById(userSessionEntity.getUserIdx()).get();
+            userSessionDTO = getUserSession(session);
+            UserEntity loginedUser = userRepository.findById(userSessionDTO.getUserIdx()).get();
             String loginedUserPassword = loginedUser.getPassword();
             if (loginedUserPassword != password)
                 return false;
@@ -103,9 +103,9 @@ public class UserServicelmpl implements UserService {
 
                 userRepository.save(loginedUser);
                 if (isSet(newNickName))
-                    userSessionEntity.setUserNickName(newNickName);
+                    userSessionDTO.setUserNickName(newNickName);
                 if (isSet(newUserName))
-                    userSessionEntity.setUserName(newUserName);
+                    userSessionDTO.setUserName(newUserName);
                 
                 return true;
             }
@@ -117,7 +117,7 @@ public class UserServicelmpl implements UserService {
     @Override
     public boolean userinfoDelete(HttpSession session, String password) {
         try {
-            UserSessionEntity sessionEntity = (UserSessionEntity) session.getAttribute("user");
+            UserSessionDTO sessionEntity = (UserSessionDTO) session.getAttribute("user");
             Long userIdx = sessionEntity.getUserIdx();
             if (userRepository.deleteByIdxAndPassword(userIdx, password)){
                 session.removeAttribute("user");

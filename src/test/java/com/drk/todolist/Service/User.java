@@ -5,10 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.drk.todolist.DTO.UserSessionDTO;
+
 import org.junit.jupiter.api.Test;
-
-import com.drk.todolist.Entitis.UserSessionEntity;
-
 
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -33,8 +32,8 @@ public class User extends ServiceTest{
     public void signinTest() throws Exception{
         signupTestUser();
         if (userService.signin(this.session, testUserName, testUserPassword)){
-            userSessionEntity = (UserSessionEntity) this.session.getAttribute("user");
-            assertEquals(userSessionEntity.getUserNickName(), testUserNickName);       
+            userSessionDTO = (UserSessionDTO) this.session.getAttribute("user");
+            assertEquals(userSessionDTO.getUserNickName(), testUserNickName);       
         }else{
             throw new Exception("signin fail");
         }
@@ -49,8 +48,8 @@ public class User extends ServiceTest{
         signupTestUser();
         userService.signin(session, testUserName, testUserPassword);
         userService.logout(session);
-        userSessionEntity = (UserSessionEntity) session.getAttribute("user");
-        System.out.println(userSessionEntity);
+        userSessionDTO = (UserSessionDTO) session.getAttribute("user");
+        System.out.println(userSessionDTO);
     }
 
     @Test
@@ -59,10 +58,10 @@ public class User extends ServiceTest{
         signupTestUser();
         userService.signin(session, testUserName, testUserPassword);
         if (userService.userinfoUpdate(session, null, newNickName, null, testUserPassword)){
-            userSessionEntity = (UserSessionEntity) session.getAttribute("user");
-            final String updatedUserName = userRepository.findById(userSessionEntity.getUserIdx()).get().getUsername();
-            final String sessionNickName = userSessionEntity.getUserNickName();
-            final String updatedNickName = userRepository.findById(userSessionEntity.getUserIdx()).get().getNickname();
+            userSessionDTO = (UserSessionDTO) session.getAttribute("user");
+            final String updatedUserName = userRepository.findById(userSessionDTO.getUserIdx()).get().getUsername();
+            final String sessionNickName = userSessionDTO.getUserNickName();
+            final String updatedNickName = userRepository.findById(userSessionDTO.getUserIdx()).get().getNickname();
             assertEquals(sessionNickName,newNickName); 
             assertEquals(updatedUserName,testUserName);
             assertEquals(updatedNickName,newNickName);            
@@ -73,7 +72,7 @@ public class User extends ServiceTest{
     public void userinfoDeleteTest() throws Exception{
         signupTestUser();
         userService.signin(session, testUserName, testUserPassword);
-        final Long userIdx = ((UserSessionEntity) session.getAttribute("user")).getUserIdx();
+        final Long userIdx = ((UserSessionDTO) session.getAttribute("user")).getUserIdx();
         if (userService.userinfoDelete(session, testUserPassword)){
             assertNull(session.getAttribute("user"));
             assertFalse(userRepository.findById(userIdx).isPresent());

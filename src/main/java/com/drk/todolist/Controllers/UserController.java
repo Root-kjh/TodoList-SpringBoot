@@ -39,9 +39,9 @@ public class UserController {
             @RequestParam String userName, 
             @RequestParam String password){
         if (userService.signin(session, userName, password)){
-            return "alterMessage/User/signinSuccess";
+            return "alertMessage/User/signinSuccess";
         }else{
-            return "alterMessage/User/signinFail";
+            return "alertMessage/User/signinFail";
         }
     }
 
@@ -56,9 +56,9 @@ public class UserController {
             @RequestParam String nickName, 
             @RequestParam String password){
         if (userService.signup(userName, password, nickName))
-            return "alterMessage/User/signupSuccess";
+            return "alertMessage/User/signupSuccess";
         else
-            return "alterMessage/User/signupFail";
+            return "alertMessage/User/signupFail";
     }
 
     @GetMapping("/logout")
@@ -105,7 +105,7 @@ public class UserController {
             @RequestParam String password
     ){
         if (userService.userinfoUpdate(session, newUserName, newNickName, newPassword, password))
-            return "alsertMessage/User/updateUserInfoSuccess";
+            return "alertMessage/User/updateUserInfoSuccess";
         else
             return "alertMessage/User/updateUserInfoFail";
     }

@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import javax.transaction.Transactional;
 
+import com.drk.todolist.DTO.UserSessionDTO;
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
-import com.drk.todolist.Entitis.UserSessionEntity;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,13 +20,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class ToDoList extends ServiceTest{
 
-    private UserSessionEntity testUserSession;
-
     @BeforeEach
     public void makeTestUser() throws Exception{
         signupTestUser();
         userService.signin(session, testUserName, testUserPassword);
-        testUserSession = (UserSessionEntity) session.getAttribute("user");
+        userSessionDTO = (UserSessionDTO) session.getAttribute("user");
     }
 
     
@@ -34,7 +32,7 @@ public class ToDoList extends ServiceTest{
     @Transactional
     public void insertTodoTest() throws Exception{
         insertTodo();
-        UserEntity userEntity = userRepository.findById(testUserSession.getUserIdx()).get();
+        UserEntity userEntity = userRepository.findById(userSessionDTO.getUserIdx()).get();
         TodoEntity todoEntity = userEntity.getTodoEntityList().get(0);
         assertEquals(todoEntity.getTitle(), testTodoTitle);
     }
@@ -43,7 +41,7 @@ public class ToDoList extends ServiceTest{
     @Transactional
     public void selectTodoListTest() throws Exception{
         insertTodo();
-        TodoEntity insertedTodoEntity = todoService.selectTodolist(testUserSession.getUserIdx()).get(0);
+        TodoEntity insertedTodoEntity = todoService.selectTodolist(userSessionDTO.getUserIdx()).get(0);
         assertEquals(insertedTodoEntity.getContext(), testTodoContext);
     }
 
@@ -54,7 +52,7 @@ public class ToDoList extends ServiceTest{
         final String newTodoTitle = "newTodo";
         final String newTodoContext = "newTodoContext";
         insertTodo();
-        Long todoIdx = todoService.selectTodolist(testUserSession.getUserIdx()).get(0).getIdx();
+        Long todoIdx = todoService.selectTodolist(userSessionDTO.getUserIdx()).get(0).getIdx();
         if (todoService.updateTodo(todoIdx, newTodoTitle, newTodoContext)){
             TodoEntity updatedTodo = todoRepository.findById(todoIdx).get();
             assertEquals(updatedTodo.getTitle(), newTodoTitle);
@@ -68,7 +66,7 @@ public class ToDoList extends ServiceTest{
     @Transactional
     public void deleteTodoTest() throws Exception{
         insertTodo();
-        Long todoIdx = todoService.selectTodolist(testUserSession.getUserIdx()).get(0).getIdx();
+        Long todoIdx = todoService.selectTodolist(userSessionDTO.getUserIdx()).get(0).getIdx();
         if (todoService.deleteTodo(todoIdx))
             assertFalse(todoRepository.findById(todoIdx).isPresent());
         else
