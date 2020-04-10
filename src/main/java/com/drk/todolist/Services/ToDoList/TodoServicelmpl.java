@@ -24,6 +24,20 @@ public class TodoServicelmpl implements TodoService{
     }
 
     @Override
+    public boolean checkTodoOwnership(Long todoIdx, Long userIdx){
+        try{
+            UserEntity userEntity = userRepository.findById(userIdx).get();
+            for (TodoEntity todoEntity : userEntity.getTodoEntityList()) {
+                if (todoEntity.getIdx().equals(todoIdx))
+                    return true;
+            }
+            return false;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+    @Override
     public List<TodoEntity> selectTodolist(Long userIdx) {
         List<TodoEntity> todoList = userRepository.findById(userIdx).get().getTodoEntityList();
         return todoList;

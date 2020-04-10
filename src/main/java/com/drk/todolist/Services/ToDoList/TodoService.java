@@ -10,4 +10,5 @@ public interface TodoService {
     public boolean insertTodo(Long userIdx, String title, String context);
     public boolean deleteTodo(Long todoIdx);
     public boolean updateTodo(Long todoIdx, String newTitle, String newContext);
+    public boolean checkTodoOwnership(Long todoIdx, Long userIdx);
 }

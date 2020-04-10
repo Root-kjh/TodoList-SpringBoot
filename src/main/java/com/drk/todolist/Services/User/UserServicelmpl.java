@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 public class UserServicelmpl implements UserService {
 
     private sha512 sha512_class=new sha512();
+    
+    UserSessionEntity userSessionEntity;
 
     @Autowired
     UserRepository userRepository;
@@ -26,15 +28,20 @@ public class UserServicelmpl implements UserService {
         return userRepository.isExistUser(user_name);
     }
     
+    @Override
+    public UserSessionEntity getUserSession(HttpSession session) throws Exception{
+        return (UserSessionEntity) session.getAttribute("user");
+    }
 
     @Override
     public boolean signin(HttpSession session, String userName, String password) {
         password=sha512_class.hash(password);
         UserEntity loginUser = userRepository.findByUsernameAndPassword(userName, password);
         try{
-            UserSessionEntity userSessionEntity = new UserSessionEntity();
+            userSessionEntity = new UserSessionEntity();
             userSessionEntity.setUserIdx(loginUser.getIdx());
             userSessionEntity.setUserNickName(loginUser.getNickname());
+            userSessionEntity.setUserName(loginUser.getUsername());
             session.setAttribute("user", userSessionEntity);
             return true;
         }catch(Exception e){
@@ -80,8 +87,8 @@ public class UserServicelmpl implements UserService {
             String newPassword,
             String password) {
         try {
-            UserSessionEntity UserSessionEntity = (UserSessionEntity) session.getAttribute("user");
-            UserEntity loginedUser = userRepository.findById(UserSessionEntity.getUserIdx()).get();
+            userSessionEntity = getUserSession(session);
+            UserEntity loginedUser = userRepository.findById(userSessionEntity.getUserIdx()).get();
             String loginedUserPassword = loginedUser.getPassword();
             if (loginedUserPassword != password)
                 return false;
@@ -96,7 +103,10 @@ public class UserServicelmpl implements UserService {
 
                 userRepository.save(loginedUser);
                 if (isSet(newNickName))
-                    UserSessionEntity.setUserNickName(newNickName);
+                    userSessionEntity.setUserNickName(newNickName);
+                if (isSet(newUserName))
+                    userSessionEntity.setUserName(newUserName);
+                
                 return true;
             }
         } catch (Exception e) {

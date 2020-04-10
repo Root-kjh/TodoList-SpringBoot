@@ -8,4 +8,5 @@ import lombok.Setter;
 public class UserSessionEntity {
     private Long userIdx;
     private String userNickName;
+    private String userName;
 }
