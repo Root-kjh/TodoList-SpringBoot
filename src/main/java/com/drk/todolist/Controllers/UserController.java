@@ -2,7 +2,7 @@ package com.drk.todolist.Controllers;
 
 import javax.servlet.http.HttpSession;
 
-import com.drk.todolist.Entitis.UserSessionEntity;
+import com.drk.todolist.DTO.UserSessionDTO;
 import com.drk.todolist.Services.User.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequestMapping("user")
 public class UserController {
 
-    UserSessionEntity userSessionEntity;
+    UserSessionDTO userSessionDTO;
 
     @Autowired
     UserService userService;
@@ -86,13 +86,13 @@ public class UserController {
     @GetMapping("/updateUserInfo")
     public String updateUserInfoForm(HttpSession session, Model model){
         try{
-            userSessionEntity = userService.getUserSession(session);
+            userSessionDTO = userService.getUserSession(session);
         }catch(Exception e){
             logout(session);
             return "alertMessage/User/updateUserInfoFail";
         }
-        model.addAttribute("userName", userSessionEntity.getUserName());
-        model.addAttribute("nickName", userSessionEntity.getUserNickName());
+        model.addAttribute("userName", userSessionDTO.getUserName());
+        model.addAttribute("nickName", userSessionDTO.getUserNickName());
         return "Content/User/updateUserInfoForm";
     }
 

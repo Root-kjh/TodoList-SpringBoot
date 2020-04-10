@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import com.drk.todolist.DTO.UserSessionDTO;
 import com.drk.todolist.Entitis.TodoEntity;
-import com.drk.todolist.Entitis.UserSessionEntity;
 import com.drk.todolist.Services.ToDoList.TodoService;
 import com.drk.todolist.Services.User.UserService;
 
@@ -29,18 +29,18 @@ public class TodoController {
     @Autowired
     UserService userService;
 
-    UserSessionEntity userSessionEntity;
+    UserSessionDTO userSessionDTO;
 
     @GetMapping("/")
     public String showTodoList(HttpSession session, Model model){
         try{
-            userSessionEntity = userService.getUserSession(session);
+            userSessionDTO = userService.getUserSession(session);
         }
         catch (Exception e){
             userService.logout(session);
             return "redirect:/";
         }
-            List<TodoEntity> todoList = todoService.selectTodolist(userSessionEntity.getUserIdx());
+            List<TodoEntity> todoList = todoService.selectTodolist(userSessionDTO.getUserIdx());
             model.addAttribute("todoList", todoList);
         return "showTodoList";
     }
@@ -52,20 +52,20 @@ public class TodoController {
             @RequestParam String context
             ){
         try{
-            userSessionEntity = userService.getUserSession(session);
+            userSessionDTO = userService.getUserSession(session);
         }catch (Exception e){
             userService.logout(session);
             return "alterMessage/Todo/insertFail";
         }
-        todoService.insertTodo(userSessionEntity.getUserIdx(), title, context);
+        todoService.insertTodo(userSessionDTO.getUserIdx(), title, context);
         return "redirect:todo/";
     }
 
     @GetMapping("/delete")
     public String deleteTodo(HttpSession session, @RequestParam Long todoIdx) {
         try{
-            userSessionEntity=userService.getUserSession(session);
-            if (todoService.checkTodoOwnership(todoIdx, userSessionEntity.getUserIdx()))
+            userSessionDTO=userService.getUserSession(session);
+            if (todoService.checkTodoOwnership(todoIdx, userSessionDTO.getUserIdx()))
                 throw new Exception("User is not todoOwner");
             todoService.deleteTodo(todoIdx);
         }catch (Exception e){
@@ -78,8 +78,8 @@ public class TodoController {
     @PostMapping("/update")
     public String updateTodo(HttpSession session, @RequestParam Long todoIdx, @RequestParam String newTitle, @RequestParam String newContext){
         try{
-            userSessionEntity=userService.getUserSession(session);
-            if (todoService.checkTodoOwnership(todoIdx, userSessionEntity.getUserIdx()))
+            userSessionDTO=userService.getUserSession(session);
+            if (todoService.checkTodoOwnership(todoIdx, userSessionDTO.getUserIdx()))
                 throw new Exception("User is not todoOwner");
             todoService.updateTodo(todoIdx, newTitle, newContext);
         }catch (Exception e){
