@@ -2,7 +2,6 @@ package com.drk.todolist.Controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -13,12 +12,12 @@ public class UserController {
 
     @RequestMapping("/")
     public String index(){
-        return "User/index";
+        return "Content/User/index";
     }
 
     @GetMapping("/signin")
     public String signinForm() {
-        return "signinForm";
+        return "Content/User/signin";
     }
 
     @PostMapping("/signin")
@@ -28,7 +27,7 @@ public class UserController {
 
     @GetMapping("/signup")
     public String signupForm(){
-        return "signupForm";
+        return "Content/User/signup";
     }
 
     @PostMapping("/signup")

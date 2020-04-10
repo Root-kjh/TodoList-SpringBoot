@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    
+    <!-- head -->
+    <th:block th:replace="Fragments/head"></th:block>
+</head>
+<body>
+    <!-- header -->
+    <header th:replace="Fragments/header"></header>
+
+    <!-- page content body-->
+    <th:block layout:fragment="content"></th:block>
+
+    <!-- footer -->
+    <footer th:replace="fragments/footer"></footer>
+
+    <!-- impot javascript -->
+    <!-- <th:block th:replace=""></th:block> -->
+    <!-- page custom javascript -->
+    <!-- <th:block layout:fragment=""></th:block> -->
+</body>
+</html>

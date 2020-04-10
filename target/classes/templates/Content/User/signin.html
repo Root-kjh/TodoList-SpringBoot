@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="Layout/formLayout">
+<head></head>
+<body>
+    <section layout:fragment="form">
+        <!-- page content body-->
+        <form action="signip" method="POST">
+            <input type="text" name="userName" placeholder="user name"/>
+            <input type="password" name="password" placeholder="password"/>
+            <button type="submit">signIn</button>
+        </form>
+    </section>
+</body>
+</html>

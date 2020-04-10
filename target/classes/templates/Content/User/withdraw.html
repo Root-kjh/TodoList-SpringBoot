@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="Layout/formLayout">
+<head></head>
+<body>
+    <section layout:fragment="form">
+        <!-- page content body-->
+        <form action="withdraw" method="POST">
+            <input type="password" name="password" placeholder="password"/>
+            <input type="password" name="passwordRetry" placeholder="password Retry"/>
+            <button type="submit">withdraw</button>
+        </form>
+    </section>
+</body>
+</html>
