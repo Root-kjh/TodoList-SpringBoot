@@ -7,6 +7,7 @@ import com.drk.todolist.DTO.UserSessionDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.UserRepository;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,9 @@ public class UserServicelmpl implements UserService {
     private sha512 sha512_class=new sha512();
     
     UserSessionDTO userSessionDTO;
+
+    @Autowired
+    ModelMapper modelMapper;
 
     @Autowired
     UserRepository userRepository;
@@ -39,9 +43,7 @@ public class UserServicelmpl implements UserService {
         UserEntity loginUser = userRepository.findByUsernameAndPassword(userName, password);
         try{
             userSessionDTO = new UserSessionDTO();
-            userSessionDTO.setUserIdx(loginUser.getIdx());
-            userSessionDTO.setUserNickName(loginUser.getNickname());
-            userSessionDTO.setUserName(loginUser.getUsername());
+            userSessionDTO = modelMapper.map(loginUser, UserSessionDTO.class);
             session.setAttribute("user",userSessionDTO);
             return true;
         }catch(Exception e){

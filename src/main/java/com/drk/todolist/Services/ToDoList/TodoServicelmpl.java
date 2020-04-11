@@ -3,6 +3,7 @@ package com.drk.todolist.Services.ToDoList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.drk.todolist.Entitis.TodoEntity;
@@ -40,6 +41,8 @@ public class TodoServicelmpl implements TodoService{
     @Override
     public List<TodoEntity> selectTodolist(Long userIdx) {
         List<TodoEntity> todoList = userRepository.findById(userIdx).get().getTodoEntityList();
+        if (todoList==null)
+            return new ArrayList<TodoEntity>();
         return todoList;
     }
 

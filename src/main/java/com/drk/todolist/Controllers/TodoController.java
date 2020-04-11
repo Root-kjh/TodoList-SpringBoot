@@ -42,7 +42,7 @@ public class TodoController {
         }
             List<TodoEntity> todoList = todoService.selectTodolist(userSessionDTO.getUserIdx());
             model.addAttribute("todoList", todoList);
-        return "showTodoList";
+        return "content/Todo/showTodoList";
     }
 
     @PostMapping("/insert")
