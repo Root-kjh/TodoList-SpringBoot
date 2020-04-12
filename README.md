@@ -143,3 +143,20 @@ SpringBoot를 이용해 해당 웹을 구현할 것이다.
     * Todo 삭제(/delete) : Todo 삭제(GET : todo->idx)
     * Todo 수정(/update) : Todo 수정(GET : todo->idx)
     (POST : todo->title, todo->context)
+
+## view 설계
+
+1. /User/
+    * 로그인(signin/) -> Login(UserName, Password) Form, signup button 출력
+    * 회원가입(signup/) -> Signup Form(UserName, NickName, Password, Password retry), signin button 출력
+    * 회원정보 수정(edit_user_info/) -> (UserName, NickName, Password, Password retry) 폼 출력
+    * 회원탈퇴(withdraw/)회원탈퇴 전 비밀번호 입력 폼(Password, Password retry) 출력
+
+2.  /Todo/
+    * TodoList 출력(/) : ToDoList(Title, Content), Todo Add button, Todo remove button 출력
+
+        Todo add button click : New Todo 출력 -> Ctrl+S 저장
+
+        Todo remove button click : 해당 Todo remove -> javascript로 todo view remove
+
+        Todo update : 해당 Todo update
