@@ -6,16 +6,18 @@ import com.drk.todolist.DTO.UserSessionDTO;
 import com.drk.todolist.Services.User.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 
-@Controller
+@RestController
 @RequestMapping("user")
+@CrossOrigin
 public class UserController {
 
     UserSessionDTO userSessionDTO;
@@ -59,17 +61,6 @@ public class UserController {
             return "alertMessage/User/signupSuccess";
         else
             return "alertMessage/User/signupFail";
-    }
-
-    @GetMapping("/logout")
-    public String logout(HttpSession session){
-        userService.logout(session);
-        return "redirect:/";
-    }
-
-    @GetMapping("/withdraw")
-    public String withdrawForm(){
-         return "Content/User/withdrawForm";
     }
 
     @PostMapping("/withdraw")

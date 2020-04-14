@@ -13,6 +13,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     UserEntity findByNickname(String nickname);
     boolean deleteByUsername(String userName);
     boolean deleteByIdxAndPassword(Long idx, String password);
+    UserEntity findByUsername(String username);
 
     @Query("select count(u.username)>0 from user u where u.username = ?1")
     public boolean isExistUser(String userName);

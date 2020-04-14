@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserSessionDTO {
+public class UserJwtDTO {
     private Long userIdx;
     private String userNickName;
     private String userName;
