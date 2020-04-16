@@ -1,4 +1,4 @@
-package com.drk.todolist.DTO;
+package com.drk.todolist.DTO.User;
 
 public class UserInfoDTO {
     private String userName;

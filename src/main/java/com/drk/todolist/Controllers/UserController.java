@@ -2,12 +2,13 @@ package com.drk.todolist.Controllers;
 
 import javax.servlet.http.HttpSession;
 
-import com.drk.todolist.DTO.UserInfoDTO;
-import com.drk.todolist.DTO.UserSessionDTO;
+import com.drk.todolist.DTO.User.SigninDTO;
+import com.drk.todolist.DTO.User.UserInfoDTO;
+import com.drk.todolist.DTO.User.UserJwtDTO;
 import com.drk.todolist.Services.User.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,29 +22,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 @CrossOrigin
 public class UserController {
 
-    UserSessionDTO userSessionDTO;
+    UserJwtDTO UserJwtDTO;
 
     @Autowired
     UserService userService;
 
     @PostMapping("/signin")
-    public String signinProcess(
+    public ResponseEntity<?> signinProcess(
             HttpSession session, 
-            @RequestParam String userName, 
-            @RequestParam String password){
-        if (userService.signin(session, userName, password)){
-            return "alertMessage/User/signinSuccess";
-        }else{
-            return "alertMessage/User/signinFail";
-        }
+            @RequestParam SigninDTO SigninDTO){
+        ResponseEntity.ok(new )
     }
 
     @PostMapping("/signup")
     public String signupProcess(
-            @RequestParam String userName, 
-            @RequestParam String nickName, 
-            @RequestParam String password){
-        if (userService.signup(userName, password, nickName))
+            @RequestParam UserInfoDTO userInfoDTO){
+        if (userService.signup(userInfoDTO))
             return "alertMessage/User/signupSuccess";
         else
             return "alertMessage/User/signupFail";
@@ -62,25 +56,25 @@ public class UserController {
 
     @GetMapping("/getUserInfo")
     public UserInfoDTO getUserInfo(HttpSession session){
+        UserInfoDTO userInfoDTO = null;
         try{
-            userSessionDTO = userService.getUserSession(session);
+            UserJwtDTO = userService.getUserInfoByJWT(session);
+            userInfoDTO = userService.getUserInfoByUserName(UserJwtDTO.getUserName());
         }catch(Exception e){
-            logout(session);
-            return "alertMessage/User/updateUserInfoFail";
+            e.printStackTrace();
         }
-        UserInfoDTO userInfoDTO = userService.getUserInfoByUserName(userSessionDTO.getUserName());
         return userInfoDTO;
     }
 
     @PostMapping("/updateUserInfo")
-    public String updateUserInfoProcess(
+    public boolean updateUserInfoProcess(
             HttpSession session,
             @RequestParam UserInfoDTO newUserInfoDTO,
             @RequestParam String password
     ){
         if (userService.userinfoUpdate(session, newUserInfoDTO, password))
-            return "alertMessage/User/updateUserInfoSuccess";
+            return true;
         else
-            return "alertMessage/User/updateUserInfoFail";
+            return false;
     }
 }
