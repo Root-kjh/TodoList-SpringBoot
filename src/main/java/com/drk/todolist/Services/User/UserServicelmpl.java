@@ -3,6 +3,8 @@ package com.drk.todolist.Services.User;
 import javax.servlet.http.HttpSession;
 
 import com.drk.todolist.Crypto.sha512;
+import com.drk.todolist.DTO.UserInfoDTO;
+import com.drk.todolist.DTO.UserJwtDTO;
 import com.drk.todolist.DTO.UserSessionDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.UserRepository;
@@ -16,7 +18,7 @@ public class UserServicelmpl implements UserService {
 
     private sha512 sha512_class=new sha512();
     
-    UserSessionDTO userSessionDTO;
+    UserJwtDTO userJwtDTO;
 
     @Autowired
     ModelMapper modelMapper;
@@ -32,11 +34,6 @@ public class UserServicelmpl implements UserService {
         return userRepository.isExistUser(user_name);
     }
     
-    @Override
-    public UserSessionDTO getUserSession(HttpSession session) throws Exception{
-        return (UserSessionDTO) session.getAttribute("user");
-    }
-
     @Override
     public boolean signin(HttpSession session, String userName, String password) {
         password=sha512_class.hash(password);
@@ -82,12 +79,7 @@ public class UserServicelmpl implements UserService {
     }
 
     @Override
-    public boolean userinfoUpdate(
-            HttpSession session, 
-            String newUserName, 
-            String newNickName, 
-            String newPassword,
-            String password) {
+    public boolean userinfoUpdate(HttpSession session, UserInfoDTO newUserInfoDTO, String password) {
         try {
             userSessionDTO = getUserSession(session);
             UserEntity loginedUser = userRepository.findById(userSessionDTO.getUserIdx()).get();

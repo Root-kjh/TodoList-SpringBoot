@@ -2,6 +2,7 @@ package com.drk.todolist.Controllers;
 
 import javax.servlet.http.HttpSession;
 
+import com.drk.todolist.DTO.UserInfoDTO;
 import com.drk.todolist.DTO.UserSessionDTO;
 import com.drk.todolist.Services.User.UserService;
 
@@ -25,16 +26,6 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @RequestMapping("/")
-    public String index(){
-        return "Content/User/index";
-    }
-
-    @GetMapping("/signin")
-    public String signinForm() {
-        return "Content/User/signin";
-    }
-
     @PostMapping("/signin")
     public String signinProcess(
             HttpSession session, 
@@ -45,11 +36,6 @@ public class UserController {
         }else{
             return "alertMessage/User/signinFail";
         }
-    }
-
-    @GetMapping("/signup")
-    public String signupForm(){
-        return "Content/User/signup";
     }
 
     @PostMapping("/signup")
@@ -74,28 +60,25 @@ public class UserController {
 
     }
 
-    @GetMapping("/updateUserInfo")
-    public String updateUserInfoForm(HttpSession session, Model model){
+    @GetMapping("/getUserInfo")
+    public UserInfoDTO getUserInfo(HttpSession session){
         try{
             userSessionDTO = userService.getUserSession(session);
         }catch(Exception e){
             logout(session);
             return "alertMessage/User/updateUserInfoFail";
         }
-        model.addAttribute("userName", userSessionDTO.getUserName());
-        model.addAttribute("nickName", userSessionDTO.getUserNickName());
-        return "Content/User/updateUserInfoForm";
+        UserInfoDTO userInfoDTO = userService.getUserInfoByUserName(userSessionDTO.getUserName());
+        return userInfoDTO;
     }
 
     @PostMapping("/updateUserInfo")
     public String updateUserInfoProcess(
             HttpSession session,
-            @RequestParam String newUserName,
-            @RequestParam String newNickName,
-            @RequestParam String newPassword,
+            @RequestParam UserInfoDTO newUserInfoDTO,
             @RequestParam String password
     ){
-        if (userService.userinfoUpdate(session, newUserName, newNickName, newPassword, password))
+        if (userService.userinfoUpdate(session, newUserInfoDTO, password))
             return "alertMessage/User/updateUserInfoSuccess";
         else
             return "alertMessage/User/updateUserInfoFail";
