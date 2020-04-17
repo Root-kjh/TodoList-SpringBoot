@@ -3,9 +3,9 @@ package com.drk.todolist.Services.ToDoList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import com.drk.todolist.DTO.User.UserJwtDTO;
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.TodoRepository;
@@ -25,9 +25,9 @@ public class TodoServicelmpl implements TodoService{
     }
 
     @Override
-    public boolean checkTodoOwnership(Long todoIdx, Long userIdx){
+    public boolean checkTodoOwnership(Long todoIdx, UserJwtDTO userJwtDTO){
         try{
-            UserEntity userEntity = userRepository.findById(userIdx).get();
+            UserEntity userEntity = userRepository.findById(userJwtDTO.getUserIdx()).get();
             for (TodoEntity todoEntity : userEntity.getTodoEntityList()) {
                 if (todoEntity.getIdx().equals(todoIdx))
                     return true;
@@ -39,17 +39,20 @@ public class TodoServicelmpl implements TodoService{
     }
 
     @Override
-    public List<TodoEntity> selectTodolist(Long userIdx) {
-        List<TodoEntity> todoList = userRepository.findById(userIdx).get().getTodoEntityList();
-        if (todoList==null)
-            return new ArrayList<TodoEntity>();
+    public List<TodoEntity> selectTodolist(UserJwtDTO userJwtDTO) {
+        List<TodoEntity> todoList = null;
+        try{
+            todoList = userRepository.findById(userJwtDTO.getUserIdx()).get().getTodoEntityList();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return todoList;
     }
 
     @Override
-    public boolean insertTodo(Long userIdx, String title, String context) {
+    public boolean insertTodo(UserJwtDTO userJwtDTO, String title, String context) {
         try{
-            UserEntity loginUser = userRepository.findById(userIdx).get();
+            UserEntity loginUser = userRepository.findById(userJwtDTO.getUserIdx()).get();
             List<TodoEntity> todoList = loginUser.getTodoEntityList();
             TodoEntity new_todo = new TodoEntity();
             new_todo.setTitle(title);

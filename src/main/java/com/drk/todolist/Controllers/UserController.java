@@ -5,16 +5,22 @@ import javax.servlet.http.HttpSession;
 import com.drk.todolist.DTO.User.SigninDTO;
 import com.drk.todolist.DTO.User.UserInfoDTO;
 import com.drk.todolist.DTO.User.UserJwtDTO;
+import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Services.User.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
@@ -28,53 +34,40 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> signinProcess(
-            HttpSession session, 
-            @RequestParam SigninDTO SigninDTO){
-        ResponseEntity.ok(new )
+    public ResponseEntity<?> signin(
+            @RequestBody SigninDTO signinDTO){
+        return ResponseEntity.ok(userService.signin(signinDTO));
     }
 
     @PostMapping("/signup")
-    public String signupProcess(
+    public boolean signup(
             @RequestParam UserInfoDTO userInfoDTO){
-        if (userService.signup(userInfoDTO))
-            return "alertMessage/User/signupSuccess";
-        else
-            return "alertMessage/User/signupFail";
+        return userService.signup(userInfoDTO);
     }
 
     @PostMapping("/withdraw")
-    public String withdrawProcess(
-            HttpSession session,
+    public boolean withdraw(
+            @RequestParam String token,
             @RequestParam String password){
-                if (userService.userinfoDelete(session, password))
-                    return "alertMessage/User/withdrawSuccess";
-                else
-                    return "alertMessage/User/withdrawFail";
+                return userService.userinfoDelete(token, password);
 
     }
 
     @GetMapping("/getUserInfo")
-    public UserInfoDTO getUserInfo(HttpSession session){
+    public UserInfoDTO getUserInfo(@RequestParam String token){
         UserInfoDTO userInfoDTO = null;
         try{
             UserJwtDTO = userService.getUserInfoByJWT(session);
             userInfoDTO = userService.getUserInfoByUserName(UserJwtDTO.getUserName());
         }catch(Exception e){
             e.printStackTrace();
+        } finally {
+            return userInfoDTO;
         }
-        return userInfoDTO;
     }
 
     @PostMapping("/updateUserInfo")
-    public boolean updateUserInfoProcess(
-            HttpSession session,
-            @RequestParam UserInfoDTO newUserInfoDTO,
-            @RequestParam String password
-    ){
-        if (userService.userinfoUpdate(session, newUserInfoDTO, password))
-            return true;
-        else
-            return false;
+    public boolean updateUserInfo(@RequestBody UserInfoDTO newUserInfoDTO){
+        return userService.userinfoUpdate(newUserInfoDTO);              
     }
 }

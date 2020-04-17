@@ -3,14 +3,18 @@ package com.drk.todolist.Services.User;
 import javax.servlet.http.HttpSession;
 
 import com.drk.todolist.Crypto.sha512;
-import com.drk.todolist.DTO.UserInfoDTO;
-import com.drk.todolist.DTO.UserJwtDTO;
-import com.drk.todolist.DTO.UserSessionDTO;
+import com.drk.todolist.DTO.User.SigninDTO;
+import com.drk.todolist.DTO.User.UserInfoDTO;
+import com.drk.todolist.DTO.User.UserJwtDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.UserRepository;
+import com.drk.todolist.Services.JWT.JwtTokenUtil;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,10 +25,13 @@ public class UserServicelmpl implements UserService {
     UserJwtDTO userJwtDTO;
 
     @Autowired
-    ModelMapper modelMapper;
+    UserRepository userRepository;
 
     @Autowired
-    UserRepository userRepository;
+    JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
 
     public boolean isSet(Object object){
         return object!=null;
@@ -35,31 +42,35 @@ public class UserServicelmpl implements UserService {
     }
     
     @Override
-    public boolean signin(HttpSession session, String userName, String password) {
-        password=sha512_class.hash(password);
-        UserEntity loginUser = userRepository.findByUsernameAndPassword(userName, password);
+    public String signin(SigninDTO signinDTO){
+        String token = null;
+        signinDTO.setPassword(sha512_class.hash(signinDTO.getPassword()));
         try{
-            userSessionDTO = new UserSessionDTO();
-            userSessionDTO = modelMapper.map(loginUser, UserSessionDTO.class);
-            session.setAttribute("user",userSessionDTO);
-            return true;
+            authenticate(signinDTO.getUsername(), signinDTO.getPassword());
+            final UserEntity userEntity = userRepository.findByUsername(signinDTO.getUsername());
+            userJwtDTO = new UserJwtDTO();
+            userJwtDTO.setUserIdx(userEntity.getIdx());
+            userJwtDTO.setUserName(userEntity.getUsername());
+            userJwtDTO.setUserNickName(userEntity.getNickname());
+            token = jwtTokenUtil.generateToken(userJwtDTO);
         }catch(Exception e){
             e.printStackTrace();
-            return false;
+        } finally {
+            return token;
         }
     }
 
     @Override
-    public boolean signup(String userName, String password, String nickName) {
+    public boolean signup(UserInfoDTO userInfoDTO) {
         try {
-            if(userRepository.isExistUser(userName))
+            if(userRepository.isExistUser(userInfoDTO.getUserName()))
                 return false;
             else{
-                password = sha512_class.hash(password);
+                userInfoDTO.setPassword(sha512_class.hash(userInfoDTO.getPassword()));
                 UserEntity userEntity = new UserEntity();
-                userEntity.setUsername(userName);
-                userEntity.setPassword(password);
-                userEntity.setNickname(nickName);
+                userEntity.setUsername(userInfoDTO.getUserName());
+                userEntity.setPassword(userInfoDTO.getPassword());
+                userEntity.setNickname(userInfoDTO.getNickName());
                 userRepository.save(userEntity);
                 return true;
             }
@@ -69,57 +80,61 @@ public class UserServicelmpl implements UserService {
     }
 
     @Override
-    public boolean logout(HttpSession session) {
+    public String userinfoUpdate(UserJwtDTO userJwtDTO, UserInfoDTO newUserInfoDTO) {
+        String token = null;
         try {
-            session.removeAttribute("user");
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean userinfoUpdate(HttpSession session, UserInfoDTO newUserInfoDTO, String password) {
-        try {
-            userSessionDTO = getUserSession(session);
-            UserEntity loginedUser = userRepository.findById(userSessionDTO.getUserIdx()).get();
+            UserEntity loginedUser = userRepository.findByUsername(userJwtDTO.getUserName());
+            newUserInfoDTO.setPassword(sha512_class.hash(newUserInfoDTO.getPassword()));
             String loginedUserPassword = loginedUser.getPassword();
-            if (loginedUserPassword != password)
-                return false;
-            else {
-                if (isSet(newNickName))
-                    loginedUser.setNickname(newNickName);
-                if (isSet(newUserName) && !userRepository.isExistUser(newUserName)) {
-                    loginedUser.setUsername(newUserName);
+            if (loginedUserPassword.equals(newUserInfoDTO.getPassword())){
+                if (isSet(newUserInfoDTO.getNickName()))
+                    loginedUser.setNickname(newUserInfoDTO.getNickName());
+                if (isSet(newUserInfoDTO.getUserName()) && !userRepository.isExistUser(newUserInfoDTO.getUserName())) {
+                    loginedUser.setUsername(newUserInfoDTO.getUserName());
                 }
-                if (isSet(newPassword))
-                    loginedUser.setPassword(newPassword);
+                if (isSet(newUserInfoDTO.getPassword()))
+                    loginedUser.setPassword(newUserInfoDTO.getPassword());
 
                 userRepository.save(loginedUser);
-                if (isSet(newNickName))
-                    userSessionDTO.setUserNickName(newNickName);
-                if (isSet(newUserName))
-                    userSessionDTO.setUserName(newUserName);
+                if (isSet(newUserInfoDTO.getNickName()))
+                    userJwtDTO.setUserNickName(newUserInfoDTO.getNickName());
+                if (isSet(newUserInfoDTO.getUserName()))
+                    userJwtDTO.setUserName(newUserInfoDTO.getUserName());
                 
-                return true;
+                token = jwtTokenUtil.generateToken(userJwtDTO);
             }
         } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            return token;
+        }
+    }
+
+    @Override
+    public boolean userinfoDelete(UserJwtDTO userJwtDTO, String password) {
+        try {
+            Long userIdx = userJwtDTO.getUserIdx();
+            if (userRepository.deleteByIdxAndPassword(userIdx, password))
+                return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
             return false;
         }
     }
 
     @Override
-    public boolean userinfoDelete(HttpSession session, String password) {
-        try {
-            UserSessionDTO sessionEntity = (UserSessionDTO) session.getAttribute("user");
-            Long userIdx = sessionEntity.getUserIdx();
-            if (userRepository.deleteByIdxAndPassword(userIdx, password)){
-                session.removeAttribute("user");
-                return true;
-            }else
-                return false;
-        } catch (Exception e) {
-            return false;
+    public UserEntity getUserInfoByUserName(String userName) throws Exception {
+        return userRepository.findByUsername(userName);
+    }
+
+    private void authenticate (String username, String password) throws Exception{
+        try{
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        } catch (DisabledException e) {
+            throw new Exception("User Disabled",e);
+        } catch (BadCredentialsException e) {
+            throw new Exception("Invalid Credentials",e);
         }
     }
 }
