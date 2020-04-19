@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import com.drk.todolist.DTO.Todo.TodoDTO;
 import com.drk.todolist.DTO.User.UserJwtDTO;
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
@@ -25,11 +26,11 @@ public class TodoServicelmpl implements TodoService{
     }
 
     @Override
-    public boolean checkTodoOwnership(Long todoIdx, UserJwtDTO userJwtDTO){
+    public boolean checkTodoOwnership(Long todoIdx, Long userIdx){
         try{
-            UserEntity userEntity = userRepository.findById(userJwtDTO.getUserIdx()).get();
+            UserEntity userEntity = userRepository.findById(userIdx).get();
             for (TodoEntity todoEntity : userEntity.getTodoEntityList()) {
-                if (todoEntity.getIdx().equals(todoIdx))
+                if (todoEntity.getIdx()==userIdx)
                     return true;
             }
             return false;
@@ -39,24 +40,18 @@ public class TodoServicelmpl implements TodoService{
     }
 
     @Override
-    public List<TodoEntity> selectTodolist(UserJwtDTO userJwtDTO) {
-        List<TodoEntity> todoList = null;
-        try{
-            todoList = userRepository.findById(userJwtDTO.getUserIdx()).get().getTodoEntityList();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return todoList;
+    public List<TodoEntity> selectTodolist(Long userIdx) {
+        return userRepository.findById(userIdx).get().getTodoEntityList();
     }
 
     @Override
-    public boolean insertTodo(UserJwtDTO userJwtDTO, String title, String context) {
+    public boolean insertTodo(Long userIdx, TodoDTO todo) {
         try{
-            UserEntity loginUser = userRepository.findById(userJwtDTO.getUserIdx()).get();
+            UserEntity loginUser = userRepository.findById(userIdx).get();
             List<TodoEntity> todoList = loginUser.getTodoEntityList();
             TodoEntity new_todo = new TodoEntity();
-            new_todo.setTitle(title);
-            new_todo.setContext(context);
+            new_todo.setTitle(todo.getTitle());
+            new_todo.setContext(todo.getContext());
             todoList.add(new_todo);
             loginUser.setTodoEntityList(todoList);
             userRepository.save(loginUser);
@@ -77,13 +72,13 @@ public class TodoServicelmpl implements TodoService{
     }
 
     @Override
-    public boolean updateTodo(Long todoIdx, String newTitle, String newContext) {
+    public boolean updateTodo(Long todoIdx, TodoDTO newTodoDto) {
         try {
             TodoEntity todo = todoRepository.findById(todoIdx).get();
-            if (isSet(newTitle))
-                todo.setTitle(newTitle);
-            if (isSet(newContext))
-                todo.setContext(newContext);
+            if (isSet(newTodoDto.getTitle()))
+                todo.setTitle(newTodoDto.getTitle());
+            if (isSet(newTodoDto.getContext()))
+                todo.setContext(newTodoDto.getContext());
             todoRepository.save(todo);
         return true;    
         }catch(Exception e){

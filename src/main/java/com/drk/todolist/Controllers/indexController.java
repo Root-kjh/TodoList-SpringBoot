@@ -14,6 +14,6 @@ public class indexController {
         if (session.getAttribute("user")!=null)
             return "redirect:todo/";
         else
-            return "redirect:user/";
+            return "redirect:auth/";
     }
 }

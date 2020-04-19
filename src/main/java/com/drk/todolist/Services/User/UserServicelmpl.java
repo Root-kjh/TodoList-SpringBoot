@@ -1,72 +1,49 @@
 package com.drk.todolist.Services.User;
 
-import javax.servlet.http.HttpSession;
-
-import com.drk.todolist.Crypto.sha512;
 import com.drk.todolist.DTO.User.SigninDTO;
 import com.drk.todolist.DTO.User.UserInfoDTO;
 import com.drk.todolist.DTO.User.UserJwtDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.UserRepository;
-import com.drk.todolist.Services.JWT.JwtTokenUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-@Service
-public class UserServicelmpl implements UserService {
+import lombok.RequiredArgsConstructor;
 
-    private sha512 sha512_class=new sha512();
+@RequiredArgsConstructor
+@Service
+public class UserServicelmpl implements UserService, UserDetailsService {
+
+    private final PasswordEncoder passwordEncoder;
     
     UserJwtDTO userJwtDTO;
 
     @Autowired
     UserRepository userRepository;
 
-    @Autowired
-    JwtTokenUtil jwtTokenUtil;
 
     @Autowired
     AuthenticationManager authenticationManager;
 
-    public boolean isSet(Object object){
-        return object!=null;
+    public boolean isSet(Object object) {
+        return object != null;
     }
 
-    public boolean userDuplicateCheck(String user_name){
+    public boolean isExistUser(String user_name) {
         return userRepository.isExistUser(user_name);
-    }
-    
-    @Override
-    public String signin(SigninDTO signinDTO){
-        String token = null;
-        signinDTO.setPassword(sha512_class.hash(signinDTO.getPassword()));
-        try{
-            authenticate(signinDTO.getUsername(), signinDTO.getPassword());
-            final UserEntity userEntity = userRepository.findByUsername(signinDTO.getUsername());
-            userJwtDTO = new UserJwtDTO();
-            userJwtDTO.setUserIdx(userEntity.getIdx());
-            userJwtDTO.setUserName(userEntity.getUsername());
-            userJwtDTO.setUserNickName(userEntity.getNickname());
-            token = jwtTokenUtil.generateToken(userJwtDTO);
-        }catch(Exception e){
-            e.printStackTrace();
-        } finally {
-            return token;
-        }
     }
 
     @Override
     public boolean signup(UserInfoDTO userInfoDTO) {
         try {
-            if(userRepository.isExistUser(userInfoDTO.getUserName()))
-                return false;
-            else{
-                userInfoDTO.setPassword(sha512_class.hash(userInfoDTO.getPassword()));
+            if (!userRepository.isExistUser(userInfoDTO.getUserName())){
+                userInfoDTO.setPassword(passwordEncoder.encode(userInfoDTO.getPassword()));
                 UserEntity userEntity = new UserEntity();
                 userEntity.setUsername(userInfoDTO.getUserName());
                 userEntity.setPassword(userInfoDTO.getPassword());
@@ -75,18 +52,18 @@ public class UserServicelmpl implements UserService {
                 return true;
             }
         } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
             return false;
         }
     }
 
     @Override
-    public String userinfoUpdate(UserJwtDTO userJwtDTO, UserInfoDTO newUserInfoDTO) {
-        String token = null;
+    public String userinfoUpdate(UserEntity loginedUser, UserInfoDTO newUserInfoDTO) {
         try {
-            UserEntity loginedUser = userRepository.findByUsername(userJwtDTO.getUserName());
-            newUserInfoDTO.setPassword(sha512_class.hash(newUserInfoDTO.getPassword()));
+            newUserInfoDTO.setPassword(passwordEncoder.encode(newUserInfoDTO.getPassword()));
             String loginedUserPassword = loginedUser.getPassword();
-            if (loginedUserPassword.equals(newUserInfoDTO.getPassword())){
+            if (loginedUserPassword.equals(newUserInfoDTO.getPassword())) {
                 if (isSet(newUserInfoDTO.getNickName()))
                     loginedUser.setNickname(newUserInfoDTO.getNickName());
                 if (isSet(newUserInfoDTO.getUserName()) && !userRepository.isExistUser(newUserInfoDTO.getUserName())) {
@@ -96,25 +73,20 @@ public class UserServicelmpl implements UserService {
                     loginedUser.setPassword(newUserInfoDTO.getPassword());
 
                 userRepository.save(loginedUser);
-                if (isSet(newUserInfoDTO.getNickName()))
-                    userJwtDTO.setUserNickName(newUserInfoDTO.getNickName());
-                if (isSet(newUserInfoDTO.getUserName()))
-                    userJwtDTO.setUserName(newUserInfoDTO.getUserName());
-                
-                token = jwtTokenUtil.generateToken(userJwtDTO);
+                return loginedUser.getUsername();
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            return token;
+            return null;
         }
     }
 
     @Override
-    public boolean userinfoDelete(UserJwtDTO userJwtDTO, String password) {
+    public boolean userinfoDelete(UserEntity loginedUser, String password) {
         try {
-            Long userIdx = userJwtDTO.getUserIdx();
-            if (userRepository.deleteByIdxAndPassword(userIdx, password))
+            Long userIdx = loginedUser.getIdx();
+            if (loginedUser.getPassword().equals(password) && userRepository.deleteByIdx(userIdx))
                 return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,17 +96,22 @@ public class UserServicelmpl implements UserService {
     }
 
     @Override
-    public UserEntity getUserInfoByUserName(String userName) throws Exception {
-        return userRepository.findByUsername(userName);
+    public boolean isCanLogin(SigninDTO signinDTO){
+        try{
+            UserEntity userEntity = userRepository.findByUsername(signinDTO.getUsername());
+            return (userEntity != null && userEntity.getPassword().equals(passwordEncoder.encode(signinDTO.getPassword())));
+        }catch (Exception e){
+            return false;
+        }
     }
 
-    private void authenticate (String username, String password) throws Exception{
-        try{
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (DisabledException e) {
-            throw new Exception("User Disabled",e);
-        } catch (BadCredentialsException e) {
-            throw new Exception("Invalid Credentials",e);
-        }
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username);       
+    }
+
+    @Override
+    public UserEntity findUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 }
