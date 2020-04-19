@@ -3,7 +3,6 @@ package com.drk.todolist.Services.ToDoList;
 import java.util.List;
 
 import com.drk.todolist.DTO.Todo.TodoDTO;
-import com.drk.todolist.DTO.User.UserJwtDTO;
 import com.drk.todolist.Entitis.TodoEntity;
 
 

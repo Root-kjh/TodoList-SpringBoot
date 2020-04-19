@@ -9,12 +9,14 @@ import com.drk.todolist.Services.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/auth")
 public class AuthController {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -22,12 +24,12 @@ public class AuthController {
     @Autowired
     UserService userService;
 
-    @PostMapping("signup")
+    @PostMapping("/signup")
     public boolean signup(@RequestBody UserInfoDTO userInfoDTO) {
         return userService.signup(userInfoDTO);
     }
 
-    @PostMapping("signin")
+    @PostMapping("/signin")
     public String signin(@RequestBody SigninDTO signinDTO) {
         if (userService.isCanLogin(signinDTO))
             return jwtTokenProvider.coreateToken(signinDTO.getUsername());

@@ -8,7 +8,6 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import com.drk.todolist.DTO.Todo.TodoDTO;
-import com.drk.todolist.DTO.User.UserJwtDTO;
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.TodoRepository;

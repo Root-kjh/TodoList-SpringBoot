@@ -12,7 +12,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     UserEntity findByUsernameAndPassword(String userName, String password);
     UserEntity findByNickname(String nickname);
     boolean deleteByUsername(String userName);
-    boolean deleteByIdx(Long idx);
+    void deleteByIdx(Long idx);
     UserEntity findByUsername(String username);
 
     @Query("select count(u.username)>0 from user u where u.username = ?1")

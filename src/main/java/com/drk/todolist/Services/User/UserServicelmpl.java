@@ -1,8 +1,9 @@
 package com.drk.todolist.Services.User;
 
+import javax.transaction.Transactional;
+
 import com.drk.todolist.DTO.User.SigninDTO;
 import com.drk.todolist.DTO.User.UserInfoDTO;
-import com.drk.todolist.DTO.User.UserJwtDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.UserRepository;
 
@@ -19,8 +20,6 @@ public class UserServicelmpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
     
-    UserJwtDTO userJwtDTO;
-
     @Autowired
     UserRepository userRepository;
 
@@ -48,9 +47,10 @@ public class UserServicelmpl implements UserService {
                 userRepository.save(userEntity);
                 return true;
             }
+            else
+                return false;
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
             return false;
         }
     }
@@ -58,36 +58,33 @@ public class UserServicelmpl implements UserService {
     @Override
     public String userinfoUpdate(UserEntity loginedUser, UserInfoDTO newUserInfoDTO) {
         try {
-            newUserInfoDTO.setPassword(passwordEncoder.encode(newUserInfoDTO.getPassword()));
-            String loginedUserPassword = loginedUser.getPassword();
-            if (loginedUserPassword.equals(newUserInfoDTO.getPassword())) {
-                if (isSet(newUserInfoDTO.getNickName()))
-                    loginedUser.setNickname(newUserInfoDTO.getNickName());
-                if (isSet(newUserInfoDTO.getUserName()) && !userRepository.isExistUser(newUserInfoDTO.getUserName())) {
-                    loginedUser.setUsername(newUserInfoDTO.getUserName());
-                }
-                if (isSet(newUserInfoDTO.getPassword()))
-                    loginedUser.setPassword(newUserInfoDTO.getPassword());
-
-                userRepository.save(loginedUser);
-                return loginedUser.getUsername();
-            }
+            if (isSet(newUserInfoDTO.getPassword()))
+                loginedUser.setPassword(passwordEncoder.encode(newUserInfoDTO.getPassword()));
+            if (isSet(newUserInfoDTO.getNickName()))
+                loginedUser.setNickname(newUserInfoDTO.getNickName());
+            if (isSet(newUserInfoDTO.getUserName()) && !userRepository.isExistUser(newUserInfoDTO.getUserName()))
+                loginedUser.setUsername(newUserInfoDTO.getUserName());
+            
+            userRepository.save(loginedUser);
+            return loginedUser.getUsername();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
             return null;
         }
     }
 
     @Override
+    @Transactional
     public boolean userinfoDelete(UserEntity loginedUser, String password) {
         try {
-            Long userIdx = loginedUser.getIdx();
-            if (loginedUser.getPassword().equals(password) && userRepository.deleteByIdx(userIdx))
+            UserEntity userEntity = userRepository.findByUsername(loginedUser.getUsername());
+            if (passwordEncoder.matches(password, userEntity.getPassword())) {
+                userRepository.deleteByIdx(userEntity.getIdx());
                 return true;
+            } else
+                return false;
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
             return false;
         }
     }
@@ -96,7 +93,7 @@ public class UserServicelmpl implements UserService {
     public boolean isCanLogin(SigninDTO signinDTO){
         try{
             UserEntity userEntity = userRepository.findByUsername(signinDTO.getUsername());
-            return (userEntity != null && userEntity.getPassword().equals(passwordEncoder.encode(signinDTO.getPassword())));
+            return (userEntity != null && passwordEncoder.matches(signinDTO.getPassword(), userEntity.getPassword()));
         }catch (Exception e){
             return false;
         }

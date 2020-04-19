@@ -7,9 +7,9 @@ import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Services.ToDoList.TodoService;
 import com.drk.todolist.Services.User.UserService;
-import com.drk.todolist.Services.User.getUserEntityByJwt;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,12 +33,10 @@ public class TodoController {
 
     UserEntity userEntity;
 
-    getUserEntityByJwt getUserEntityClass;
-
     @GetMapping("/")
-    public List<TodoEntity> showTodoList(){
+    public List<TodoEntity> showTodoList(Authentication authentication){
         try{
-            userEntity = getUserEntityClass.getUserEntity();
+            userEntity = (UserEntity) authentication.getPrincipal();
             return todoService.selectTodolist(userEntity.getIdx());
         }
         catch (Exception e){
@@ -47,9 +45,9 @@ public class TodoController {
     }
 
     @PostMapping("/insert")
-    public boolean insertTodo(@RequestBody TodoDTO todoDTO){
+    public boolean insertTodo(Authentication authentication, @RequestBody TodoDTO todoDTO){
         try{
-            userEntity = getUserEntityClass.getUserEntity();
+            userEntity = (UserEntity) authentication.getPrincipal();
             return todoService.insertTodo(userEntity.getIdx(), todoDTO);
         }catch (Exception e){
             return false;
@@ -57,9 +55,9 @@ public class TodoController {
     }
 
     @GetMapping("/delete")
-    public boolean deleteTodo(@RequestParam Long todoIdx) {
+    public boolean deleteTodo(Authentication authentication, @RequestParam Long todoIdx) {
         try{
-            userEntity = getUserEntityClass.getUserEntity();
+            userEntity = (UserEntity) authentication.getPrincipal();
             return (todoService.checkTodoOwnership(todoIdx, userEntity.getIdx()) && todoService.deleteTodo(todoIdx));
         }catch (Exception e){
             return false;
@@ -67,9 +65,9 @@ public class TodoController {
     }
     
     @PostMapping("/update")
-    public boolean updateTodo(@RequestBody TodoDTO newTodo){
+    public boolean updateTodo(Authentication authentication, @RequestBody TodoDTO newTodo){
         try{
-            userEntity = getUserEntityClass.getUserEntity();
+            userEntity = (UserEntity) authentication.getPrincipal();
             return (todoService.checkTodoOwnership(newTodo.getIdx(), userEntity.getIdx()) && todoService.updateTodo(newTodo.getIdx(), newTodo));
         }catch (Exception e){
             return false;
