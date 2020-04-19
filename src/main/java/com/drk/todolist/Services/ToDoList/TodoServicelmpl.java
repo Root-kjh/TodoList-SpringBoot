@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import com.drk.todolist.DTO.Todo.TodoDTO;
 import com.drk.todolist.DTO.User.UserJwtDTO;
 import com.drk.todolist.Entitis.TodoEntity;
@@ -26,6 +28,7 @@ public class TodoServicelmpl implements TodoService{
     }
 
     @Override
+    @Transactional
     public boolean checkTodoOwnership(Long todoIdx, Long userIdx){
         try{
             UserEntity userEntity = userRepository.findById(userIdx).get();
@@ -40,11 +43,13 @@ public class TodoServicelmpl implements TodoService{
     }
 
     @Override
+    @Transactional
     public List<TodoEntity> selectTodolist(Long userIdx) {
         return userRepository.findById(userIdx).get().getTodoEntityList();
     }
 
     @Override
+    @Transactional
     public boolean insertTodo(Long userIdx, TodoDTO todo) {
         try{
             UserEntity loginUser = userRepository.findById(userIdx).get();
@@ -57,6 +62,7 @@ public class TodoServicelmpl implements TodoService{
             userRepository.save(loginUser);
             return true;
         }catch(Exception e){
+            e.printStackTrace();
             return false;
         }
     }
@@ -64,14 +70,16 @@ public class TodoServicelmpl implements TodoService{
     @Override
     public boolean deleteTodo(Long todoIdx) {
         try{
-            todoRepository.deleteById(todoIdx);
+            todoRepository.deleteByIdx(todoIdx);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
 
     @Override
+    @Transactional
     public boolean updateTodo(Long todoIdx, TodoDTO newTodoDto) {
         try {
             TodoEntity todo = todoRepository.findById(todoIdx).get();

@@ -24,10 +24,6 @@ public class AuthController {
 
     @PostMapping("signup")
     public boolean signup(@RequestBody UserInfoDTO userInfoDTO) {
-        UserEntity newUser = new UserEntity();
-        newUser.setNickname(userInfoDTO.getNickName());
-        newUser.setUsername(userInfoDTO.getUserName());
-        newUser.setPassword(userInfoDTO.getPassword());
         return userService.signup(userInfoDTO);
     }
 
