@@ -92,7 +92,7 @@ public class UserServicelmpl implements UserService {
     @Override
     public boolean isCanLogin(SigninDTO signinDTO){
         try{
-            UserEntity userEntity = userRepository.findByUsername(signinDTO.getUsername());
+            UserEntity userEntity = userRepository.findByUsername(signinDTO.getUserName());
             return (userEntity != null && passwordEncoder.matches(signinDTO.getPassword(), userEntity.getPassword()));
         }catch (Exception e){
             return false;

@@ -32,7 +32,7 @@ public class AuthController {
     @PostMapping("/signin")
     public String signin(@RequestBody SigninDTO signinDTO) {
         if (userService.isCanLogin(signinDTO))
-            return jwtTokenProvider.coreateToken(signinDTO.getUsername());
+            return jwtTokenProvider.coreateToken(signinDTO.getUserName());
         else
             return "false";
     }
