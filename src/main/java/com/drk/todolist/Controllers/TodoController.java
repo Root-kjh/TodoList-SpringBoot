@@ -33,7 +33,7 @@ public class TodoController {
 
     UserEntity userEntity;
 
-    @GetMapping("/")
+    @GetMapping("/show")
     public List<TodoEntity> showTodoList(Authentication authentication){
         try{
             userEntity = (UserEntity) authentication.getPrincipal();
