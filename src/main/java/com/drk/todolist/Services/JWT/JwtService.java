@@ -1,6 +1,5 @@
 package com.drk.todolist.Services.JWT;
 
-import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;

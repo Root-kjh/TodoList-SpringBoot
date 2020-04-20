@@ -32,7 +32,7 @@ public class TodoServicelmpl implements TodoService{
         try{
             UserEntity userEntity = userRepository.findById(userIdx).get();
             for (TodoEntity todoEntity : userEntity.getTodoEntityList()) {
-                if (todoEntity.getIdx()==userIdx)
+                if (todoEntity.getIdx()==todoIdx)
                     return true;
             }
             return false;
@@ -67,6 +67,7 @@ public class TodoServicelmpl implements TodoService{
     }
 
     @Override
+    @Transactional
     public boolean deleteTodo(Long todoIdx) {
         try{
             todoRepository.deleteByIdx(todoIdx);
