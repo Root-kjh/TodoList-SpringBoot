@@ -42,7 +42,7 @@ public class UserEntity implements UserDetails {
     @Column(name = "nick_name", length = 20, nullable = false)
     private String nickname;
 
-    @OneToMany(cascade = CascadeType.REFRESH)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_idx")
     private List<TodoEntity> todoEntityList = new ArrayList<>();
 
