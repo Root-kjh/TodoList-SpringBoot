@@ -23,7 +23,7 @@ public class User extends RepositoryTest{
     @BeforeEach
     @AfterEach
     public void clearDB(){
-        clearUserDB();
+        userRepository.deleteAll();
     }
 
     @Override

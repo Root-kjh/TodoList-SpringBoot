@@ -15,14 +15,6 @@ public class RepositoryTest {
     @Autowired
     public TodoRepository todoRepository;
 
-    public void clearTodoDB(){
-        todoRepository.deleteAll();
-    }
-
-    public void clearUserDB(){
-        userRepository.deleteAll();
-    }
-
     public UserEntity makeTestUser() throws Exception{
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername("test");

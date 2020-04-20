@@ -30,7 +30,7 @@ public class todoServiceTest extends ServiceTest{
     }
 
     @Test
-    public void insertTodoTest(){
+    public void insertTodoTest() throws Exception {
         UserEntity testUser = userRepository.findByUsername(testUserName);
         TodoDTO todoDTO = new TodoDTO();
         todoDTO.setTitle(testTitle);
@@ -40,7 +40,7 @@ public class todoServiceTest extends ServiceTest{
 
     @Test
     @Transactional
-    public void showTodoTest(){
+    public void showTodoTest() throws Exception {
         UserEntity testUser = userRepository.findByUsername(testUserName);
         insertTodoTest();
         assertFalse(todoService.selectTodolist(testUser.getIdx()).isEmpty());
@@ -48,7 +48,7 @@ public class todoServiceTest extends ServiceTest{
 
     @Test
     @Transactional
-    public void deleteTodoTest(){
+    public void deleteTodoTest() throws Exception {
         UserEntity testUser = userRepository.findByUsername(testUserName);
         insertTodoTest();
         assertFalse(todoService.selectTodolist(testUser.getIdx()).isEmpty());
@@ -60,7 +60,7 @@ public class todoServiceTest extends ServiceTest{
 
     @Test
     @Transactional
-    public void updateTodoTest(){
+    public void updateTodoTest() throws Exception {
         final String newTitle = "updated Title";
         final String newContext = "updated Context";
         UserEntity testUser = userRepository.findByUsername(testUserName);

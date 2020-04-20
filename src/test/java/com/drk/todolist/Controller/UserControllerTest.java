@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest extends ControllerTestConfigure {
 
     @Test
-    public void signup() throws Exception{
+    public void signup() throws Exception {
         UserInfoDTO userInfoDTO = new UserInfoDTO();
         userInfoDTO.setUserName(testUserName);
         userInfoDTO.setNickName(testUserNickName);
@@ -42,7 +42,7 @@ public class UserControllerTest extends ControllerTestConfigure {
     }
 
     @Test
-    public void signin() throws Exception{
+    public void signin() throws Exception {
         makeTestUser();
         
         MvcResult result = mockMvc.perform(post("/auth/signin")
@@ -57,7 +57,7 @@ public class UserControllerTest extends ControllerTestConfigure {
     }
 
     @Test
-    public void getUserInfo() throws Exception{
+    public void getUserInfo() throws Exception {
         makeTestUser();
 
         String jwt = getJwt();
@@ -74,7 +74,7 @@ public class UserControllerTest extends ControllerTestConfigure {
         }
 
     @Test
-    public void updateUserInfo() throws Exception{
+    public void updateUserInfo() throws Exception {
         final String newUserName = "new user";
         final String newUserNickName = "new nick name";
 
@@ -107,7 +107,7 @@ public class UserControllerTest extends ControllerTestConfigure {
     }
 
     @Test
-    public void deleteUser() throws Exception{
+    public void deleteUser() throws Exception {
         makeTestUser();
         String jwt = getJwt();
 

@@ -31,7 +31,7 @@ public class TodoControllerTest extends ControllerTestConfigure {
 
     @Test
     @Transactional
-    public void insertTodo() throws Exception{
+    public void insertTodo() throws Exception {
         makeTestUser();
         TodoDTO newTodoDto = new TodoDTO();
         newTodoDto.setTitle(testTodoTitle);
@@ -54,7 +54,7 @@ public class TodoControllerTest extends ControllerTestConfigure {
     }
 
     @Test
-    public void showTodo() throws Exception{
+    public void showTodo() throws Exception {
         makeTestUser();
         String jwt = getJwt();
         Long userIdx = userRepository.findByUsername(testUserName).getIdx();
@@ -72,7 +72,7 @@ public class TodoControllerTest extends ControllerTestConfigure {
     }
 
     @Test
-    public void updateTodo() throws Exception{
+    public void updateTodo() throws Exception {
         final String newTodoTitle = "new Todo";
         final String newTodoContext = "new Context";
         
@@ -102,7 +102,7 @@ public class TodoControllerTest extends ControllerTestConfigure {
 
     @Test
     @Transactional
-    public void deleteTodo() throws Exception{
+    public void deleteTodo() throws Exception {
         makeTestUser();
         String jwt = getJwt();
         UserEntity userEntity = userRepository.findByUsername(testUserName);

@@ -29,7 +29,7 @@ public class userServiceTest extends ServiceTest {
     JwtService jwtService;
 
     @Test
-    public void signup() {
+    public void signup() throws Exception {
         UserInfoDTO newUser = new UserInfoDTO();
         newUser.setNickName(testUserNickName);
         newUser.setUserName(testUserName);
@@ -40,7 +40,7 @@ public class userServiceTest extends ServiceTest {
 
     @Test
     @Transactional
-    public void signin(){
+    public void signin() throws Exception {
         final JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(jwtService);
         signup();
         SigninDTO signinDTO = new SigninDTO();

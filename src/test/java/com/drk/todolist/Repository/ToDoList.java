@@ -25,8 +25,8 @@ public class ToDoList extends RepositoryTest{
     @BeforeEach
     @AfterEach
     public void clearDB() {
-        clearUserDB();
-        clearTodoDB();
+        userRepository.deleteAll();
+        todoRepository.deleteAll();
     }
 
     @Override
