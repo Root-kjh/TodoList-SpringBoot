@@ -2,6 +2,7 @@ package com.drk.todolist.Controller;
 
 import com.drk.todolist.DTO.Todo.TodoDTO;
 import com.drk.todolist.Entitis.TodoEntity;
+import com.drk.todolist.Entitis.UserEntity;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -99,7 +101,22 @@ public class TodoControllerTest extends ControllerTestConfigure {
     }
 
     @Test
+    @Transactional
     public void deleteTodo() throws Exception{
+        makeTestUser();
+        String jwt = getJwt();
+        UserEntity userEntity = userRepository.findByUsername(testUserName);
 
+        makeTestTodo(userEntity.getIdx());
+        Long todoIdx = todoService.selectTodolist(userEntity.getIdx()).get(0).getIdx();
+
+        mockMvc.perform(get("/todo/delete")
+            .header("X-AUTH-TOKEN", jwt)
+            .param("todoIdx", todoIdx.toString()))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(content().string("true"));
+
+        assertFalse(todoRepository.findById(todoIdx).isPresent());
     }
 }
