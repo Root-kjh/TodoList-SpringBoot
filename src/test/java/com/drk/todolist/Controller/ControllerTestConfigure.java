@@ -2,7 +2,7 @@ package com.drk.todolist.Controller;
 
 import com.drk.todolist.DTO.Todo.TodoDTO;
 import com.drk.todolist.DTO.User.SigninDTO;
-import com.drk.todolist.DTO.User.UserInfoDTO;
+import com.drk.todolist.DTO.User.UserDTO;
 import com.drk.todolist.Repositories.TodoRepository;
 import com.drk.todolist.Repositories.UserRepository;
 import com.drk.todolist.Services.JWT.JwtService;
@@ -74,11 +74,11 @@ public class ControllerTestConfigure {
     }
 
     public void makeTestUser(){
-        UserInfoDTO userInfoDTO = new UserInfoDTO();
-        userInfoDTO.setUserName(testUserName);
-        userInfoDTO.setNickName(testUserNickName);
-        userInfoDTO.setPassword(testUserPassword);
-        userService.signup(userInfoDTO);
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserName(testUserName);
+        userDTO.setNickName(testUserNickName);
+        userDTO.setPassword(testUserPassword);
+        userService.signup(userDTO);
     }
 
     public void makeTestTodo(Long userIdx){

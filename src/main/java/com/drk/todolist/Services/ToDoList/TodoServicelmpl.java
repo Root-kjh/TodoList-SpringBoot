@@ -12,6 +12,7 @@ import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.TodoRepository;
 import com.drk.todolist.Repositories.UserRepository;
+import com.drk.todolist.lib.VariablesLib;
 
 @Service
 public class TodoServicelmpl implements TodoService{
@@ -21,10 +22,6 @@ public class TodoServicelmpl implements TodoService{
 
     @Autowired
     UserRepository userRepository;
-
-    public boolean isSet(Object object){
-        return object!=null;
-    }
 
     @Override
     @Transactional
@@ -83,9 +80,9 @@ public class TodoServicelmpl implements TodoService{
     public boolean updateTodo(Long todoIdx, TodoDTO newTodoDto) {
         try {
             TodoEntity todo = todoRepository.findById(todoIdx).get();
-            if (isSet(newTodoDto.getTitle()))
+            if (VariablesLib.isSet(newTodoDto.getTitle()))
                 todo.setTitle(newTodoDto.getTitle());
-            if (isSet(newTodoDto.getContext()))
+            if (VariablesLib.isSet(newTodoDto.getContext()))
                 todo.setContext(newTodoDto.getContext());
             todoRepository.save(todo);
         return true;    

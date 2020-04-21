@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import javax.transaction.Transactional;
 
 import com.drk.todolist.DTO.Todo.TodoDTO;
-import com.drk.todolist.DTO.User.UserInfoDTO;
+import com.drk.todolist.DTO.User.UserDTO;
 import com.drk.todolist.Entitis.UserEntity;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,15 +18,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-public class todoServiceTest extends ServiceTest{
+public class TodoServiceTest extends ServiceTest{
 
     @BeforeEach
     public void makeTestUser(){
-        UserInfoDTO newUser = new UserInfoDTO();
-        newUser.setNickName(testUserNickName);
-        newUser.setUserName(testUserName);
-        newUser.setPassword(testUserPassword);
-        userService.signup(newUser);
+        UserDTO newUserDTO = new UserDTO();
+        newUserDTO.setNickName(testUserNickName);
+        newUserDTO.setUserName(testUserName);
+        newUserDTO.setPassword(testUserPassword);
+        userService.signup(newUserDTO);
     }
 
     @Test

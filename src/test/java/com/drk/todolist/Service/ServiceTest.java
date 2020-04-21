@@ -1,8 +1,5 @@
 package com.drk.todolist.Service;
 
-import com.drk.todolist.DTO.User.UserInfoDTO;
-import com.drk.todolist.Entitis.TodoEntity;
-import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.TodoRepository;
 import com.drk.todolist.Repositories.UserRepository;
 import com.drk.todolist.Services.ToDoList.TodoService;

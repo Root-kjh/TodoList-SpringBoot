@@ -1,7 +1,7 @@
 package com.drk.todolist.Controllers;
 
 import com.drk.todolist.Config.JWT.JwtTokenProvider;
-import com.drk.todolist.DTO.User.UserInfoDTO;
+import com.drk.todolist.DTO.User.UserDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Services.User.UserService;
 
@@ -40,22 +40,22 @@ public class UserController {
     }
 
     @GetMapping("/getUserInfo")
-    public UserInfoDTO getUserInfo(Authentication authentication){
-        UserInfoDTO userInfoDTO = new UserInfoDTO();
+    public UserDTO getUserInfo(Authentication authentication){
+        UserDTO userDTO = new UserDTO();
         try{
             userEntity = (UserEntity) authentication.getPrincipal();
-            userInfoDTO.setNickName(userEntity.getNickname());
-            userInfoDTO.setUserName(userEntity.getUsername());
+            userDTO.setNickName(userEntity.getNickname());
+            userDTO.setUserName(userEntity.getUsername());
         }catch(Exception e){
             e.printStackTrace();
         } finally {
-            return userInfoDTO;
+            return userDTO;
         }
     }
 
     @PostMapping("/updateUserInfo")
-    public String updateUserInfo(Authentication authentication, @RequestBody UserInfoDTO newUserInfoDTO){
-        String newUsername = userService.userinfoUpdate((UserEntity) authentication.getPrincipal(), newUserInfoDTO);
+    public String updateUserInfo(Authentication authentication, @RequestBody UserDTO newUserDTO){
+        String newUsername = userService.userinfoUpdate((UserEntity) authentication.getPrincipal(), newUserDTO);
         if(newUsername != null)
             return jwtTokenProvider.coreateToken(newUsername);
         else

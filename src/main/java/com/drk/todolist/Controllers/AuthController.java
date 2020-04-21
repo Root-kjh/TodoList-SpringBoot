@@ -2,7 +2,7 @@ package com.drk.todolist.Controllers;
 
 import com.drk.todolist.Config.JWT.JwtTokenProvider;
 import com.drk.todolist.DTO.User.SigninDTO;
-import com.drk.todolist.DTO.User.UserInfoDTO;
+import com.drk.todolist.DTO.User.UserDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Services.User.UserService;
 
@@ -25,8 +25,8 @@ public class AuthController {
     UserService userService;
 
     @PostMapping("/signup")
-    public boolean signup(@RequestBody UserInfoDTO userInfoDTO) {
-        return userService.signup(userInfoDTO);
+    public boolean signup(@RequestBody UserDTO userDTO) {
+        return userService.signup(userDTO);
     }
 
     @PostMapping("/signin")

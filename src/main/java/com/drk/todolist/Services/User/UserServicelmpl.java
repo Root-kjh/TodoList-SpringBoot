@@ -3,9 +3,10 @@ package com.drk.todolist.Services.User;
 import javax.transaction.Transactional;
 
 import com.drk.todolist.DTO.User.SigninDTO;
-import com.drk.todolist.DTO.User.UserInfoDTO;
+import com.drk.todolist.DTO.User.UserDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.UserRepository;
+import com.drk.todolist.lib.VariablesLib;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,14 +37,14 @@ public class UserServicelmpl implements UserService {
     }
 
     @Override
-    public boolean signup(UserInfoDTO userInfoDTO) {
+    public boolean signup(UserDTO userDTO) {
         try {
-            if (!userRepository.isExistUser(userInfoDTO.getUserName())){
-                userInfoDTO.setPassword(passwordEncoder.encode(userInfoDTO.getPassword()));
+            if (!userRepository.isExistUser(userDTO.getUserName())){
+                userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 UserEntity userEntity = new UserEntity();
-                userEntity.setUsername(userInfoDTO.getUserName());
-                userEntity.setPassword(userInfoDTO.getPassword());
-                userEntity.setNickname(userInfoDTO.getNickName());
+                userEntity.setUsername(userDTO.getUserName());
+                userEntity.setPassword(userDTO.getPassword());
+                userEntity.setNickname(userDTO.getNickName());
                 userRepository.save(userEntity);
                 return true;
             }
@@ -56,14 +57,14 @@ public class UserServicelmpl implements UserService {
     }
 
     @Override
-    public String userinfoUpdate(UserEntity loginedUser, UserInfoDTO newUserInfoDTO) {
+    public String userinfoUpdate(UserEntity loginedUser, UserDTO newUserDTO) {
         try {
-            if (isSet(newUserInfoDTO.getPassword()))
-                loginedUser.setPassword(passwordEncoder.encode(newUserInfoDTO.getPassword()));
-            if (isSet(newUserInfoDTO.getNickName()))
-                loginedUser.setNickname(newUserInfoDTO.getNickName());
-            if (isSet(newUserInfoDTO.getUserName()) && !userRepository.isExistUser(newUserInfoDTO.getUserName()))
-                loginedUser.setUsername(newUserInfoDTO.getUserName());
+            if (isSet(newUserDTO.getPassword()))
+                loginedUser.setPassword(passwordEncoder.encode(newUserDTO.getPassword()));
+            if (isSet(newUserDTO.getNickName()))
+                loginedUser.setNickname(newUserDTO.getNickName());
+            if (isSet(newUserDTO.getUserName()) && !userRepository.isExistUser(newUserDTO.getUserName()))
+                loginedUser.setUsername(newUserDTO.getUserName());
             
             userRepository.save(loginedUser);
             return loginedUser.getUsername();
@@ -93,7 +94,7 @@ public class UserServicelmpl implements UserService {
     public boolean isCanLogin(SigninDTO signinDTO){
         try{
             UserEntity userEntity = userRepository.findByUsername(signinDTO.getUserName());
-            return (userEntity != null && passwordEncoder.matches(signinDTO.getPassword(), userEntity.getPassword()));
+            return (VariablesLib.isSet(userEntity) && passwordEncoder.matches(signinDTO.getPassword(), userEntity.getPassword()));
         }catch (Exception e){
             return false;
         }

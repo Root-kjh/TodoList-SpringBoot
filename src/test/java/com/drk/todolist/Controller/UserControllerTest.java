@@ -1,6 +1,6 @@
 package com.drk.todolist.Controller;
 
-import com.drk.todolist.DTO.User.UserInfoDTO;
+import com.drk.todolist.DTO.User.UserDTO;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -28,12 +28,12 @@ public class UserControllerTest extends ControllerTestConfigure {
 
     @Test
     public void signup() throws Exception {
-        UserInfoDTO userInfoDTO = new UserInfoDTO();
-        userInfoDTO.setUserName(testUserName);
-        userInfoDTO.setNickName(testUserNickName);
-        userInfoDTO.setPassword(testUserPassword);
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserName(testUserName);
+        userDTO.setNickName(testUserNickName);
+        userDTO.setPassword(testUserPassword);
         mockMvc.perform(post("/auth/signup")
-            .content(asJsonString(userInfoDTO))
+            .content(asJsonString(userDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().string("true"));
@@ -81,13 +81,13 @@ public class UserControllerTest extends ControllerTestConfigure {
         makeTestUser();
         String jwt = getJwt();
 
-        UserInfoDTO newUserInfoDTO = new UserInfoDTO();
-        newUserInfoDTO.setUserName(newUserName);
-        newUserInfoDTO.setNickName(newUserNickName);
+        UserDTO newUserDTO = new UserDTO();
+        newUserDTO.setUserName(newUserName);
+        newUserDTO.setNickName(newUserNickName);
 
         String newUserJwt = mockMvc.perform(post("/user/updateUserInfo")
             .header("X-AUTH-TOKEN", jwt)
-            .content(asJsonString(newUserInfoDTO))
+            .content(asJsonString(newUserDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk())

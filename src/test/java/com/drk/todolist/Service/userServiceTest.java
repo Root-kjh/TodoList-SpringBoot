@@ -7,7 +7,7 @@ import javax.transaction.Transactional;
 
 import com.drk.todolist.Config.JWT.JwtTokenProvider;
 import com.drk.todolist.DTO.User.SigninDTO;
-import com.drk.todolist.DTO.User.UserInfoDTO;
+import com.drk.todolist.DTO.User.UserDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Services.JWT.JwtService;
 
@@ -23,18 +23,18 @@ import lombok.RequiredArgsConstructor;
 @SpringBootTest
 @RequiredArgsConstructor
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-public class userServiceTest extends ServiceTest {
+public class UserServiceTest extends ServiceTest {
 
     @Autowired
     JwtService jwtService;
 
     @Test
     public void signup() throws Exception {
-        UserInfoDTO newUser = new UserInfoDTO();
-        newUser.setNickName(testUserNickName);
-        newUser.setUserName(testUserName);
-        newUser.setPassword(testUserPassword);
-        userService.signup(newUser);
+        UserDTO newUserDTO = new UserDTO();
+        newUserDTO.setNickName(testUserNickName);
+        newUserDTO.setUserName(testUserName);
+        newUserDTO.setPassword(testUserPassword);
+        userService.signup(newUserDTO);
         assertEquals(userRepository.findByUsername(testUserName).getUsername(),testUserName);
     }
 
