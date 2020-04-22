@@ -1,16 +1,17 @@
 package com.drk.todolist.Repository;
 
+import com.drk.todolist.Entitis.TodoEntity;
+import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.TodoRepository;
 import com.drk.todolist.Repositories.UserRepository;
+import com.drk.todolist.lib.TestLib;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
-@Slf4j
 public class RepositoryTest {
 
     @Autowired
@@ -18,6 +19,16 @@ public class RepositoryTest {
 
     @Autowired
     public TodoRepository todoRepository;
+
+    UserEntity testUserEntity;
+    TodoEntity testTodoEntity;
+
+    TestLib testLib;
+
+    @BeforeEach
+    public void settingLibs(){
+        testLib = new TestLib(userRepository, todoRepository);
+    }
 
     @BeforeEach
     @AfterEach

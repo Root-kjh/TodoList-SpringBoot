@@ -8,8 +8,6 @@ import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.lib.TestLib;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -29,12 +27,12 @@ public class ToDoListRepoTest extends RepositoryTest{
     @Test
     public void insertTest() throws Exception {
         TestLib.drawLogGuideLine();
-        this.testUserEntity = TestLib.makeTestUser();
+        this.testUserEntity = testLib.makeTestUser();
         this.testTodoEntity = new TodoEntity();
         this.testTodoEntity.setTitle(TestLib.testTodo.title);
         this.testTodoEntity.setContext(TestLib.testTodo.context);
         TodoEntity insertedTodoEntity = this.todoRepository.save(this.testTodoEntity);
-        log.info("insertedTodoEntity");
+        log.info("inserted TodoEntity");
         log.info(insertedTodoEntity.toString());
         assertTrue(TestLib.compareTodoEntity(this.testTodoEntity, insertedTodoEntity));
     }
@@ -43,13 +41,11 @@ public class ToDoListRepoTest extends RepositoryTest{
     @Test
     public void selectTest() throws Exception {
         TestLib.drawLogGuideLine();
-        this.testUserEntity = TestLib.makeTestUser();
-        this.testTodoEntity = TestLib.makeTodo(testUserEntity);
-        log.info("testTodoEntity");
-        log.info(this.testTodoEntity.toString());
+        this.testUserEntity = testLib.makeTestUser();
+        this.testTodoEntity = testLib.makeTodo(testUserEntity);
 
-        final TodoEntity selectedTodoEntity = todoRepository.findById(testTodoEntity.getIdx()).get();
-        log.info("selectedTodoEntity");
+        final TodoEntity selectedTodoEntity = this.todoRepository.findById(testTodoEntity.getIdx()).get();
+        log.info("selected TodoEntity");
         log.info(selectedTodoEntity.toString());
         
         assertTrue(TestLib.compareTodoEntity(selectedTodoEntity, this.testTodoEntity));
@@ -59,25 +55,27 @@ public class ToDoListRepoTest extends RepositoryTest{
     @Test
     public void updateTest() throws Exception {
         TestLib.drawLogGuideLine();
-        this.testUserEntity = TestLib.makeTestUser();
-        this.testTodoEntity = TestLib.makeTodo(testUserEntity);
-        log.info("testTodoEntity");
-        log.info(this.testTodoEntity.toString());
+        this.testUserEntity = testLib.makeTestUser();
+        this.testTodoEntity = testLib.makeTodo(testUserEntity);
 
         this.testTodoEntity.setTitle(TestLib.newTestTodo.title);
         this.testTodoEntity.setContext(TestLib.newTestTodo.context);
-        final TodoEntity updatedTodo = todoRepository.save(this.testTodoEntity);
-        
+        final TodoEntity updatedTodo = this.todoRepository.save(this.testTodoEntity);
+        log.info("updated TodoEntity");
+        log.info(updatedTodo.toString());
         assertTrue(TestLib.compareTodoEntity(this.testTodoEntity, updatedTodo));
     }
 
     @Override
     @Test
     public void deleteTest() throws Exception {
-        this.testUserEntity = TestLib.makeTestUser();
-        this.testTodoEntity = TestLib.makeTodo(testUserEntity);
-        todoRepository.deleteById(testTodoEntity.getIdx());
-        final boolean isToDoListSelected = todoRepository.findById(testTodoEntity.getIdx()).isPresent();
+        TestLib.drawLogGuideLine();
+        this.testUserEntity = testLib.makeTestUser();
+        this.testTodoEntity = testLib.makeTodo(testUserEntity);
+        log.info(String.format("testTodo Idx : %d",this.testTodoEntity.getIdx()));
+        
+        this.todoRepository.deleteById(this.testTodoEntity.getIdx());
+        final boolean isToDoListSelected = this.todoRepository.findById(testTodoEntity.getIdx()).isPresent();
         assertFalse(isToDoListSelected);
     }
 }

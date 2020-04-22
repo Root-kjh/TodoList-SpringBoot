@@ -7,23 +7,21 @@ import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.TodoRepository;
 import com.drk.todolist.Repositories.UserRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@RequiredArgsConstructor
 public class TestLib {
 
-    @Autowired
-    private static UserRepository userRepository;
-
-    @Autowired
-    private static TodoRepository todoRepository;
+    private final UserRepository userRepository;
+    private final TodoRepository todoRepository;
 
     private final static PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    
+
     public final static class testUser{
         public final static String name = "test";
         public final static String nickName = "testNickName";
@@ -46,25 +44,26 @@ public class TestLib {
         public final static String context = "new context";
     }
 
-    public static UserEntity makeTestUser() throws Exception{
+    public UserEntity makeTestUser() throws Exception{
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(testUser.name);
         userEntity.setNickname(testUser.nickName);
         userEntity.setPassword(passwordEncoder.encode(testUser.password));
-        UserEntity saveUserEntity = userRepository.save(userEntity);
+        log.info(this.userRepository.toString());
+        UserEntity saveUserEntity = this.userRepository.save(userEntity);
         if (userEntity.getIdx() == saveUserEntity.getIdx())
             return saveUserEntity;
         else
             throw new Exception("userEntity was not save nomarlly");
     }
 
-    public static TodoEntity makeTodo(final UserEntity userEntity) throws Exception{
+    public TodoEntity makeTodo(final UserEntity userEntity) throws Exception{
         TodoEntity todo = new TodoEntity();
         todo.setTitle(testTodo.title);
         todo.setContext(testTodo.context);
         userEntity.getTodoEntityList().add(todo);
-        TodoEntity savedTodo = todoRepository.save(todo);
-        userRepository.save(userEntity);
+        TodoEntity savedTodo = this.todoRepository.save(todo);
+        this.userRepository.save(userEntity);
         return savedTodo;
     }
 
