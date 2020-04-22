@@ -7,6 +7,7 @@ import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Services.ToDoList.TodoService;
 import com.drk.todolist.Services.User.UserService;
+import com.drk.todolist.Config.Controller.UrlMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/todo")
+@RequestMapping(UrlMapper.Todo.baseUrl)
 @CrossOrigin
 public class TodoController {
 
@@ -33,7 +34,7 @@ public class TodoController {
 
     UserEntity userEntity;
 
-    @GetMapping("/show")
+    @GetMapping(UrlMapper.Todo.showTodoList)
     public List<TodoEntity> showTodoList(Authentication authentication){
         try{
             userEntity = (UserEntity) authentication.getPrincipal();
@@ -44,7 +45,7 @@ public class TodoController {
         }
     }
 
-    @PostMapping("/insert")
+    @PostMapping(UrlMapper.Todo.insertTodo)
     public boolean insertTodo(Authentication authentication, @RequestBody TodoDTO todoDTO){
         try{
             userEntity = (UserEntity) authentication.getPrincipal();
@@ -54,7 +55,7 @@ public class TodoController {
         }
     }
 
-    @GetMapping("/delete")
+    @GetMapping(UrlMapper.Todo.deleteTodo)
     public boolean deleteTodo(Authentication authentication, @RequestParam Long todoIdx) {
         try{
             userEntity = (UserEntity) authentication.getPrincipal();
@@ -64,7 +65,7 @@ public class TodoController {
         }
     }
     
-    @PostMapping("/update")
+    @PostMapping(UrlMapper.Todo.updateTodo)
     public boolean updateTodo(Authentication authentication, @RequestBody TodoDTO newTodo){
         try{
             userEntity = (UserEntity) authentication.getPrincipal();

@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import javax.transaction.Transactional;
 
 import com.drk.todolist.DTO.Todo.TodoDTO;
-import com.drk.todolist.DTO.User.UserDTO;
-import com.drk.todolist.Entitis.UserEntity;
+import com.drk.todolist.Entitis.TodoEntity;
+import com.drk.todolist.lib.TestLib;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,55 +21,52 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class TodoServiceTest extends ServiceTest{
 
     @BeforeEach
-    public void makeTestUser(){
-        UserDTO newUserDTO = new UserDTO();
-        newUserDTO.setNickName(testUserNickName);
-        newUserDTO.setUserName(testUserName);
-        newUserDTO.setPassword(testUserPassword);
-        userService.signup(newUserDTO);
+    public void makeTestUser() throws Exception{
+        this.testLib.drawLogGuideLine();
+        this.testUserEntity = testLib.makeTestUser();
     }
 
     @Test
+    @Transactional
     public void insertTodoTest() throws Exception {
-        UserEntity testUser = userRepository.findByUsername(testUserName);
+        this.testLib.drawLogGuideLine();
         TodoDTO todoDTO = new TodoDTO();
-        todoDTO.setTitle(testTitle);
-        todoDTO.setContext(testContext);
-        assertTrue(todoService.insertTodo(testUser.getIdx(), todoDTO));
+        todoDTO.setTitle(TestLib.newTestTodo.title);
+        todoDTO.setContext(TestLib.newTestTodo.context);
+        assertTrue(this.todoService.insertTodo(this.testUserEntity.getIdx(), todoDTO));
+
+        TodoEntity insertedTodoEntity = testUserEntity.getTodoEntityList().get(0);
+        assertTrue(testLib.compareTodoEntity(insertedTodoEntity, todoDTO));
     }
 
     @Test
     @Transactional
     public void showTodoTest() throws Exception {
-        UserEntity testUser = userRepository.findByUsername(testUserName);
-        insertTodoTest();
-        assertFalse(todoService.selectTodolist(testUser.getIdx()).isEmpty());
+        testLib.drawLogGuideLine();
+        this.testTodoEntity = this.testLib.makeTodo(this.testUserEntity);
+        TodoEntity selectedTodoEntity = this.todoService.selectTodolist(this.testUserEntity.getIdx()).get(0);
+        assertTrue(this.testLib.compareTodoEntity(this.testTodoEntity, selectedTodoEntity));
     }
 
     @Test
     @Transactional
     public void deleteTodoTest() throws Exception {
-        UserEntity testUser = userRepository.findByUsername(testUserName);
-        insertTodoTest();
-        assertFalse(todoService.selectTodolist(testUser.getIdx()).isEmpty());
-        Long todoIdx = todoService.selectTodolist(testUser.getIdx()).get(0).getIdx();
-        System.out.println(todoService.selectTodolist(testUser.getIdx()).get(0).getIdx());
-        todoService.deleteTodo(todoIdx);
-        assertFalse(todoRepository.findById(todoIdx).isPresent());
+        testLib.drawLogGuideLine();
+        testTodoEntity = this.testLib.makeTodo(this.testUserEntity);
+        todoService.deleteTodo(testTodoEntity.getIdx());
+        assertFalse(todoRepository.findById(testTodoEntity.getIdx()).isPresent());
     }
 
     @Test
     @Transactional
     public void updateTodoTest() throws Exception {
-        final String newTitle = "updated Title";
-        final String newContext = "updated Context";
-        UserEntity testUser = userRepository.findByUsername(testUserName);
-        insertTodoTest();
-        Long todoIdx = todoService.selectTodolist(testUser.getIdx()).get(0).getIdx();
+        testLib.drawLogGuideLine();
+        this.testTodoEntity = testLib.makeTodo(this.testUserEntity);
         TodoDTO newTodoDto = new TodoDTO();
-        newTodoDto.setTitle(newTitle);
-        newTodoDto.setContext(newContext);
-        todoService.updateTodo(todoIdx, newTodoDto);
-        assertEquals(todoRepository.findById(todoIdx).get().getTitle(), newTitle);
+        newTodoDto.setTitle(TestLib.newTestTodo.title);
+        newTodoDto.setContext(TestLib.newTestTodo.context);
+        todoService.updateTodo(testTodoEntity.getIdx(), newTodoDto);
+        TodoEntity updatedTodoEntity = todoRepository.findById(testTodoEntity.getIdx()).get();
+        assertTrue(testLib.compareTodoEntity(updatedTodoEntity, newTodoDto));
     }
 }

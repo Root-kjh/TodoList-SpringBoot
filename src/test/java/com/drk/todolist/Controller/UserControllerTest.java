@@ -1,6 +1,8 @@
 package com.drk.todolist.Controller;
 
 import com.drk.todolist.DTO.User.UserDTO;
+import com.drk.todolist.lib.TestLib;
+import com.drk.todolist.Config.Controller.UrlMapper;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -14,8 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -26,51 +30,74 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 public class UserControllerTest extends ControllerTestConfigure {
 
+    private String getAuthBasedControllerUrl(String url){
+        return UrlMapper.Auth.baseUrl+url;
+    }
+
+    private String getUserBasedControllerUrl(String url){
+        return UrlMapper.User.baseUrl+url;
+    }
+
     @Test
     public void signup() throws Exception {
         UserDTO userDTO = new UserDTO();
-        userDTO.setUserName(testUserName);
-        userDTO.setNickName(testUserNickName);
-        userDTO.setPassword(testUserPassword);
-        mockMvc.perform(post("/auth/signup")
-            .content(asJsonString(userDTO))
+        userDTO.setUserName(TestLib.testUser.name);
+        userDTO.setNickName(TestLib.testUser.nickName);
+        userDTO.setPassword(TestLib.testUser.password);
+        mockMvc.perform(post(getAuthBasedControllerUrl(UrlMapper.Auth.signup))
+            .content(TestLib.asJsonString(userDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().string("true"));
 
-        assertEquals(userRepository.findByUsername(testUserName).getNickname(), testUserNickName);
+        // signup user in Database
+        testUserEntity = userRepository.findByUsername(TestLib.testUser.name);
+
+        log.info("user DTO");
+        log.info(userDTO.toString());
+        log.info("signup User Entity");
+        log.info(testUserEntity.toString());
+        assertTrue(testLib.compareUserEntity(testUserEntity, userDTO));
     }
 
     @Test
     public void signin() throws Exception {
-        makeTestUser();
+        testUserEntity = testLib.makeTestUser();
         
-        MvcResult result = mockMvc.perform(post("/auth/signin")
-            .content(asJsonString(signinDTO))
+        String jwt = mockMvc.perform(post(getAuthBasedControllerUrl(UrlMapper.Auth.signin))
+            .content(TestLib.asJsonString(signinDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andReturn();
+        .andDo(print())
+        .andReturn().getResponse().getContentAsString();
     
-        String signinToken = result.getResponse().getContentAsString();
-        log.info(signinToken);
-        assertNotNull(signinToken);
+        log.info("jwt Token");
+        log.info(jwt);
+
+        assertNotEquals(jwt, "false");
     }
 
     @Test
     public void getUserInfo() throws Exception {
-        makeTestUser();
+        testUserEntity = testLib.makeTestUser();
 
         String jwt = getJwt();
 
-        String userInfoPageBody = mockMvc.perform(get("/user/getUserInfo")
-            .header("X-AUTH-TOKEN", jwt))
+        String userInfoPageBody = mockMvc.perform(get(UrlMapper.User.getUserInfo)
+            .header(TOKEN_HEADER, jwt))
             .andDo(print())
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
         
         JSONObject userInfoJSONParsing = ((JSONObject) new JSONParser().parse(userInfoPageBody));
-        assertEquals(userInfoJSONParsing.get("userName"), testUserName);
-        assertEquals(userInfoJSONParsing.get("nickName"), testUserNickName);
+  
+        // JSONObject UserENtity로 변환 후 Compare
+        // UserDTO userDTO = new UserDTO();
+        // userDTO.setNickName((String) userInfoJSONParsing.get("nickName"));
+        // userDTO.setUserName((String) userInfoJSONParsing.get("userName"));
+        // userDTO.setPassword((String) userInfoJSONParsing.get("password"));
+        
+        // assertTrue(testLib.compareUserEntity(dbUserEntity, localUserEntity));
         }
 
     @Test

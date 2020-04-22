@@ -1,11 +1,9 @@
 package com.drk.todolist.Repository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.drk.todolist.Entitis.TodoEntity;
-import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.lib.TestLib;
 
 import org.junit.jupiter.api.Test;
@@ -18,15 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @Slf4j
-public class ToDoListRepoTest extends RepositoryTest{
+public class ToDoListRepoTest extends RepositoryTest { 
 
-    private UserEntity testUserEntity;
-    private TodoEntity testTodoEntity;
-
-    @Override
     @Test
     public void insertTest() throws Exception {
-        TestLib.drawLogGuideLine();
+        testLib.drawLogGuideLine();
         this.testUserEntity = testLib.makeTestUser();
         this.testTodoEntity = new TodoEntity();
         this.testTodoEntity.setTitle(TestLib.testTodo.title);
@@ -34,13 +28,12 @@ public class ToDoListRepoTest extends RepositoryTest{
         TodoEntity insertedTodoEntity = this.todoRepository.save(this.testTodoEntity);
         log.info("inserted TodoEntity");
         log.info(insertedTodoEntity.toString());
-        assertTrue(TestLib.compareTodoEntity(this.testTodoEntity, insertedTodoEntity));
+        assertTrue(testLib.compareTodoEntity(this.testTodoEntity, insertedTodoEntity));
     }
 
-    @Override
     @Test
     public void selectTest() throws Exception {
-        TestLib.drawLogGuideLine();
+        testLib.drawLogGuideLine();
         this.testUserEntity = testLib.makeTestUser();
         this.testTodoEntity = testLib.makeTodo(testUserEntity);
 
@@ -48,13 +41,12 @@ public class ToDoListRepoTest extends RepositoryTest{
         log.info("selected TodoEntity");
         log.info(selectedTodoEntity.toString());
         
-        assertTrue(TestLib.compareTodoEntity(selectedTodoEntity, this.testTodoEntity));
+        assertTrue(testLib.compareTodoEntity(selectedTodoEntity, this.testTodoEntity));
     }
 
-    @Override
     @Test
     public void updateTest() throws Exception {
-        TestLib.drawLogGuideLine();
+        testLib.drawLogGuideLine();
         this.testUserEntity = testLib.makeTestUser();
         this.testTodoEntity = testLib.makeTodo(testUserEntity);
 
@@ -63,13 +55,12 @@ public class ToDoListRepoTest extends RepositoryTest{
         final TodoEntity updatedTodo = this.todoRepository.save(this.testTodoEntity);
         log.info("updated TodoEntity");
         log.info(updatedTodo.toString());
-        assertTrue(TestLib.compareTodoEntity(this.testTodoEntity, updatedTodo));
+        assertTrue(testLib.compareTodoEntity(this.testTodoEntity, updatedTodo));
     }
 
-    @Override
     @Test
     public void deleteTest() throws Exception {
-        TestLib.drawLogGuideLine();
+        testLib.drawLogGuideLine();
         this.testUserEntity = testLib.makeTestUser();
         this.testTodoEntity = testLib.makeTodo(testUserEntity);
         log.info(String.format("testTodo Idx : %d",this.testTodoEntity.getIdx()));

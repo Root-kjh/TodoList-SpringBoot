@@ -1,9 +1,12 @@
 package com.drk.todolist.Service;
 
+import com.drk.todolist.Entitis.TodoEntity;
+import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.TodoRepository;
 import com.drk.todolist.Repositories.UserRepository;
 import com.drk.todolist.Services.ToDoList.TodoService;
 import com.drk.todolist.Services.User.UserService;
+import com.drk.todolist.lib.TestLib;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,18 +25,22 @@ public class ServiceTest {
 
     @Autowired
     TodoRepository todoRepository;
-    
-    final String testUserName = "testUser";
-    final String testUserNickName = "test";
-    final String testUserPassword = "test123!";
 
-    final String testTitle = "testTodo";
-    final String testContext = "testContext";
+    UserEntity testUserEntity;
+    TodoEntity testTodoEntity;
+
+    TestLib testLib;
+
+    @BeforeEach
+    public void settingLibs(){
+        testLib = new TestLib(userRepository, todoRepository);
+    }
 
     @BeforeEach
     @AfterEach
-    public void clearUserDB(){
+    public void clearDB(){
         userRepository.deleteAll();
+        todoRepository.deleteAll();
     }
 
 }

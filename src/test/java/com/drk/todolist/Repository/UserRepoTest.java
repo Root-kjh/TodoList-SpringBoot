@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserRepoTest extends RepositoryTest{
 
-    private final static PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
-    @Override
     @Test 
     public void insertTest() throws Exception {
-        TestLib.drawLogGuideLine();
+        testLib.drawLogGuideLine();
         this.testUserEntity = new UserEntity();
         this.testUserEntity.setUsername(TestLib.testUser.name);
         this.testUserEntity.setNickname(TestLib.testUser.nickName);
@@ -33,24 +32,22 @@ public class UserRepoTest extends RepositoryTest{
         UserEntity insertedUserEntity = this.userRepository.save(this.testUserEntity);
         log.info("inserted UserEntity");
         log.info(insertedUserEntity.toString());
-        assertTrue(TestLib.compareUserEntity(insertedUserEntity, this.testUserEntity));
+        assertTrue(testLib.compareUserEntity(insertedUserEntity, this.testUserEntity));
     }
 
-    @Override
     @Test
     public void selectTest() throws Exception {
-        TestLib.drawLogGuideLine();
+        testLib.drawLogGuideLine();
         this.testUserEntity = testLib.makeTestUser();
         final UserEntity selectedUserEntity = this.userRepository.findById(this.testUserEntity.getIdx()).get();
         log.info("selected Entity");
         log.info(selectedUserEntity.toString());
-        assertTrue(TestLib.compareUserEntity(selectedUserEntity, this.testUserEntity));
+        assertTrue(testLib.compareUserEntity(selectedUserEntity, this.testUserEntity));
     }
 
-    @Override
     @Test
     public void updateTest() throws Exception {
-        TestLib.drawLogGuideLine();
+        testLib.drawLogGuideLine();
         this.testUserEntity = testLib.makeTestUser();
         this.testUserEntity.setUsername(TestLib.newTestUser.name);
         this.testUserEntity.setNickname(TestLib.newTestUser.nickName);
@@ -58,13 +55,12 @@ public class UserRepoTest extends RepositoryTest{
         final UserEntity updateUserEntity = this.userRepository.save(this.testUserEntity);
         log.info("updated Entity");
         log.info(updateUserEntity.toString());
-        assertTrue(TestLib.compareUserEntity(updateUserEntity, this.testUserEntity));
+        assertTrue(testLib.compareUserEntity(updateUserEntity, this.testUserEntity));
     }
 
-    @Override
     @Test
     public void deleteTest() throws Exception {
-        TestLib.drawLogGuideLine();
+        testLib.drawLogGuideLine();
         this.testUserEntity = testLib.makeTestUser();
         log.info(String.format("testUser Idx : %d",this.testUserEntity.getIdx()));
         this.userRepository.deleteById(this.testUserEntity.getIdx());

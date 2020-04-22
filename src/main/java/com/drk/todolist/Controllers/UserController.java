@@ -4,6 +4,7 @@ import com.drk.todolist.Config.JWT.JwtTokenProvider;
 import com.drk.todolist.DTO.User.UserDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Services.User.UserService;
+import com.drk.todolist.Config.Controller.UrlMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("user")
+@RequestMapping(UrlMapper.User.baseUrl)
 @CrossOrigin
 @RequiredArgsConstructor
 public class UserController {
@@ -32,14 +33,14 @@ public class UserController {
 
     private UserEntity userEntity;
 
-    @PostMapping("/withdraw")
+    @PostMapping(UrlMapper.User.withdraw)
     public boolean withdraw(Authentication authentication, @RequestParam String password){
         userEntity = (UserEntity) authentication.getPrincipal();
         return userService.userinfoDelete(userEntity, password);
 
     }
 
-    @GetMapping("/getUserInfo")
+    @GetMapping(UrlMapper.User.getUserInfo)
     public UserDTO getUserInfo(Authentication authentication){
         UserDTO userDTO = new UserDTO();
         try{
@@ -53,7 +54,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/updateUserInfo")
+    @PostMapping(UrlMapper.User.updateUserInfo)
     public String updateUserInfo(Authentication authentication, @RequestBody UserDTO newUserDTO){
         String newUsername = userService.userinfoUpdate((UserEntity) authentication.getPrincipal(), newUserDTO);
         if(newUsername != null)

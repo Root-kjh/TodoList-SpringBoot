@@ -40,10 +40,9 @@ public class UserServicelmpl implements UserService {
     public boolean signup(UserDTO userDTO) {
         try {
             if (!userRepository.isExistUser(userDTO.getUserName())){
-                userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 UserEntity userEntity = new UserEntity();
                 userEntity.setUsername(userDTO.getUserName());
-                userEntity.setPassword(userDTO.getPassword());
+                userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 userEntity.setNickname(userDTO.getNickName());
                 userRepository.save(userEntity);
                 return true;
@@ -93,6 +92,7 @@ public class UserServicelmpl implements UserService {
     @Override
     public boolean isCanLogin(SigninDTO signinDTO){
         try{
+            System.out.println(passwordEncoder.getClass());
             UserEntity userEntity = userRepository.findByUsername(signinDTO.getUserName());
             return (VariablesLib.isSet(userEntity) && passwordEncoder.matches(signinDTO.getPassword(), userEntity.getPassword()));
         }catch (Exception e){

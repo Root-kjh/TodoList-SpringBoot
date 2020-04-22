@@ -9,17 +9,15 @@ import com.drk.todolist.lib.TestLib;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public class RepositoryTest {
 
     @Autowired
-    public UserRepository userRepository;
+    UserRepository userRepository;
 
     @Autowired
-    public TodoRepository todoRepository;
-
+    TodoRepository todoRepository;
+    
     UserEntity testUserEntity;
     TodoEntity testTodoEntity;
 
@@ -37,8 +35,4 @@ public class RepositoryTest {
         todoRepository.deleteAll();
     }
 
-    public void insertTest() throws Exception {}
-    public void  selectTest() throws Exception {}
-    public void updateTest() throws Exception{}
-    public void deleteTest() throws Exception {}
 }
