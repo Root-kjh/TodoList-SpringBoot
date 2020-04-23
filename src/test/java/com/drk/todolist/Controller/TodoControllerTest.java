@@ -1,8 +1,9 @@
 package com.drk.todolist.Controller;
 
+import com.drk.todolist.Config.Controller.UrlMapper;
 import com.drk.todolist.DTO.Todo.TodoDTO;
 import com.drk.todolist.Entitis.TodoEntity;
-import com.drk.todolist.Entitis.UserEntity;
+import com.drk.todolist.lib.TestLib;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,94 +31,103 @@ import javax.transaction.Transactional;
 @Slf4j
 public class TodoControllerTest extends ControllerTestConfigure {
 
+    private String getTodoBasedControllerUrl(String url){
+        return UrlMapper.Todo.baseUrl+url;
+    }
+
     @Test
     @Transactional
     public void insertTodo() throws Exception {
-        makeTestUser();
-        TodoDTO newTodoDto = new TodoDTO();
-        newTodoDto.setTitle(testTodoTitle);
-        newTodoDto.setContext(testTodoContext);
+        testUserEntity = testLib.makeTestUser();
+        TodoDTO newTodoDTO = new TodoDTO();
+        newTodoDTO.setTitle(TestLib.testTodo.title);
+        newTodoDTO.setContext(TestLib.testTodo.context);
         String jwt = getJwt();
 
-        String insertTodoPageBody = mockMvc.perform(post("/todo/insert")
-            .header("X-AUTH-TOKEN", jwt)
-            .content(asJsonString(newTodoDto))
+        mockMvc.perform(post(getTodoBasedControllerUrl(UrlMapper.Todo.insertTodo))
+            .header(TOKEN_HEADER, jwt)
+            .content(TestLib.asJsonString(newTodoDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk())
+        .andExpect(content().string("true"))
         .andReturn().getResponse().getContentAsString();
-        assertEquals(insertTodoPageBody, "true");
 
-        Long userIdx = userRepository.findByUsername(testUserName).getIdx();
+        Long userIdx = userRepository.findByUsername(TestLib.testUser.name).getIdx();
         TodoEntity insertedTodo = todoService.selectTodolist(userIdx).get(0);
-        assertEquals(insertedTodo.getTitle(), testTodoTitle);
-        assertEquals(insertedTodo.getContext(), testTodoContext);
+
+        log.info("new TodoDTO : "+newTodoDTO.toString());
+        log.info("inserted Todo Entity : "+insertedTodo.toString());
+
+        assertTrue(testLib.compareTodoEntity(insertedTodo, newTodoDTO));
     }
 
     @Test
     public void showTodo() throws Exception {
-        makeTestUser();
+        testUserEntity = testLib.makeTestUser();
         String jwt = getJwt();
-        Long userIdx = userRepository.findByUsername(testUserName).getIdx();
-        makeTestTodo(userIdx);
+        testTodoEntity = testLib.makeTodo(testUserEntity);
 
-        String showTodoPageBody = mockMvc.perform(get("/todo/show")
-            .header("X-AUTH-TOKEN", jwt))
-        .andDo(print())
-        .andExpect(status().isOk())
-        .andReturn().getResponse().getContentAsString();
+        String showTodoPageBody = 
+            mockMvc.perform(get(getTodoBasedControllerUrl(UrlMapper.Todo.showTodoList))
+                .header(TOKEN_HEADER, jwt))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
 
         JSONObject todoListJson = (JSONObject)((JSONArray) new JSONParser().parse(showTodoPageBody)).get(0);
-        assertEquals(todoListJson.get("title"), testTodoTitle);
-        assertEquals(todoListJson.get("context"), testTodoContext);
-    }
-
-    @Test
-    public void updateTodo() throws Exception {
-        final String newTodoTitle = "new Todo";
-        final String newTodoContext = "new Context";
         
-        makeTestUser();
-        String jwt = getJwt();
-        Long userIdx = userRepository.findByUsername(testUserName).getIdx();
-        makeTestTodo(userIdx);
-        TodoEntity todoEntity = todoService.selectTodolist(userIdx).get(0);
+        log.info("inserted Todo Entity : "+testTodoEntity.toString());
+        log.info("show Todo Entity : "+todoListJson.toString());
 
-        TodoDTO newTodoDto = new TodoDTO(); 
-        newTodoDto.setIdx(todoEntity.getIdx());
-        newTodoDto.setTitle(newTodoTitle);
-        newTodoDto.setContext(newTodoContext);
-
-        mockMvc.perform(post("/todo/update")
-            .header("X-AUTH-TOKEN", jwt)
-            .content(asJsonString(newTodoDto))
-            .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
-        .andExpect(status().isOk())
-        .andExpect(content().string("true"));
-
-        TodoEntity newTodoEntity = todoService.selectTodolist(userIdx).get(0);
-        assertEquals(newTodoEntity.getTitle(), newTodoTitle);
-        assertEquals(newTodoEntity.getContext(), newTodoContext);
+        assertEquals(todoListJson.get("title"), testTodoEntity.getTitle());
+        assertEquals(todoListJson.get("context"), testTodoEntity.getContext());
     }
 
     @Test
     @Transactional
-    public void deleteTodo() throws Exception {
-        makeTestUser();
+    public void updateTodo() throws Exception {
+        testUserEntity = testLib.makeTestUser();
         String jwt = getJwt();
-        UserEntity userEntity = userRepository.findByUsername(testUserName);
+        testTodoEntity = testLib.makeTodo(testUserEntity);
 
-        makeTestTodo(userEntity.getIdx());
-        Long todoIdx = todoService.selectTodolist(userEntity.getIdx()).get(0).getIdx();
+        log.info("before Update todo : "+testTodoEntity.toString());
 
-        mockMvc.perform(get("/todo/delete")
-            .header("X-AUTH-TOKEN", jwt)
-            .param("todoIdx", todoIdx.toString()))
+        TodoDTO newTodoDto = new TodoDTO(); 
+        newTodoDto.setIdx(testTodoEntity.getIdx());
+        newTodoDto.setTitle(TestLib.newTestTodo.title);
+        newTodoDto.setContext(TestLib.newTestTodo.context);
+
+        mockMvc.perform(post(getTodoBasedControllerUrl(UrlMapper.Todo.updateTodo))
+            .header(TOKEN_HEADER, jwt)
+            .content(TestLib.asJsonString(newTodoDto))
+            .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(content().string("true"));
+        
+        TodoEntity newTodoEntity = todoService.selectTodolist(testUserEntity.getIdx()).get(0);
+        log.info("after Update todo : "+newTodoEntity.toString());
+        assertTrue(testLib.compareTodoEntity(newTodoEntity, newTodoDto));
+    }
+
+    @Test
+    public void deleteTodo() throws Exception {
+        final String todoIdxParamName = "todoIdx";
+        testUserEntity = testLib.makeTestUser();
+        String jwt = getJwt();
+
+        testTodoEntity = testLib.makeTodo(testUserEntity);
+
+        mockMvc.perform(get(getTodoBasedControllerUrl(UrlMapper.Todo.deleteTodo))
+            .header(TOKEN_HEADER, jwt)
+            .param(todoIdxParamName, testTodoEntity.getIdx().toString()))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(content().string("true"));
 
-        assertFalse(todoRepository.findById(todoIdx).isPresent());
+        log.info("All todo list : "+todoRepository.findAll().toString());
+
+        assertFalse(todoRepository.findById(testTodoEntity.getIdx()).isPresent());
     }
 }

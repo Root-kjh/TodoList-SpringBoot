@@ -16,9 +16,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import lombok.extern.slf4j.Slf4j;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Slf4j
 public class ControllerTestConfigure {
 
     @Autowired
@@ -70,12 +74,14 @@ public class ControllerTestConfigure {
     }
 
     public String getJwt() throws Exception {
-        return mockMvc.perform(post(UrlMapper.Auth.signin)
+        String jwt = mockMvc.perform(post(UrlMapper.Auth.baseUrl+UrlMapper.Auth.signin)
             .content(TestLib.asJsonString(signinDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andReturn()
         .getResponse()
         .getContentAsString(); 
+        log.info("jwt : " + jwt);
+        return jwt;
     }
 }

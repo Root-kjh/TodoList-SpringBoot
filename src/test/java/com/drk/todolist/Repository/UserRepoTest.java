@@ -24,7 +24,6 @@ public class UserRepoTest extends RepositoryTest{
 
     @Test 
     public void insertTest() throws Exception {
-        testLib.drawLogGuideLine();
         this.testUserEntity = new UserEntity();
         this.testUserEntity.setUsername(TestLib.testUser.name);
         this.testUserEntity.setNickname(TestLib.testUser.nickName);
@@ -37,7 +36,6 @@ public class UserRepoTest extends RepositoryTest{
 
     @Test
     public void selectTest() throws Exception {
-        testLib.drawLogGuideLine();
         this.testUserEntity = testLib.makeTestUser();
         final UserEntity selectedUserEntity = this.userRepository.findById(this.testUserEntity.getIdx()).get();
         log.info("selected Entity");
@@ -47,7 +45,6 @@ public class UserRepoTest extends RepositoryTest{
 
     @Test
     public void updateTest() throws Exception {
-        testLib.drawLogGuideLine();
         this.testUserEntity = testLib.makeTestUser();
         this.testUserEntity.setUsername(TestLib.newTestUser.name);
         this.testUserEntity.setNickname(TestLib.newTestUser.nickName);
@@ -60,7 +57,6 @@ public class UserRepoTest extends RepositoryTest{
 
     @Test
     public void deleteTest() throws Exception {
-        testLib.drawLogGuideLine();
         this.testUserEntity = testLib.makeTestUser();
         log.info(String.format("testUser Idx : %d",this.testUserEntity.getIdx()));
         this.userRepository.deleteById(this.testUserEntity.getIdx());

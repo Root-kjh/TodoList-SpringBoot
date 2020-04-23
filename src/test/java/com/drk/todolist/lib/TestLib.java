@@ -12,9 +12,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 public class TestLib {
 
@@ -65,11 +63,6 @@ public class TestLib {
         TodoEntity savedTodo = this.todoRepository.save(todo);
         this.userRepository.save(userEntity);
         return savedTodo;
-    }
-
-    public void drawLogGuideLine(){
-        final String methodName = new Throwable().getStackTrace()[1].getMethodName(); 
-        log.info(String.format("=====================%s=====================",methodName));
     }
 
     public boolean compareUserEntity(UserEntity dbUserEntity, UserEntity localUserEntity) throws Exception {

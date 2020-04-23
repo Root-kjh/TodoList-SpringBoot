@@ -47,10 +47,10 @@ public class UserController {
             userEntity = (UserEntity) authentication.getPrincipal();
             userDTO.setNickName(userEntity.getNickname());
             userDTO.setUserName(userEntity.getUsername());
+            return userDTO;
         }catch(Exception e){
             e.printStackTrace();
-        } finally {
-            return userDTO;
+            return null;
         }
     }
 

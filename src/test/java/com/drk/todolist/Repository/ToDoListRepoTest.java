@@ -20,7 +20,6 @@ public class ToDoListRepoTest extends RepositoryTest {
 
     @Test
     public void insertTest() throws Exception {
-        testLib.drawLogGuideLine();
         this.testUserEntity = testLib.makeTestUser();
         this.testTodoEntity = new TodoEntity();
         this.testTodoEntity.setTitle(TestLib.testTodo.title);
@@ -33,7 +32,6 @@ public class ToDoListRepoTest extends RepositoryTest {
 
     @Test
     public void selectTest() throws Exception {
-        testLib.drawLogGuideLine();
         this.testUserEntity = testLib.makeTestUser();
         this.testTodoEntity = testLib.makeTodo(testUserEntity);
 
@@ -46,7 +44,6 @@ public class ToDoListRepoTest extends RepositoryTest {
 
     @Test
     public void updateTest() throws Exception {
-        testLib.drawLogGuideLine();
         this.testUserEntity = testLib.makeTestUser();
         this.testTodoEntity = testLib.makeTodo(testUserEntity);
 
@@ -60,7 +57,6 @@ public class ToDoListRepoTest extends RepositoryTest {
 
     @Test
     public void deleteTest() throws Exception {
-        testLib.drawLogGuideLine();
         this.testUserEntity = testLib.makeTestUser();
         this.testTodoEntity = testLib.makeTodo(testUserEntity);
         log.info(String.format("testTodo Idx : %d",this.testTodoEntity.getIdx()));

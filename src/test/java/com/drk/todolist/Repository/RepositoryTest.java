@@ -34,5 +34,4 @@ public class RepositoryTest {
         userRepository.deleteAll();
         todoRepository.deleteAll();
     }
-
 }

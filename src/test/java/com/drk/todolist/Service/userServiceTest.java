@@ -31,7 +31,6 @@ public class UserServiceTest extends ServiceTest {
     @Test
     @Transactional
     public void signup() throws Exception {
-        testLib.drawLogGuideLine();
         UserDTO newUserDTO = new UserDTO();
         newUserDTO.setUserName(TestLib.testUser.name);
         newUserDTO.setNickName(TestLib.testUser.nickName);
@@ -48,7 +47,6 @@ public class UserServiceTest extends ServiceTest {
     @Test
     @Transactional
     public void signin() throws Exception {
-        testLib.drawLogGuideLine();
         final JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(jwtService);
         testUserEntity = testLib.makeTestUser();
         SigninDTO signinDTO = new SigninDTO();
