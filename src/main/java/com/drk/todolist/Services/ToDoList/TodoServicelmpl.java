@@ -65,9 +65,10 @@ public class TodoServicelmpl implements TodoService{
 
     @Override
     @Transactional
-    public boolean deleteTodo(Long todoIdx) {
+    public boolean deleteTodo(Long todoIdx, UserEntity userEntity) {
         try{
-            todoRepository.deleteByIdx(todoIdx);
+            userEntity.getTodoEntityList().remove(todoRepository.findById(todoIdx));
+            userRepository.save(userEntity);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

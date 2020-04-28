@@ -59,7 +59,9 @@ public class TodoController {
     public boolean deleteTodo(Authentication authentication, @RequestParam Long todoIdx) {
         try{
             userEntity = (UserEntity) authentication.getPrincipal();
-            return (todoService.checkTodoOwnership(todoIdx, userEntity.getIdx()) && todoService.deleteTodo(todoIdx));
+            if(todoService.checkTodoOwnership(todoIdx, userEntity.getIdx()))
+                return todoService.deleteTodo(todoIdx, userEntity);
+            return false;
         }catch (Exception e){
             return false;
         }

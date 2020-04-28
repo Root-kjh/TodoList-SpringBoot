@@ -60,9 +60,8 @@ public class TestLib {
         todo.setTitle(testTodo.title);
         todo.setContext(testTodo.context);
         userEntity.getTodoEntityList().add(todo);
-        TodoEntity savedTodo = this.todoRepository.save(todo);
         this.userRepository.save(userEntity);
-        return savedTodo;
+        return todo;
     }
 
     public boolean compareUserEntity(UserEntity dbUserEntity, UserEntity localUserEntity) throws Exception {
