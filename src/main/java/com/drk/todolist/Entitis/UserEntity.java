@@ -51,6 +51,10 @@ public class UserEntity implements UserDetails {
         return null;
     }
 
+    public void addTodo(final TodoEntity todo) {
+        todoEntityList.add(todo);
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

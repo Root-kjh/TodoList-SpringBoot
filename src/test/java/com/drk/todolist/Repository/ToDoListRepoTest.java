@@ -3,8 +3,11 @@ package com.drk.todolist.Repository;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import javax.transaction.Transactional;
+
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.lib.TestLib;
+import com.drk.todolist.lib.TestLib.testTodo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -59,10 +62,13 @@ public class ToDoListRepoTest extends RepositoryTest {
     public void deleteTest() throws Exception {
         this.testUserEntity = testLib.makeTestUser();
         this.testTodoEntity = testLib.makeTodo(testUserEntity);
+        log.info("all todo list : "+this.todoRepository.findAll());
         log.info(String.format("testTodo Idx : %d",this.testTodoEntity.getIdx()));
-        
-        this.todoRepository.deleteById(this.testTodoEntity.getIdx());
-        final boolean isToDoListSelected = this.todoRepository.findById(testTodoEntity.getIdx()).isPresent();
-        assertFalse(isToDoListSelected);
+        this.testUserEntity.getTodoEntityList().remove(this.testTodoEntity);
+        this.todoRepository.delete(this.testTodoEntity);
+        this.userRepository.save(this.testUserEntity);
+        log.info("todo deleted");
+        log.info("all todo list : "+this.todoRepository.findAll());
+        assertFalse(this.todoRepository.findById(testTodoEntity.getIdx()).isPresent());
     }
 }

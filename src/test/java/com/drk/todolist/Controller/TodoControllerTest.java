@@ -112,15 +112,16 @@ public class TodoControllerTest extends ControllerTestConfigure {
     }
 
     @Test
+    @Transactional
     public void deleteTodo() throws Exception {
         testUserEntity = testLib.makeTestUser();
         String jwt = getJwt();
 
         testTodoEntity = testLib.makeTodo(testUserEntity);
-        String param = String.format("?todoIdx=%d", testTodoEntity.getIdx());
-        log.info("param : "+param);
-        mockMvc.perform(get(getTodoBasedControllerUrl(UrlMapper.Todo.deleteTodo)+param)
-            .header(TOKEN_HEADER, jwt))
+        log.info(" testTodoEntity : "+testTodoEntity.toString());
+        mockMvc.perform(get(getTodoBasedControllerUrl(UrlMapper.Todo.deleteTodo))
+            .header(TOKEN_HEADER, jwt)
+            .param("todoIdx", testTodoEntity.getIdx().toString()))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(content().string("true"));

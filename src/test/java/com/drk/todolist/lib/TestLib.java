@@ -59,9 +59,9 @@ public class TestLib {
         TodoEntity todo = new TodoEntity();
         todo.setTitle(testTodo.title);
         todo.setContext(testTodo.context);
-        userEntity.getTodoEntityList().add(todo);
-        this.userRepository.save(userEntity);
-        return todo;
+        userEntity.addTodo(todo);
+        this.userRepository.saveAndFlush(userEntity);
+        return userEntity.getTodoEntityList().get(0);
     }
 
     public boolean compareUserEntity(UserEntity dbUserEntity, UserEntity localUserEntity) throws Exception {
