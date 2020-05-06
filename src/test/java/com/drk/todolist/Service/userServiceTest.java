@@ -35,32 +35,33 @@ public class UserServiceTest extends ServiceTest {
         newUserDTO.setUserName(TestLib.testUser.name);
         newUserDTO.setNickName(TestLib.testUser.nickName);
         newUserDTO.setPassword(TestLib.testUser.password);
-        userService.signup(newUserDTO);
-        testUserEntity = userRepository.findByUsername(TestLib.testUser.name);
+        this.userService.signup(newUserDTO);
+        this.testUserEntity = this.userRepository.findByUsername(TestLib.testUser.name);
         log.info("Signup User DTO");
         log.info(newUserDTO.toString());
         log.info("Signup User Entity");
-        log.info(testUserEntity.toString());
-        assertTrue(testLib.compareUserEntity(testUserEntity, newUserDTO));
+        log.info(this.testUserEntity.toString());
+        assertTrue(this.testLib.compareUserEntity(this.testUserEntity, newUserDTO));
     }
 
     @Test
     @Transactional
     public void signin() throws Exception {
         final JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(jwtService);
-        testUserEntity = testLib.makeTestUser();
+        this.testUserEntity = this.testLib.makeTestUser();
         SigninDTO signinDTO = new SigninDTO();
         signinDTO.setUserName(TestLib.testUser.name);
         signinDTO.setPassword(TestLib.testUser.password);
         log.info("signin DTO");
         log.info(signinDTO.toString());
         
-        assertTrue(userService.isCanLogin(signinDTO));
+        assertTrue(this.userService.isCanLogin(signinDTO));
         String token = jwtTokenProvider.coreateToken(TestLib.testUser.name);
 
         Authentication authentication = jwtTokenProvider.getAuthentication(token);
         log.info("jwt userEntity");
-        log.info(testUserEntity.toString());
-        assertTrue(testLib.compareUserEntity(testUserEntity, ((UserEntity) authentication.getPrincipal())));
+        log.info(this.testUserEntity.toString());
+        assertTrue(this.testLib.compareUserEntity(this.testUserEntity, 
+            ((UserEntity) authentication.getPrincipal())));
     }
 }

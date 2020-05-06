@@ -21,7 +21,7 @@ public class TodoServiceTest extends ServiceTest{
 
     @BeforeEach
     public void makeTestUser() throws Exception{
-        this.testUserEntity = testLib.makeTestUser();
+        this.testUserEntity = this.testLib.makeTestUser();
     }
 
     @Test
@@ -32,8 +32,8 @@ public class TodoServiceTest extends ServiceTest{
         todoDTO.setContext(TestLib.newTestTodo.context);
         assertTrue(this.todoService.insertTodo(this.testUserEntity.getIdx(), todoDTO));
 
-        TodoEntity insertedTodoEntity = testUserEntity.getTodoEntityList().get(0);
-        assertTrue(testLib.compareTodoEntity(insertedTodoEntity, todoDTO));
+        TodoEntity insertedTodoEntity = this.testUserEntity.getTodoEntityList().get(0);
+        assertTrue(this.testLib.compareTodoEntity(insertedTodoEntity, todoDTO));
     }
 
     @Test
@@ -47,20 +47,20 @@ public class TodoServiceTest extends ServiceTest{
     @Test
     @Transactional
     public void deleteTodoTest() throws Exception {
-        testTodoEntity = this.testLib.makeTodo(this.testUserEntity);
-        todoService.deleteTodo(testTodoEntity.getIdx(),this.testUserEntity);
-        assertFalse(todoRepository.findById(testTodoEntity.getIdx()).isPresent());
+        this.testTodoEntity = this.testLib.makeTodo(this.testUserEntity);
+        this.todoService.deleteTodo(this.testTodoEntity.getIdx(),this.testUserEntity);
+        assertFalse(this.todoRepository.findById(this.testTodoEntity.getIdx()).isPresent());
     }
 
     @Test
     @Transactional
     public void updateTodoTest() throws Exception {
-        this.testTodoEntity = testLib.makeTodo(this.testUserEntity);
+        this.testTodoEntity = this.testLib.makeTodo(this.testUserEntity);
         TodoDTO newTodoDto = new TodoDTO();
         newTodoDto.setTitle(TestLib.newTestTodo.title);
         newTodoDto.setContext(TestLib.newTestTodo.context);
-        todoService.updateTodo(testTodoEntity.getIdx(), newTodoDto);
-        TodoEntity updatedTodoEntity = todoRepository.findById(testTodoEntity.getIdx()).get();
-        assertTrue(testLib.compareTodoEntity(updatedTodoEntity, newTodoDto));
+        this.todoService.updateTodo(this.testTodoEntity.getIdx(), newTodoDto);
+        TodoEntity updatedTodoEntity = this.todoRepository.findById(this.testTodoEntity.getIdx()).get();
+        assertTrue(this.testLib.compareTodoEntity(updatedTodoEntity, newTodoDto));
     }
 }

@@ -3,11 +3,8 @@ package com.drk.todolist.Repository;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import javax.transaction.Transactional;
-
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.lib.TestLib;
-import com.drk.todolist.lib.TestLib.testTodo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -23,7 +20,7 @@ public class ToDoListRepoTest extends RepositoryTest {
 
     @Test
     public void insertTest() throws Exception {
-        this.testUserEntity = testLib.makeTestUser();
+        this.testUserEntity = this.testLib.makeTestUser();
         this.testTodoEntity = new TodoEntity();
         this.testTodoEntity.setTitle(TestLib.testTodo.title);
         this.testTodoEntity.setContext(TestLib.testTodo.context);
@@ -35,8 +32,8 @@ public class ToDoListRepoTest extends RepositoryTest {
 
     @Test
     public void selectTest() throws Exception {
-        this.testUserEntity = testLib.makeTestUser();
-        this.testTodoEntity = testLib.makeTodo(testUserEntity);
+        this.testUserEntity = this.testLib.makeTestUser();
+        this.testTodoEntity = this.testLib.makeTodo(this.testUserEntity);
 
         final TodoEntity selectedTodoEntity = this.todoRepository.findById(testTodoEntity.getIdx()).get();
         log.info("selected TodoEntity");
@@ -47,21 +44,21 @@ public class ToDoListRepoTest extends RepositoryTest {
 
     @Test
     public void updateTest() throws Exception {
-        this.testUserEntity = testLib.makeTestUser();
-        this.testTodoEntity = testLib.makeTodo(testUserEntity);
+        this.testUserEntity = this.testLib.makeTestUser();
+        this.testTodoEntity = this.testLib.makeTodo(testUserEntity);
 
         this.testTodoEntity.setTitle(TestLib.newTestTodo.title);
         this.testTodoEntity.setContext(TestLib.newTestTodo.context);
         final TodoEntity updatedTodo = this.todoRepository.save(this.testTodoEntity);
         log.info("updated TodoEntity");
         log.info(updatedTodo.toString());
-        assertTrue(testLib.compareTodoEntity(this.testTodoEntity, updatedTodo));
+        assertTrue(this.testLib.compareTodoEntity(this.testTodoEntity, updatedTodo));
     }
 
     @Test
     public void deleteTest() throws Exception {
-        this.testUserEntity = testLib.makeTestUser();
-        this.testTodoEntity = testLib.makeTodo(testUserEntity);
+        this.testUserEntity = this.testLib.makeTestUser();
+        this.testTodoEntity = this.testLib.makeTodo(testUserEntity);
         log.info("all todo list : "+this.todoRepository.findAll());
         log.info(String.format("testTodo Idx : %d",this.testTodoEntity.getIdx()));
         this.testUserEntity.getTodoEntityList().remove(this.testTodoEntity);
@@ -69,6 +66,6 @@ public class ToDoListRepoTest extends RepositoryTest {
         this.userRepository.save(this.testUserEntity);
         log.info("todo deleted");
         log.info("all todo list : "+this.todoRepository.findAll());
-        assertFalse(this.todoRepository.findById(testTodoEntity.getIdx()).isPresent());
+        assertFalse(this.todoRepository.findById(this.testTodoEntity.getIdx()).isPresent());
     }
 }

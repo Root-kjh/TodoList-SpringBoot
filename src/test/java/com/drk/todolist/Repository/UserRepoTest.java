@@ -31,13 +31,14 @@ public class UserRepoTest extends RepositoryTest{
         UserEntity insertedUserEntity = this.userRepository.save(this.testUserEntity);
         log.info("inserted UserEntity");
         log.info(insertedUserEntity.toString());
-        assertTrue(testLib.compareUserEntity(insertedUserEntity, this.testUserEntity));
+        assertTrue(this.testLib.compareUserEntity(insertedUserEntity, this.testUserEntity));
     }
 
     @Test
     public void selectTest() throws Exception {
-        this.testUserEntity = testLib.makeTestUser();
-        final UserEntity selectedUserEntity = this.userRepository.findById(this.testUserEntity.getIdx()).get();
+        this.testUserEntity = this.testLib.makeTestUser();
+        final UserEntity selectedUserEntity = 
+            this.userRepository.findById(this.testUserEntity.getIdx()).get();
         log.info("selected Entity");
         log.info(selectedUserEntity.toString());
         assertTrue(testLib.compareUserEntity(selectedUserEntity, this.testUserEntity));
@@ -45,14 +46,14 @@ public class UserRepoTest extends RepositoryTest{
 
     @Test
     public void updateTest() throws Exception {
-        this.testUserEntity = testLib.makeTestUser();
+        this.testUserEntity = this.testLib.makeTestUser();
         this.testUserEntity.setUsername(TestLib.newTestUser.name);
         this.testUserEntity.setNickname(TestLib.newTestUser.nickName);
         this.testUserEntity.setPassword(passwordEncoder.encode(TestLib.newTestUser.password));
         final UserEntity updateUserEntity = this.userRepository.save(this.testUserEntity);
         log.info("updated Entity");
         log.info(updateUserEntity.toString());
-        assertTrue(testLib.compareUserEntity(updateUserEntity, this.testUserEntity));
+        assertTrue(this.testLib.compareUserEntity(updateUserEntity, this.testUserEntity));
     }
 
     @Test

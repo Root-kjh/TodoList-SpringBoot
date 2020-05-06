@@ -52,18 +52,18 @@ public class UserControllerTest extends ControllerTestConfigure {
         .andExpect(content().string("true"));
 
         // signup user in Database
-        testUserEntity = userRepository.findByUsername(TestLib.testUser.name);
+        this.testUserEntity = this.userRepository.findByUsername(TestLib.testUser.name);
 
         log.info("user DTO");
         log.info(userDTO.toString());
         log.info("signup User Entity");
-        log.info(testUserEntity.toString());
-        assertTrue(testLib.compareUserEntity(testUserEntity, userDTO));
+        log.info(this.testUserEntity.toString());
+        assertTrue(this.testLib.compareUserEntity(this.testUserEntity, userDTO));
     }
 
     @Test
     public void signin() throws Exception {
-        testUserEntity = testLib.makeTestUser();
+        this.testUserEntity = this.testLib.makeTestUser();
         
         String jwt = mockMvc.perform(post(getAuthBasedControllerUrl(UrlMapper.Auth.signin))
             .content(TestLib.asJsonString(signinDTO))
@@ -93,13 +93,13 @@ public class UserControllerTest extends ControllerTestConfigure {
         JSONObject userInfoJson = ((JSONObject) new JSONParser().parse(userInfoPageBody));
         log.info(userInfoJson.toString());
 
-        assertEquals(userInfoJson.get("userName"), testUserEntity.getUsername());
-        assertEquals(userInfoJson.get("nickName"), testUserEntity.getNickname());
+        assertEquals(userInfoJson.get("userName"), this.testUserEntity.getUsername());
+        assertEquals(userInfoJson.get("nickName"), this.testUserEntity.getNickname());
         }
 
     @Test
     public void updateUserInfo() throws Exception {
-        testUserEntity = testLib.makeTestUser();
+        this.testUserEntity = this.testLib.makeTestUser();
         String jwt = getJwt();
 
         UserDTO newUserDTO = new UserDTO();
