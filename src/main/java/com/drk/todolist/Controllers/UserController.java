@@ -35,9 +35,13 @@ public class UserController {
 
     @PostMapping(UrlMapper.User.withdraw)
     public boolean withdraw(Authentication authentication, @RequestParam String password){
-        userEntity = (UserEntity) authentication.getPrincipal();
-        return userService.userinfoDelete(userEntity, password);
-
+        try{
+            userEntity = (UserEntity) authentication.getPrincipal();
+            return userService.userinfoDelete(userEntity, password);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @GetMapping(UrlMapper.User.getUserInfo)
@@ -56,10 +60,15 @@ public class UserController {
 
     @PostMapping(UrlMapper.User.updateUserInfo)
     public String updateUserInfo(Authentication authentication, @RequestBody UserDTO newUserDTO){
-        String newUsername = userService.userinfoUpdate((UserEntity) authentication.getPrincipal(), newUserDTO);
-        if(newUsername != null)
-            return jwtTokenProvider.coreateToken(newUsername);
-        else
-            return "false";              
+        try{
+            String newUsername = userService.userinfoUpdate((UserEntity) authentication.getPrincipal(), newUserDTO);
+            if(newUsername != null)
+                return jwtTokenProvider.coreateToken(newUsername);
+            else
+                return "false";
+        }catch (Exception e) {
+            e.printStackTrace();
+            return "false";
+        }              
     }
 }

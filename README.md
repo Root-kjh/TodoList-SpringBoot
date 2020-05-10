@@ -8,7 +8,6 @@ ToDoList웹을 제작하기 위해 먼저 해당 웹의 모든 기능을 나열�
 
 1. 로그인
 2. 회원가입
-3. 로그아웃
 4. 회원정보 수정
 5. 회원탈퇴
 6. 로그인된 회원의 TodoList 출력
@@ -36,24 +35,15 @@ SpringBoot를 이용해 해당 웹을 구현할 것이다.
 
 ## URL 설계
 
-* / : 메인 페이지 출력
+1. /auth/
+    * 로그인(signin/) : 로그인 처리(POST : User->UserName, User->Password)
+    * 회원가입(signup/) : 회원가입 처리(POST : User->UserName, User->Password, User->NickName)
 
-1. /User/
-    * 로그인(signin/)
-        * form : 로그인 폼 출력
-        * process : 로그인 처리(POST : User->UserName, User->Password(sha512 hashed))
-    * 회원가입(signup/)
-        * form : 회원가입 폼 출력
-        * process : 회원가입 처리(POST : User->UserName, User->Password(sha512 hashed), User->NickName)
-    * 로그아웃(logout/) : 로그아웃 처리
-    * 회원정보 수정(edit_user_info/)
-        * form : 회원정보 수정 폼 출력
-        * process :  회원정보 수정 처리(POST : User->UserName, User->Password(sha512 hashed), User->NickName)
-    * 회원탈퇴(withdraw/)
-        * form : 회원탈퇴 전 비밀번호 입력 폼 출력
-        * process : 회원탈퇴 처리
+2. /user/
+    * 회원정보 수정(edit_user_info/) : 회원정보 수정 처리(POST : User->UserName, User->Password, User->NickName)
+    * 회원탈퇴(withdraw/) : 회원탈퇴 처리
 
-2.  /Todo/
+3.  /todo/
     * TodoList 출력(/) : ToDoList 출력
     * Todo 추가(/insert) : Tdoo 추가(POST : todo->title, todo->context)
     * Todo 삭제(/delete) : Todo 삭제(GET : todo->idx)
@@ -69,13 +59,11 @@ SpringBoot를 이용해 해당 웹을 구현할 것이다.
 
 1. 로그인
     * 계정 BruteForce 취약점 -> recaptcha 사용 or 동일 ip의 5회 이상 로그인 시도 시 10분간 ip Block
-    * packet sniffing을 통한 user password 노출 취약점 -> SSL 암호화 사용 or pw를 front에서 hash 한채로 전달 
+    * packet sniffing을 통한 user password 노출 취약점 -> SSL 암호화 사용 
 
 2. 회원가입
     * 중복 계정 회원가입 -> 회원가입 시 id 중복 체크
-    * packet sniffing을 통한 user password 노출 취약점 -> SSL 암호화 사용 or pw를 front에서 hash 한채로 전달 
-
-3. 로그아웃
+    * packet sniffing을 통한 user password 노출 취약점 -> SSL 암호화 사용 
 
 4. 회원정보 수정
 
@@ -112,7 +100,6 @@ SpringBoot를 이용해 해당 웹을 구현할 것이다.
 
 1. signin
 2. signup
-3. logout
 4. userinfoUpdate
 5. userinfoDelete
 6. selectTodoList
@@ -122,24 +109,54 @@ SpringBoot를 이용해 해당 웹을 구현할 것이다.
 
 ### Controller
 
-1. /User/
-    * 로그인(signin/)
-        * form : 로그인 폼 출력
-        * process : 로그인 처리(POST : User->UserName, User->Password(sha512 hashed))
-    * 회원가입(signup/)
-        * form : 회원가입 폼 출력
-        * process : 회원가입 처리(POST : User->UserName, User->Password(sha512 hashed), User->NickName)
-    * 로그아웃(logout/) : 로그아웃 처리
-    * 회원정보 수정(edit_user_info/)
-        * form : 회원정보 수정 폼 출력
-        * process :  회원정보 수정 처리(POST : User->UserName, User->Password(sha512 hashed), User->NickName)
-    * 회원탈퇴(withdraw/)
-        * form : 회원탈퇴 전 비밀번호 입력 폼 출력
-        * process : 회원탈퇴 처리
+1. /auth/
+    * 로그인(signin/) : 로그인 처리(POST : User->UserName, User->Password)
+    * 회원가입(signup/) : 회원가입 처리(POST : User->UserName, User->Password, User->NickName)
 
-2.  /Todo/
+2. /user/
+    * 회원정보 수정(edit_user_info/) : 회원정보 수정 처리(POST : User->UserName, User->Password, User->NickName)
+    * 회원탈퇴(withdraw/) : 회원탈퇴 처리
+
+3.  /todo/
     * TodoList 출력(/) : ToDoList 출력
     * Todo 추가(/insert) : Tdoo 추가(POST : todo->title, todo->context)
     * Todo 삭제(/delete) : Todo 삭제(GET : todo->idx)
     * Todo 수정(/update) : Todo 수정(GET : todo->idx)
     (POST : todo->title, todo->context)
+
+### Error Handling
+
+        * UserDataInvalid = 403
+        * RequestDataInvalid = 405
+
+
+1. /user/
+
+    * 로그인
+        * UserDataInvalid
+        * RequestDataInvalid
+    
+    * 회원가입
+        * UserExist
+        * RequestDataInvalid
+
+    * 회원정보수정
+        * UserDataInvalid
+        * RequestDataInvalid
+
+    * 회원탈퇴
+        * UserDataInvalid
+        * RequestDataInvalid
+
+2. /todo/
+    * Todo 추가
+        * RequestDataInvalid
+    
+    * Todo 삭제
+        * RequestDataInvalid
+        * UserDataInvalid
+    
+    * Todo 수정
+        * RequestDataInvalid
+        * UserDataInvalid
+    

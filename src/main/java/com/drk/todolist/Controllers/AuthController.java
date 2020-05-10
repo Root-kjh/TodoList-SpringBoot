@@ -26,14 +26,22 @@ public class AuthController {
 
     @PostMapping(UrlMapper.Auth.signup)
     public boolean signup(@RequestBody UserDTO userDTO) {
-        return userService.signup(userDTO);
+        try{
+            return userService.signup(userDTO);
+        }catch(Exception e) {
+            return false;
+        }     
     }
 
     @PostMapping(UrlMapper.Auth.signin)
     public String signin(@RequestBody SigninDTO signinDTO) {
-        if (userService.isCanLogin(signinDTO))
-            return jwtTokenProvider.coreateToken(signinDTO.getUserName());
-        else
+        try{
+            if (userService.isCanLogin(signinDTO))
+                return jwtTokenProvider.coreateToken(signinDTO.getUserName());
+            else
+                return "false";
+        }catch(Exception e) {
             return "false";
+        }
     }
 }
