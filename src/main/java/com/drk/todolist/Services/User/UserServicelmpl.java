@@ -37,71 +37,53 @@ public class UserServicelmpl implements UserService {
     }
 
     @Override
-    public boolean signup(UserDTO userDTO) {
-        try {
-            if (!userRepository.isExistUser(userDTO.getUserName())){
-                UserEntity userEntity = new UserEntity();
-                userEntity.setUsername(userDTO.getUserName());
-                userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-                userEntity.setNickname(userDTO.getNickName());
-                userRepository.save(userEntity);
-                return true;
-            }
-            else
-                return false;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+    public boolean signup(UserDTO userDTO)  throws Exception{
+        if (!userRepository.isExistUser(userDTO.getUserName())){
+            UserEntity userEntity = new UserEntity();
+            userEntity.setUsername(userDTO.getUserName());
+            userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            userEntity.setNickname(userDTO.getNickName());
+            userRepository.save(userEntity);
+            return true;
         }
+        else
+            return false;
     }
 
     @Override
-    public String userinfoUpdate(UserEntity loginedUser, UserDTO newUserDTO) {
-        try {
-            if (isSet(newUserDTO.getPassword()))
-                loginedUser.setPassword(passwordEncoder.encode(newUserDTO.getPassword()));
-            if (isSet(newUserDTO.getNickName()))
-                loginedUser.setNickname(newUserDTO.getNickName());
-            if (isSet(newUserDTO.getUserName()) && !userRepository.isExistUser(newUserDTO.getUserName()))
-                loginedUser.setUsername(newUserDTO.getUserName());
-            
-            userRepository.save(loginedUser);
-            return loginedUser.getUsername();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public String userinfoUpdate(UserEntity loginedUser, UserDTO newUserDTO)  throws Exception{
+        if (isSet(newUserDTO.getPassword()))
+            loginedUser.setPassword(passwordEncoder.encode(newUserDTO.getPassword()));
+        if (isSet(newUserDTO.getNickName()))
+            loginedUser.setNickname(newUserDTO.getNickName());
+        if (isSet(newUserDTO.getUserName()) && !userRepository.isExistUser(newUserDTO.getUserName()))
+            loginedUser.setUsername(newUserDTO.getUserName());
+        
+        userRepository.save(loginedUser);
+        return loginedUser.getUsername();
     }
 
     @Override
     @Transactional
-    public boolean userinfoDelete(UserEntity loginedUser, String password) {
-        try {
-            UserEntity userEntity = userRepository.findByUsername(loginedUser.getUsername());
-            if (passwordEncoder.matches(password, userEntity.getPassword())) {
-                userRepository.deleteByIdx(userEntity.getIdx());
-                return true;
-            } else
-                return false;
-        } catch (Exception e) {
-            e.printStackTrace();
+    public boolean userinfoDelete(UserEntity loginedUser, String password)  throws Exception{
+        UserEntity userEntity = userRepository.findByUsername(loginedUser.getUsername());
+        if (passwordEncoder.matches(password, userEntity.getPassword())) {
+            userRepository.deleteByIdx(userEntity.getIdx());
+            return true;
+        } else
             return false;
-        }
     }
 
     @Override
-    public boolean isCanLogin(SigninDTO signinDTO){
-        try{
-            System.out.println(passwordEncoder.getClass());
-            UserEntity userEntity = userRepository.findByUsername(signinDTO.getUserName());
-            return (VariablesLib.isSet(userEntity) && passwordEncoder.matches(signinDTO.getPassword(), userEntity.getPassword()));
-        }catch (Exception e){
-            return false;
-        }
+    public boolean isCanLogin(SigninDTO signinDTO) throws Exception {
+        System.out.println(passwordEncoder.getClass());
+        UserEntity userEntity = userRepository.findByUsername(signinDTO.getUserName());
+        return (VariablesLib.isSet(userEntity) &&
+            passwordEncoder.matches(signinDTO.getPassword(), userEntity.getPassword()));
     }
     
     @Override
-    public UserEntity findUserByUsername(String username) {
+    public UserEntity findUserByUsername(String username) throws Exception {
         return userRepository.findByUsername(username);
     }
 }

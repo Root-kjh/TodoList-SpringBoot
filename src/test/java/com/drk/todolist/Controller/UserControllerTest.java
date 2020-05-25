@@ -30,14 +30,6 @@ import javax.transaction.Transactional;
 @Slf4j
 public class UserControllerTest extends ControllerTestConfigure {
 
-    private String getAuthBasedControllerUrl(String url){
-        return UrlMapper.Auth.baseUrl+url;
-    }
-
-    private String getUserBasedControllerUrl(String url){
-        return UrlMapper.User.baseUrl+url;
-    }
-
     @Test
     @Transactional
     public void signup() throws Exception {
@@ -45,7 +37,7 @@ public class UserControllerTest extends ControllerTestConfigure {
         userDTO.setUserName(TestLib.testUser.name);
         userDTO.setNickName(TestLib.testUser.nickName);
         userDTO.setPassword(TestLib.testUser.password);
-        mockMvc.perform(post(getAuthBasedControllerUrl(UrlMapper.Auth.signup))
+        mockMvc.perform(post(UrlMapper.Auth.signup)
             .content(TestLib.asJsonString(userDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
@@ -65,7 +57,7 @@ public class UserControllerTest extends ControllerTestConfigure {
     public void signin() throws Exception {
         this.testUserEntity = this.testLib.makeTestUser();
         
-        String jwt = mockMvc.perform(post(getAuthBasedControllerUrl(UrlMapper.Auth.signin))
+        String jwt = mockMvc.perform(post(UrlMapper.Auth.signin)
             .content(TestLib.asJsonString(signinDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
@@ -84,7 +76,7 @@ public class UserControllerTest extends ControllerTestConfigure {
 
         String jwt = getJwt();
 
-        String userInfoPageBody = mockMvc.perform(get(getUserBasedControllerUrl(UrlMapper.User.getUserInfo))
+        String userInfoPageBody = mockMvc.perform(get(UrlMapper.User.getUserInfo)
                 .header(TOKEN_HEADER, jwt))
             .andDo(print())
             .andExpect(status().isOk())
@@ -107,7 +99,7 @@ public class UserControllerTest extends ControllerTestConfigure {
         newUserDTO.setNickName(TestLib.newTestUser.nickName);
 
         String newUserJwt = 
-            mockMvc.perform(post(getUserBasedControllerUrl(UrlMapper.User.updateUserInfo))
+            mockMvc.perform(post(UrlMapper.User.updateUserInfo)
                 .header(TOKEN_HEADER, jwt)
                 .content(TestLib.asJsonString(newUserDTO))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -118,7 +110,7 @@ public class UserControllerTest extends ControllerTestConfigure {
         log.info("new User JWT : "+newUserJwt);
 
         String newUserInfoJson = 
-            mockMvc.perform(get(getUserBasedControllerUrl(UrlMapper.User.getUserInfo))
+            mockMvc.perform(get(UrlMapper.User.getUserInfo)
                 .header(TOKEN_HEADER, newUserJwt))
             .andDo(print())
             .andExpect(status().isOk())
@@ -132,7 +124,7 @@ public class UserControllerTest extends ControllerTestConfigure {
     public void deleteUser() throws Exception {
         testUserEntity = testLib.makeTestUser();
         String jwt = getJwt();
-        mockMvc.perform(post(getUserBasedControllerUrl(UrlMapper.User.withdraw))
+        mockMvc.perform(post(UrlMapper.User.withdraw)
             .header(TOKEN_HEADER, jwt)
             .param("password", TestLib.testUser.password))
         .andExpect(status().isOk())

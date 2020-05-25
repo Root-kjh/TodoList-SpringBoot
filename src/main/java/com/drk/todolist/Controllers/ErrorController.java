@@ -7,16 +7,21 @@ import com.drk.todolist.Config.Errors.UserDataInvalidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestControllerAdvice
+@Slf4j
 public class ErrorController{
     
     @ExceptionHandler(UserDataInvalidException.class)
-    public ErrorConfig userDataInvalidException(UserDataInvalidException exception) {
-        return exception.getErrorConfig();
+    public String userDataInvalidException(UserDataInvalidException exception) {
+        log.error(exception.getErrorConfig().toString());
+        return exception.getErrorMessage();
     }
 
     @ExceptionHandler(RequestDataInvalidException.class)
-    public ErrorConfig requestDataInvalidException(RequestDataInvalidException exception) {
-        return exception.getErrorConfig();
+    public String requestDataInvalidException(RequestDataInvalidException exception) {
+        log.error(exception.getErrorConfig().toString());
+        return exception.getErrorMessage();
     }
 }

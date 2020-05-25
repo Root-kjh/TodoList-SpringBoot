@@ -74,7 +74,7 @@ public class ControllerTestConfigure {
     }
 
     public String getJwt() throws Exception {
-        String jwt = mockMvc.perform(post(UrlMapper.Auth.baseUrl+UrlMapper.Auth.signin)
+        String jwt = mockMvc.perform(post(UrlMapper.Auth.signin)
             .content(TestLib.asJsonString(signinDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())

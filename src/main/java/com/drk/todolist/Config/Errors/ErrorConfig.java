@@ -1,16 +1,17 @@
 package com.drk.todolist.Config.Errors;
 
+import lombok.ToString;
+
+@ToString
 public class ErrorConfig {
     private int errorCode;
     private String reqeustData;
     private String url;
-    private String errorMessage;
 
-    ErrorConfig(int errorCode, String requestData, String url, String errorMessage){
+    ErrorConfig(int errorCode, String requestData, String url){
         this.errorCode = errorCode;
         this.reqeustData = requestData;
         this.url = url;
-        this.errorMessage = errorMessage;
     }
 
 }

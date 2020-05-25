@@ -31,10 +31,6 @@ import javax.transaction.Transactional;
 @Slf4j
 public class TodoControllerTest extends ControllerTestConfigure {
 
-    private String getTodoBasedControllerUrl(String url){
-        return UrlMapper.Todo.baseUrl+url;
-    }
-
     @Test
     @Transactional
     public void insertTodo() throws Exception {
@@ -44,7 +40,7 @@ public class TodoControllerTest extends ControllerTestConfigure {
         newTodoDTO.setContext(TestLib.testTodo.context);
         String jwt = getJwt();
 
-        mockMvc.perform(post(getTodoBasedControllerUrl(UrlMapper.Todo.insertTodo))
+        mockMvc.perform(post(UrlMapper.Todo.insertTodo)
             .header(TOKEN_HEADER, jwt)
             .content(TestLib.asJsonString(newTodoDTO))
             .contentType(MediaType.APPLICATION_JSON))
@@ -69,7 +65,7 @@ public class TodoControllerTest extends ControllerTestConfigure {
         testTodoEntity = testLib.makeTodo(testUserEntity);
 
         String showTodoPageBody = 
-            mockMvc.perform(get(getTodoBasedControllerUrl(UrlMapper.Todo.showTodoList))
+            mockMvc.perform(get(UrlMapper.Todo.showTodoList)
                 .header(TOKEN_HEADER, jwt))
             .andDo(print())
             .andExpect(status().isOk())
@@ -98,7 +94,7 @@ public class TodoControllerTest extends ControllerTestConfigure {
         newTodoDto.setTitle(TestLib.newTestTodo.title);
         newTodoDto.setContext(TestLib.newTestTodo.context);
 
-        mockMvc.perform(post(getTodoBasedControllerUrl(UrlMapper.Todo.updateTodo))
+        mockMvc.perform(post(UrlMapper.Todo.updateTodo)
             .header(TOKEN_HEADER, jwt)
             .content(TestLib.asJsonString(newTodoDto))
             .contentType(MediaType.APPLICATION_JSON))
@@ -119,7 +115,7 @@ public class TodoControllerTest extends ControllerTestConfigure {
 
         testTodoEntity = testLib.makeTodo(testUserEntity);
         log.info(" testTodoEntity : "+testTodoEntity.toString());
-        mockMvc.perform(get(getTodoBasedControllerUrl(UrlMapper.Todo.deleteTodo))
+        mockMvc.perform(get(UrlMapper.Todo.deleteTodo)
             .header(TOKEN_HEADER, jwt)
             .param("todoIdx", testTodoEntity.getIdx().toString()))
         .andDo(print())
