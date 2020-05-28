@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import com.drk.todolist.Config.Controller.UrlMapper;
 import com.drk.todolist.Config.Errors.RequestDataInvalidException;
 import com.drk.todolist.Config.Errors.UserDataInvalidException;
+import com.drk.todolist.Config.Errors.UserExistException;
 import com.drk.todolist.Services.User.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import com.drk.todolist.lib.ControllerLib;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,13 +37,11 @@ public class AuthController {
     @PostMapping(UrlMapper.Auth.signup)
     public boolean signup(HttpServletRequest request, @RequestBody @Valid UserDTO userDTO, Errors errors) {
         if (errors.hasErrors())
-            throw new RequestDataInvalidException(request.getParameterMap().toString(), UrlMapper.Auth.signup);
-        try{
-            return userService.signup(userDTO);
-        }catch(Exception e) {
-            log.error(e.getMessage());
-            return false;
-        }     
+            throw new RequestDataInvalidException(ControllerLib.getRequestBodyToString(request), UrlMapper.Auth.signup);
+        if(userService.signup(userDTO))
+            return true;
+        else
+            throw new UserExistException(ControllerLib.getRequestBodyToString(request), UrlMapper.Auth.signup);
     }
 
     @PostMapping(UrlMapper.Auth.signin)
