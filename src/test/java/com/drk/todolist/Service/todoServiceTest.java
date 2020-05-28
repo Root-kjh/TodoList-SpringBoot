@@ -48,7 +48,7 @@ public class TodoServiceTest extends ServiceTest{
     @Transactional
     public void deleteTodoTest() throws Exception {
         this.testTodoEntity = this.testLib.makeTodo(this.testUserEntity);
-        this.todoService.deleteTodo(this.testTodoEntity.getIdx(),this.testUserEntity);
+        this.todoService.deleteTodo(this.testTodoEntity.getIdx(),this.testUserEntity.getIdx());
         assertFalse(this.todoRepository.findById(this.testTodoEntity.getIdx()).isPresent());
     }
 

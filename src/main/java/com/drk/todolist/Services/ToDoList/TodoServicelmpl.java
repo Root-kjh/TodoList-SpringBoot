@@ -30,9 +30,8 @@ public class TodoServicelmpl implements TodoService{
     @Transactional
     public boolean checkTodoOwnership(Long todoIdx, Long userIdx) throws Exception {
         UserEntity userEntity = userRepository.findById(userIdx).get();
-        log.debug(userEntity.getTodoEntityList().toString());
         for (TodoEntity todoEntity : userEntity.getTodoEntityList()) {
-            if (todoEntity.getIdx()==todoIdx)
+            if (todoEntity.getIdx().equals(todoIdx))
                 return true;
         }
         return false;
@@ -60,8 +59,9 @@ public class TodoServicelmpl implements TodoService{
 
     @Override
     @Transactional
-    public boolean deleteTodo(Long todoIdx, UserEntity userEntity) throws Exception {
+    public boolean deleteTodo(Long todoIdx, Long userIdx) throws Exception {
         TodoEntity todoEntity = todoRepository.findById(todoIdx).get();
+        UserEntity userEntity = userRepository.findById(userIdx).get();
         userEntity.getTodoEntityList().remove(todoEntity);
         this.todoRepository.delete(todoEntity);
         userRepository.save(userEntity);

@@ -2,21 +2,16 @@ package com.drk.todolist.Controllers;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import com.drk.todolist.DTO.Todo.TodoDTO;
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Services.ToDoList.TodoService;
 import com.drk.todolist.Services.User.UserService;
 import com.drk.todolist.Config.Controller.UrlMapper;
-import com.drk.todolist.Config.Errors.RequestDataInvalidException;
 import com.drk.todolist.Config.Errors.UserDataInvalidException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -63,17 +58,18 @@ public class TodoController {
     }
 
     @GetMapping(UrlMapper.Todo.deleteTodo)
-    public boolean deleteTodo(HttpServletRequest request, Authentication authentication, @RequestParam Long todoIdx) {
+    public boolean deleteTodo(Authentication authentication, @RequestParam Long todoIdx) {
         try{
             userEntity = (UserEntity) authentication.getPrincipal();
             if(todoService.checkTodoOwnership(todoIdx, userEntity.getIdx()))
-                return todoService.deleteTodo(todoIdx, userEntity);
+                return todoService.deleteTodo(todoIdx, userEntity.getIdx());
             else
-                throw new UserDataInvalidException(request.getParameterMap().toString(), UrlMapper.Todo.deleteTodo);
+                throw new UserDataInvalidException(null, UrlMapper.Todo.deleteTodo);
         }catch (UserDataInvalidException | NullPointerException e){
-            throw new UserDataInvalidException(request.getParameterMap().toString(), UrlMapper.Todo.deleteTodo);
+            e.printStackTrace();
+            throw new UserDataInvalidException(null, UrlMapper.Todo.deleteTodo);
         }catch (Exception e){
-            log.error(e.fillInStackTrace().toString());
+            e.printStackTrace();
         }
 		return false;
     }
