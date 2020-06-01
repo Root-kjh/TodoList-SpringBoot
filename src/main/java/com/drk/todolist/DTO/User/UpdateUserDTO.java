@@ -9,11 +9,14 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class SigninDTO {
+public class UpdateUserDTO {
 
     @NotEmpty
-    private String userName;
-
+    private String newUserName;
+    
     @NotEmpty
-    private String password;
+    private String newPassword;
+    
+    @NotEmpty
+    private String newNickName;
 }

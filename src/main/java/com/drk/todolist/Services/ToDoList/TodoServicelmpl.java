@@ -3,8 +3,6 @@ package com.drk.todolist.Services.ToDoList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -17,7 +15,6 @@ import com.drk.todolist.Repositories.UserRepository;
 import com.drk.todolist.lib.VariablesLib;
 
 @Service
-@Slf4j
 public class TodoServicelmpl implements TodoService{
 
     @Autowired

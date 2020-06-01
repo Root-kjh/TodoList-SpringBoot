@@ -141,8 +141,8 @@ SpringBoot를 이용해 해당 웹을 구현할 것이다.
         * RequestDataInvalid
 
     * 회원정보수정
-        * UserDataInvalid
         * RequestDataInvalid
+        * UserExist
 
     * 회원탈퇴
         * UserDataInvalid
@@ -154,9 +154,6 @@ SpringBoot를 이용해 해당 웹을 구현할 것이다.
     
     * Todo 삭제
         * RequestDataInvalid
-        * UserDataInvalid
     
     * Todo 수정
         * RequestDataInvalid
-        * UserDataInvalid
-    

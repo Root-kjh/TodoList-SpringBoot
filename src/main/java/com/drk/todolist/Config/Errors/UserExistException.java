@@ -14,4 +14,6 @@ public class UserExistException extends RuntimeException{
     public UserExistException(String requestData, String url){
         this.errorConfig = new ErrorConfig(this.errorCode, requestData, url);
     }   
+
+    public UserExistException(){}
 }

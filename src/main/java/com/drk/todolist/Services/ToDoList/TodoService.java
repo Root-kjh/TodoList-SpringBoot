@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.drk.todolist.DTO.Todo.TodoDTO;
 import com.drk.todolist.Entitis.TodoEntity;
-import com.drk.todolist.Entitis.UserEntity;
 
 
 public interface TodoService {

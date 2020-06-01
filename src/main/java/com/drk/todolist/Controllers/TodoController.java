@@ -2,11 +2,14 @@ package com.drk.todolist.Controllers;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.drk.todolist.DTO.Todo.TodoDTO;
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Services.ToDoList.TodoService;
 import com.drk.todolist.Services.User.UserService;
+import com.drk.todolist.lib.ControllerLib;
 import com.drk.todolist.Config.Controller.UrlMapper;
 import com.drk.todolist.Config.Errors.UserDataInvalidException;
 
@@ -19,11 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.extern.slf4j.Slf4j;
-
 @RestController
 @CrossOrigin
-@Slf4j
 public class TodoController {
 
     @Autowired
@@ -58,28 +58,33 @@ public class TodoController {
     }
 
     @GetMapping(UrlMapper.Todo.deleteTodo)
-    public boolean deleteTodo(Authentication authentication, @RequestParam Long todoIdx) {
+    public boolean deleteTodo(HttpServletRequest request, Authentication authentication, @RequestParam Long todoIdx) {
         try{
             userEntity = (UserEntity) authentication.getPrincipal();
             if(todoService.checkTodoOwnership(todoIdx, userEntity.getIdx()))
                 return todoService.deleteTodo(todoIdx, userEntity.getIdx());
             else
-                throw new UserDataInvalidException(null, UrlMapper.Todo.deleteTodo);
-        }catch (UserDataInvalidException | NullPointerException e){
-            e.printStackTrace();
-            throw new UserDataInvalidException(null, UrlMapper.Todo.deleteTodo);
+                throw new UserDataInvalidException();
+        }catch (UserDataInvalidException e){
+            throw new UserDataInvalidException(ControllerLib.getRequestBodyToString(request), UrlMapper.Todo.deleteTodo);
         }catch (Exception e){
             e.printStackTrace();
+            return false;
         }
-		return false;
     }
     
     @PostMapping(UrlMapper.Todo.updateTodo)
-    public boolean updateTodo(Authentication authentication, @RequestBody TodoDTO newTodo){
+    public boolean updateTodo(HttpServletRequest request, Authentication authentication, @RequestBody TodoDTO newTodo){
         try{
             userEntity = (UserEntity) authentication.getPrincipal();
-            return (todoService.checkTodoOwnership(newTodo.getIdx(), userEntity.getIdx()) && todoService.updateTodo(newTodo.getIdx(), newTodo));
-        }catch (Exception e){
+            if (todoService.checkTodoOwnership(newTodo.getIdx(), userEntity.getIdx()))
+                return todoService.updateTodo(newTodo.getIdx(), newTodo);
+            else
+                throw new UserDataInvalidException();
+
+        } catch (UserDataInvalidException e){
+            throw new UserDataInvalidException(ControllerLib.getRequestBodyToString(request), UrlMapper.Todo.updateTodo);
+        } catch (Exception e){
             e.printStackTrace();
             return false;
         }

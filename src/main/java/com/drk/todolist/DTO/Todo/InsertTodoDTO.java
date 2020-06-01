@@ -1,4 +1,4 @@
-package com.drk.todolist.DTO.User;
+package com.drk.todolist.DTO.Todo;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -9,11 +9,11 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class SigninDTO {
+public class InsertTodoDTO {
 
     @NotEmpty
-    private String userName;
+    private String title;
 
     @NotEmpty
-    private String password;
+    private String context;
 }

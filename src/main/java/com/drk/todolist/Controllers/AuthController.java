@@ -15,18 +15,18 @@ import com.drk.todolist.Services.User.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import com.drk.todolist.lib.ControllerLib;
 
 @RestController
 @RequiredArgsConstructor
-@Slf4j
+@CrossOrigin
 public class AuthController {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -36,26 +36,39 @@ public class AuthController {
 
     @PostMapping(UrlMapper.Auth.signup)
     public boolean signup(HttpServletRequest request, @RequestBody @Valid UserDTO userDTO, Errors errors) {
-        if (errors.hasErrors())
-            throw new RequestDataInvalidException(ControllerLib.getRequestBodyToString(request), UrlMapper.Auth.signup);
-        if(userService.signup(userDTO))
-            return true;
-        else
-            throw new UserExistException(ControllerLib.getRequestBodyToString(request), UrlMapper.Auth.signup);
+        try{
+            if (errors.hasErrors())
+                throw new RequestDataInvalidException();
+            if(userService.signup(userDTO))
+                return true;
+            else
+                throw new UserExistException();
+        } catch (RequestDataInvalidException e){
+            throw new UserDataInvalidException(ControllerLib.getRequestBodyToString(request),UrlMapper.Auth.signup);
+        } catch (UserExistException e){
+            throw new UserExistException(ControllerLib.getRequestBodyToString(request),UrlMapper.Auth.signup);
+        } catch (Exception e){
+             e.printStackTrace();
+             return false;
+        }
     }
 
     @PostMapping(UrlMapper.Auth.signin)
     public String signin(HttpServletRequest request, @RequestBody @Valid SigninDTO signinDTO,Errors errors) {
-        if (errors.hasErrors())
-            throw new RequestDataInvalidException(request.getParameterMap().toString(), UrlMapper.Auth.signin);
         try{
+            if (errors.hasErrors())
+                throw new RequestDataInvalidException();
             if (userService.isCanLogin(signinDTO))
                 return jwtTokenProvider.coreateToken(signinDTO.getUserName());
             else
-                throw new UserDataInvalidException(request.getParameterMap().toString(), UrlMapper.Auth.signup);
-        }catch(Exception e) {
-            log.error(e.getMessage());
-            throw new UserDataInvalidException(request.getParameterMap().toString(), UrlMapper.Auth.signup);        
+                throw new UserDataInvalidException();
+        } catch (RequestDataInvalidException e){
+            throw new RequestDataInvalidException(ControllerLib.getRequestBodyToString(request),UrlMapper.Auth.signup);
+        } catch (UserDataInvalidException e){
+            throw new UserDataInvalidException(ControllerLib.getRequestBodyToString(request),UrlMapper.Auth.signup);
+        } catch(Exception e) {
+            e.printStackTrace();
+            return "false";
         }
     }
 }

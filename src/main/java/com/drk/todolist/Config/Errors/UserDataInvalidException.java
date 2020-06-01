@@ -14,4 +14,6 @@ public class UserDataInvalidException extends RuntimeException {
     public UserDataInvalidException(String requestData, String url){
         this.errorConfig = new ErrorConfig(this.errorCode, requestData, url);
     }
+
+    public UserDataInvalidException(){}
 }

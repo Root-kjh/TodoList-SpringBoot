@@ -2,6 +2,7 @@ package com.drk.todolist.Services.User;
 
 import javax.transaction.Transactional;
 
+import com.drk.todolist.Config.Errors.UserExistException;
 import com.drk.todolist.DTO.User.SigninDTO;
 import com.drk.todolist.DTO.User.UserDTO;
 import com.drk.todolist.Entitis.UserEntity;
@@ -56,8 +57,11 @@ public class UserServicelmpl implements UserService {
             loginedUser.setPassword(passwordEncoder.encode(newUserDTO.getPassword()));
         if (isSet(newUserDTO.getNickName()))
             loginedUser.setNickname(newUserDTO.getNickName());
-        if (isSet(newUserDTO.getUserName()) && !userRepository.isExistUser(newUserDTO.getUserName()))
-            loginedUser.setUsername(newUserDTO.getUserName());
+        if (isSet(newUserDTO.getUserName()))
+            if (userRepository.isExistUser(newUserDTO.getUserName()))
+                loginedUser.setUsername(newUserDTO.getUserName());
+            else
+                throw new UserExistException();
         
         userRepository.save(loginedUser);
         return loginedUser.getUsername();
