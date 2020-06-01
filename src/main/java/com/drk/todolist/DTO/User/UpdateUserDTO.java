@@ -15,8 +15,5 @@ public class UpdateUserDTO {
     private String newUserName;
     
     @NotEmpty
-    private String newPassword;
-    
-    @NotEmpty
     private String newNickName;
 }

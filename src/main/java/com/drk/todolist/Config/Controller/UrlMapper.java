@@ -12,6 +12,7 @@ public class UrlMapper {
         public final static String withdraw = baseUrl+"/withdraw";
         public final static String getUserInfo = baseUrl+"/get_user_info";
         public final static String updateUserInfo = baseUrl+"/update_user_info";
+        public final static String modifyPassword = baseUrl+"/modify_password";
     }
 
     public static class Todo{

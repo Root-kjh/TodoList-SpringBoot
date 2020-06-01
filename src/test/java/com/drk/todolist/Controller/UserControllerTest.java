@@ -1,5 +1,6 @@
 package com.drk.todolist.Controller;
 
+import com.drk.todolist.DTO.User.UpdateUserDTO;
 import com.drk.todolist.DTO.User.UserDTO;
 import com.drk.todolist.lib.TestLib;
 import com.drk.todolist.Config.Controller.UrlMapper;
@@ -94,14 +95,14 @@ public class UserControllerTest extends ControllerTestConfigure {
         this.testUserEntity = this.testLib.makeTestUser();
         String jwt = getJwt();
 
-        UserDTO newUserDTO = new UserDTO();
-        newUserDTO.setUserName(TestLib.newTestUser.name);
-        newUserDTO.setNickName(TestLib.newTestUser.nickName);
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+        updateUserDTO.setNewUserName(TestLib.newTestUser.name);
+        updateUserDTO.setNewNickName(TestLib.newTestUser.nickName);
 
         String newUserJwt = 
             mockMvc.perform(post(UrlMapper.User.updateUserInfo)
                 .header(TOKEN_HEADER, jwt)
-                .content(TestLib.asJsonString(newUserDTO))
+                .content(TestLib.asJsonString(updateUserDTO))
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
             .andExpect(status().isOk())
@@ -116,8 +117,8 @@ public class UserControllerTest extends ControllerTestConfigure {
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
         JSONObject userInfoJSONParsing = ((JSONObject) new JSONParser().parse(newUserInfoJson));
-        assertEquals(userInfoJSONParsing.get("userName"), newUserDTO.getUserName());
-        assertEquals(userInfoJSONParsing.get("nickName"), newUserDTO.getNickName());
+        assertEquals(userInfoJSONParsing.get("userName"), updateUserDTO.getNewUserName());
+        assertEquals(userInfoJSONParsing.get("nickName"), updateUserDTO.getNewNickName());
     }
 
     @Test

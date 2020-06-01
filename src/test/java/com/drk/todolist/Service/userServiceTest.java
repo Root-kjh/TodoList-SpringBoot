@@ -6,7 +6,7 @@ import javax.transaction.Transactional;
 
 import com.drk.todolist.Config.JWT.JwtTokenProvider;
 import com.drk.todolist.DTO.User.SigninDTO;
-import com.drk.todolist.DTO.User.UserDTO;
+import com.drk.todolist.DTO.User.SignupDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Services.JWT.JwtService;
 import com.drk.todolist.lib.TestLib;
@@ -31,17 +31,17 @@ public class UserServiceTest extends ServiceTest {
     @Test
     @Transactional
     public void signup() throws Exception {
-        UserDTO newUserDTO = new UserDTO();
-        newUserDTO.setUserName(TestLib.testUser.name);
-        newUserDTO.setNickName(TestLib.testUser.nickName);
-        newUserDTO.setPassword(TestLib.testUser.password);
-        this.userService.signup(newUserDTO);
+        SignupDTO signupDTO = new SignupDTO();
+        signupDTO.setUserName(TestLib.testUser.name);
+        signupDTO.setNickName(TestLib.testUser.nickName);
+        signupDTO.setPassword(TestLib.testUser.password);
+        this.userService.signup(signupDTO);
         this.testUserEntity = this.userRepository.findByUsername(TestLib.testUser.name);
         log.info("Signup User DTO");
-        log.info(newUserDTO.toString());
+        log.info(signupDTO.toString());
         log.info("Signup User Entity");
         log.info(this.testUserEntity.toString());
-        assertTrue(this.testLib.compareUserEntity(this.testUserEntity, newUserDTO));
+        assertTrue(this.testLib.compareUserEntity(this.testUserEntity, signupDTO));
     }
 
     @Test

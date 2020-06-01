@@ -2,7 +2,7 @@ package com.drk.todolist.Controllers;
 
 import com.drk.todolist.Config.JWT.JwtTokenProvider;
 import com.drk.todolist.DTO.User.SigninDTO;
-import com.drk.todolist.DTO.User.UserDTO;
+import com.drk.todolist.DTO.User.SignupDTO;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -35,11 +35,11 @@ public class AuthController {
     UserService userService;
 
     @PostMapping(UrlMapper.Auth.signup)
-    public boolean signup(HttpServletRequest request, @RequestBody @Valid UserDTO userDTO, Errors errors) {
+    public boolean signup(HttpServletRequest request, @RequestBody @Valid SignupDTO signupDTO, Errors errors) {
         try{
             if (errors.hasErrors())
                 throw new RequestDataInvalidException();
-            if(userService.signup(userDTO))
+            if(userService.signup(signupDTO))
                 return true;
             else
                 throw new UserExistException();

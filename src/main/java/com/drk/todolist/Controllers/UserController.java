@@ -1,9 +1,11 @@
 package com.drk.todolist.Controllers;
 
 import com.drk.todolist.Config.JWT.JwtTokenProvider;
+import com.drk.todolist.DTO.User.UpdateUserDTO;
 import com.drk.todolist.DTO.User.UserDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Services.User.UserService;
+import com.drk.todolist.lib.ControllerLib;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -70,11 +72,11 @@ public class UserController {
     }
 
     @PostMapping(UrlMapper.User.updateUserInfo)
-    public String updateUserInfo(HttpServletRequest request, Authentication authentication, @RequestBody UserDTO newUserDTO, Errors errors){
+    public String updateUserInfo(HttpServletRequest request, Authentication authentication, @RequestBody UpdateUserDTO updateUserDTO, Errors errors){
         try{
             if(errors.hasErrors())
                 throw new RequestDataInvalidException();
-            String newUsername = userService.userinfoUpdate((UserEntity) authentication.getPrincipal(), newUserDTO);
+            String newUsername = userService.userinfoUpdate((UserEntity) authentication.getPrincipal(), updateUserDTO);
             return jwtTokenProvider.coreateToken(newUsername);
         } catch (RequestDataInvalidException e){
             throw new RequestDataInvalidException();
@@ -84,5 +86,19 @@ public class UserController {
             e.printStackTrace();
             return "false";
         }              
+    }
+
+    @PostMapping(UrlMapper.User.modifyPassword)
+    public boolean modifyPassword(HttpServletRequest request, Authentication authentication, @RequestParam String newPassword, Errors errors){
+        try{
+            if (errors.hasErrors())
+                throw new RequestDataInvalidException();
+            return userService.modifyPassowrd((UserEntity) authentication.getPrincipal(), newPassword);
+        } catch (RequestDataInvalidException e){
+            throw new RequestDataInvalidException(ControllerLib.getRequestBodyToString(request),UrlMapper.User.modifyPassword);
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -7,12 +7,12 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import com.drk.todolist.DTO.Todo.TodoDTO;
+import com.drk.todolist.DTO.Todo.InsertTodoDTO;
+import com.drk.todolist.DTO.Todo.UpdateTodoDTO;
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.TodoRepository;
 import com.drk.todolist.Repositories.UserRepository;
-import com.drk.todolist.lib.VariablesLib;
 
 @Service
 public class TodoServicelmpl implements TodoService{
@@ -42,12 +42,12 @@ public class TodoServicelmpl implements TodoService{
 
     @Override
     @Transactional
-    public boolean insertTodo(Long userIdx, TodoDTO todo) throws Exception {
+    public boolean insertTodo(Long userIdx, InsertTodoDTO insertTodoDTO) throws Exception {
         UserEntity loginUser = userRepository.findById(userIdx).get();
         List<TodoEntity> todoList = loginUser.getTodoEntityList();
         TodoEntity new_todo = new TodoEntity();
-        new_todo.setTitle(todo.getTitle());
-        new_todo.setContext(todo.getContext());
+        new_todo.setTitle(insertTodoDTO.getTitle());
+        new_todo.setContext(insertTodoDTO.getContext());
         todoList.add(new_todo);
         loginUser.setTodoEntityList(todoList);
         userRepository.save(loginUser);
@@ -67,12 +67,11 @@ public class TodoServicelmpl implements TodoService{
 
     @Override
     @Transactional
-    public boolean updateTodo(Long todoIdx, TodoDTO newTodoDto) throws Exception {
-        TodoEntity todo = todoRepository.findById(todoIdx).get();
-        if (VariablesLib.isSet(newTodoDto.getTitle()))
-            todo.setTitle(newTodoDto.getTitle());
-        if (VariablesLib.isSet(newTodoDto.getContext()))
-            todo.setContext(newTodoDto.getContext());
+    public boolean updateTodo(UpdateTodoDTO updateTodoDTO) throws Exception {
+        TodoEntity todo = new TodoEntity();
+        todo.setIdx(updateTodoDTO.getIdx());
+        todo.setTitle(updateTodoDTO.getNewTitle());
+        todo.setContext(updateTodoDTO.getNewContext());
         todoRepository.save(todo);
         return true;
     }

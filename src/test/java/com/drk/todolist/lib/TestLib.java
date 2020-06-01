@@ -1,6 +1,9 @@
 package com.drk.todolist.lib;
 
+import com.drk.todolist.DTO.Todo.InsertTodoDTO;
 import com.drk.todolist.DTO.Todo.TodoDTO;
+import com.drk.todolist.DTO.Todo.UpdateTodoDTO;
+import com.drk.todolist.DTO.User.SignupDTO;
 import com.drk.todolist.DTO.User.UserDTO;
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
@@ -90,6 +93,20 @@ public class TestLib {
         return true;
     }
 
+    public boolean compareUserEntity(UserEntity userEntity, SignupDTO signupDTO) throws Exception {
+        if (!userEntity.getUsername().equals(signupDTO.getUserName()))
+            throw new Exception("userName is not equals");
+
+        if (!userEntity.getNickname().equals(signupDTO.getNickName()))
+            throw new Exception("userNickName is not equals");
+
+        if (!passwordEncoder.matches(signupDTO.getPassword(), userEntity.getPassword()))
+            throw new Exception("userPassword is not equals");
+
+        return true;
+    }
+
+
     public boolean compareTodoEntity(TodoEntity todoEntityA, TodoEntity todoEntityB) throws Exception {
         if (!todoEntityA.getTitle().equals(todoEntityB.getTitle()))
             throw new Exception("todoTitle is not equals");
@@ -105,6 +122,26 @@ public class TestLib {
             throw new Exception("todoTitle is not equals");
         
         if (!todoEntity.getContext().equals(todoDTO.getContext()))
+            throw new Exception("todoContext is not equals");
+        
+        return true;
+    }
+    
+    public boolean compareTodoEntity(TodoEntity todoEntity, InsertTodoDTO insertTodoDTO) throws Exception {
+        if (!todoEntity.getTitle().equals(insertTodoDTO.getTitle()))
+            throw new Exception("todoTitle is not equals");
+        
+        if (!todoEntity.getContext().equals(insertTodoDTO.getContext()))
+            throw new Exception("todoContext is not equals");
+        
+        return true;
+    }
+
+    public boolean compareTodoEntity(TodoEntity todoEntity, UpdateTodoDTO updateTodoDTO) throws Exception {
+        if (!todoEntity.getTitle().equals(updateTodoDTO.getNewTitle()))
+            throw new Exception("todoTitle is not equals");
+        
+        if (!todoEntity.getContext().equals(updateTodoDTO.getNewContext()))
             throw new Exception("todoContext is not equals");
         
         return true;
