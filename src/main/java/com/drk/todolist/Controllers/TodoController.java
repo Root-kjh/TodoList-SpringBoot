@@ -66,17 +66,13 @@ public class TodoController {
     }
 
     @GetMapping(UrlMapper.Todo.deleteTodo)
-    public boolean deleteTodo(HttpServletRequest request, Authentication authentication, @RequestParam @Valid Long todoIdx, Errors errors) {
+    public boolean deleteTodo(HttpServletRequest request, Authentication authentication, @RequestParam Long todoIdx) {
         try{
-            if (errors.hasErrors())
-                throw new RequestDataInvalidException();
             userEntity = (UserEntity) authentication.getPrincipal();
             if(todoService.checkTodoOwnership(todoIdx, userEntity.getIdx()))
                 return todoService.deleteTodo(todoIdx, userEntity.getIdx());
             else
                 throw new UserDataInvalidException();
-        } catch (RequestDataInvalidException e){
-            throw new RequestDataInvalidException(ControllerLib.getRequestBodyToString(request), UrlMapper.Todo.deleteTodo);
         } catch (UserDataInvalidException e){
             throw new UserDataInvalidException(ControllerLib.getRequestBodyToString(request), UrlMapper.Todo.deleteTodo);
         }catch (Exception e){

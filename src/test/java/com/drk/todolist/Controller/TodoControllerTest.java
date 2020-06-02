@@ -2,6 +2,7 @@ package com.drk.todolist.Controller;
 
 import com.drk.todolist.Config.Controller.UrlMapper;
 import com.drk.todolist.DTO.Todo.TodoDTO;
+import com.drk.todolist.DTO.Todo.UpdateTodoDTO;
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.lib.TestLib;
 
@@ -89,14 +90,14 @@ public class TodoControllerTest extends ControllerTestConfigure {
 
         log.info("before Update todo : "+testTodoEntity.toString());
 
-        TodoDTO newTodoDto = new TodoDTO(); 
-        newTodoDto.setIdx(testTodoEntity.getIdx());
-        newTodoDto.setTitle(TestLib.newTestTodo.title);
-        newTodoDto.setContext(TestLib.newTestTodo.context);
+        UpdateTodoDTO updateTodoDTO = new UpdateTodoDTO();
+        updateTodoDTO.setIdx(testTodoEntity.getIdx());
+        updateTodoDTO.setNewTitle(TestLib.newTestTodo.title);
+        updateTodoDTO.setNewContext(TestLib.newTestTodo.context);
 
         mockMvc.perform(post(UrlMapper.Todo.updateTodo)
             .header(TOKEN_HEADER, jwt)
-            .content(TestLib.asJsonString(newTodoDto))
+            .content(TestLib.asJsonString(updateTodoDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk())
@@ -104,7 +105,7 @@ public class TodoControllerTest extends ControllerTestConfigure {
         
         TodoEntity newTodoEntity = todoService.selectTodolist(testUserEntity.getIdx()).get(0);
         log.info("after Update todo : "+newTodoEntity.toString());
-        assertTrue(testLib.compareTodoEntity(newTodoEntity, newTodoDto));
+        assertTrue(testLib.compareTodoEntity(newTodoEntity, updateTodoDTO));
     }
 
     @Test
