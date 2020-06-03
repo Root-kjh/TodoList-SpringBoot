@@ -11,7 +11,6 @@ import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Services.ToDoList.TodoService;
 import com.drk.todolist.Services.User.UserService;
-import com.drk.todolist.lib.ControllerLib;
 import com.drk.todolist.Config.Controller.UrlMapper;
 import com.drk.todolist.Config.Errors.RequestDataInvalidException;
 import com.drk.todolist.Config.Errors.UserDataInvalidException;
@@ -40,65 +39,38 @@ public class TodoController {
 
     @GetMapping(UrlMapper.Todo.showTodoList)
     public List<TodoEntity> showTodoList(Authentication authentication){
-        try{
-            userEntity = (UserEntity) authentication.getPrincipal();
-            return todoService.selectTodolist(userEntity.getIdx());
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
+        userEntity = (UserEntity) authentication.getPrincipal();
+        return todoService.selectTodolist(userEntity.getIdx());
     }
 
     @PostMapping(UrlMapper.Todo.insertTodo)
-    public boolean insertTodo(HttpServletRequest request,Authentication authentication, @RequestBody @Valid InsertTodoDTO insertTodoDTO, Errors errors){
-        try{
-            if (errors.hasErrors())
-                throw new RequestDataInvalidException();
-            userEntity = (UserEntity) authentication.getPrincipal();
-            return todoService.insertTodo(userEntity.getIdx(), insertTodoDTO);
-        } catch (RequestDataInvalidException e){
-            throw new RequestDataInvalidException(ControllerLib.getRequestBodyToString(request), UrlMapper.Todo.insertTodo);
-        } catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
+    public boolean insertTodo(HttpServletRequest request,Authentication authentication, @RequestBody @Valid InsertTodoDTO insertTodoDTO, Errors errors)
+            throws RequestDataInvalidException{
+        if (errors.hasErrors())
+            throw new RequestDataInvalidException("잘못된 요청 값", request, UrlMapper.Todo.insertTodo);
+        userEntity = (UserEntity) authentication.getPrincipal();
+        return todoService.insertTodo(userEntity.getIdx(), insertTodoDTO);
     }
 
     @GetMapping(UrlMapper.Todo.deleteTodo)
-    public boolean deleteTodo(HttpServletRequest request, Authentication authentication, @RequestParam Long todoIdx) {
-        try{
-            userEntity = (UserEntity) authentication.getPrincipal();
-            if(todoService.checkTodoOwnership(todoIdx, userEntity.getIdx()))
-                return todoService.deleteTodo(todoIdx, userEntity.getIdx());
-            else
-                throw new UserDataInvalidException();
-        } catch (UserDataInvalidException e){
-            throw new UserDataInvalidException(ControllerLib.getRequestBodyToString(request), UrlMapper.Todo.deleteTodo);
-        }catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
+    public boolean deleteTodo(HttpServletRequest request, Authentication authentication, @RequestParam Long todoIdx) 
+            throws UserDataInvalidException{
+        userEntity = (UserEntity) authentication.getPrincipal();
+        if(todoService.checkTodoOwnership(todoIdx, userEntity.getIdx()))
+            return todoService.deleteTodo(todoIdx, userEntity.getIdx());
+        else
+            throw new UserDataInvalidException("해당 Todo에 대한 접근권한 없음", request, UrlMapper.Todo.deleteTodo);
     }
     
     @PostMapping(UrlMapper.Todo.updateTodo)
-    public boolean updateTodo(HttpServletRequest request, Authentication authentication, @RequestBody @Valid UpdateTodoDTO updateTodoDTO, Errors errors){
-        try{
-            if (errors.hasErrors())
-                throw new RequestDataInvalidException();
-            userEntity = (UserEntity) authentication.getPrincipal();
-            if (todoService.checkTodoOwnership(updateTodoDTO.getIdx(), userEntity.getIdx()))
-                return todoService.updateTodo(updateTodoDTO);
-            else
-                throw new UserDataInvalidException();
-
-        } catch (RequestDataInvalidException e){
-            throw new RequestDataInvalidException(ControllerLib.getRequestBodyToString(request), UrlMapper.Todo.updateTodo);
-        } catch (UserDataInvalidException e){
-            throw new UserDataInvalidException(ControllerLib.getRequestBodyToString(request), UrlMapper.Todo.updateTodo);
-        } catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
+    public boolean updateTodo(HttpServletRequest request, Authentication authentication, @RequestBody @Valid UpdateTodoDTO updateTodoDTO, Errors errors)
+            throws RequestDataInvalidException, UserDataInvalidException{
+        if (errors.hasErrors())
+            throw new RequestDataInvalidException();
+        userEntity = (UserEntity) authentication.getPrincipal();
+        if (todoService.checkTodoOwnership(updateTodoDTO.getIdx(), userEntity.getIdx()))
+            return todoService.updateTodo(updateTodoDTO);
+        else
+            throw new UserDataInvalidException("해당Todo에 대한 접근권한 없음", request, UrlMapper.Todo.updateTodo);
     }
 }

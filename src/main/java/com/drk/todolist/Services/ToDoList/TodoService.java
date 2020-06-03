@@ -8,9 +8,9 @@ import com.drk.todolist.Entitis.TodoEntity;
 
 
 public interface TodoService {
-    public List<TodoEntity> selectTodolist(Long userIdx) throws Exception;
-    public boolean insertTodo(Long userIdx, InsertTodoDTO insertTodoDTO) throws Exception;
-    public boolean deleteTodo(Long todoIdx, Long userIdx) throws Exception;
-    public boolean updateTodo(UpdateTodoDTO updateTodoDTO) throws Exception;
-    public boolean checkTodoOwnership(Long todoIdx, Long userIdx) throws Exception;
+    public List<TodoEntity> selectTodolist(Long userIdx);
+    public boolean insertTodo(Long userIdx, InsertTodoDTO insertTodoDTO);
+    public boolean deleteTodo(Long todoIdx, Long userIdx);
+    public boolean updateTodo(UpdateTodoDTO updateTodoDTO);
+    public boolean checkTodoOwnership(Long todoIdx, Long userIdx);
 }

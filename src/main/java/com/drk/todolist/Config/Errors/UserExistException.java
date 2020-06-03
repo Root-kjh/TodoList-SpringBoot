@@ -1,19 +1,19 @@
 package com.drk.todolist.Config.Errors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import lombok.Getter;
 
 @Getter
-public class UserExistException extends RuntimeException{
+public class UserExistException extends BusinessException{
     
+    private static final long serialVersionUID = 1L;
     final private String errorMessage = "UserExist";
     final private int errorCode = 406;
 
-    @Getter
-    private ErrorConfig errorConfig;
-
-    public UserExistException(String requestData, String url){
-        this.errorConfig = new ErrorConfig(this.errorCode, requestData, url);
-    }   
-
     public UserExistException(){}
+
+    public UserExistException(String info, HttpServletRequest request, String url){
+        super(info, request, url);
+    }   
 }

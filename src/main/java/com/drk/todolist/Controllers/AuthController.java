@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
-import com.drk.todolist.lib.ControllerLib;
-
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin
@@ -35,40 +33,30 @@ public class AuthController {
     UserService userService;
 
     @PostMapping(UrlMapper.Auth.signup)
-    public boolean signup(HttpServletRequest request, @RequestBody @Valid SignupDTO signupDTO, Errors errors) {
+    public boolean signup(HttpServletRequest request, @RequestBody @Valid SignupDTO signupDTO, Errors errors)
+            throws RequestDataInvalidException, UserExistException {
+        boolean isSignUp;
+        if (errors.hasErrors())
+            throw new RequestDataInvalidException("잘못된 요청 값", request, UrlMapper.Auth.signup);
         try{
-            if (errors.hasErrors())
-                throw new RequestDataInvalidException();
-            if(userService.signup(signupDTO))
-                return true;
-            else
-                throw new UserExistException();
-        } catch (RequestDataInvalidException e){
-            throw new UserDataInvalidException(ControllerLib.getRequestBodyToString(request),UrlMapper.Auth.signup);
+            isSignUp = userService.signup(signupDTO);
         } catch (UserExistException e){
-            throw new UserExistException(ControllerLib.getRequestBodyToString(request),UrlMapper.Auth.signup);
-        } catch (Exception e){
-             e.printStackTrace();
-             return false;
+            throw new UserExistException("이미 존재하는 유저", request, UrlMapper.Auth.signup);
         }
+        if (isSignUp)
+            return true;
+        else
+            return false;
     }
 
     @PostMapping(UrlMapper.Auth.signin)
-    public String signin(HttpServletRequest request, @RequestBody @Valid SigninDTO signinDTO,Errors errors) {
-        try{
-            if (errors.hasErrors())
-                throw new RequestDataInvalidException();
-            if (userService.isCanLogin(signinDTO))
-                return jwtTokenProvider.coreateToken(signinDTO.getUserName());
-            else
-                throw new UserDataInvalidException();
-        } catch (RequestDataInvalidException e){
-            throw new RequestDataInvalidException(ControllerLib.getRequestBodyToString(request),UrlMapper.Auth.signup);
-        } catch (UserDataInvalidException e){
-            throw new UserDataInvalidException(ControllerLib.getRequestBodyToString(request),UrlMapper.Auth.signup);
-        } catch(Exception e) {
-            e.printStackTrace();
-            return "false";
-        }
+    public String signin(HttpServletRequest request, @RequestBody @Valid SigninDTO signinDTO,Errors errors) 
+            throws RequestDataInvalidException, UserDataInvalidException{
+        if (errors.hasErrors())
+            throw new RequestDataInvalidException("잘못된 요청 값", request, UrlMapper.Auth.signin);
+        if (userService.isCanLogin(signinDTO))
+            return jwtTokenProvider.coreateToken(signinDTO.getUserName());
+        else
+            throw new UserDataInvalidException("로그인 실패", request, UrlMapper.Auth.signin);
     }
 }

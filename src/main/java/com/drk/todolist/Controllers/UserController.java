@@ -2,16 +2,14 @@ package com.drk.todolist.Controllers;
 
 import com.drk.todolist.Config.JWT.JwtTokenProvider;
 import com.drk.todolist.DTO.User.UpdateUserDTO;
-import com.drk.todolist.DTO.User.UserDTO;
+import com.drk.todolist.DTO.User.UserInfoDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Services.User.UserService;
-import com.drk.todolist.lib.ControllerLib;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.drk.todolist.Config.Controller.UrlMapper;
 import com.drk.todolist.Config.Errors.RequestDataInvalidException;
-import com.drk.todolist.Config.Errors.UserDataInvalidException;
 import com.drk.todolist.Config.Errors.UserExistException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,64 +39,50 @@ public class UserController {
     private UserEntity userEntity;
 
     @PostMapping(UrlMapper.User.withdraw)
-    public boolean withdraw(HttpServletRequest request, Authentication authentication, @RequestParam String password, Errors errors){
-        try{
-            if(errors.hasErrors())
-                throw new RequestDataInvalidException();
-            userEntity = (UserEntity) authentication.getPrincipal();
-            return userService.userinfoDelete(userEntity, password);
-        }catch (NullPointerException e) {
-            throw new UserDataInvalidException(request.getParameterMap().toString(), UrlMapper.User.withdraw);
-        }catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
+    public boolean withdraw(
+            Authentication authentication, 
+            @RequestParam String password){
+        userEntity = (UserEntity) authentication.getPrincipal();
+        return userService.userinfoDelete(userEntity, password);
     }
 
     @GetMapping(UrlMapper.User.getUserInfo)
-    public UserDTO getUserInfo(HttpServletRequest request, Authentication authentication){
-        UserDTO userDTO = new UserDTO();
-        try{
-            userEntity = (UserEntity) authentication.getPrincipal();
-            userDTO.setNickName(userEntity.getNickname());
-            userDTO.setUserName(userEntity.getUsername());
-            return userDTO;
-        } catch(NullPointerException e) {
-            throw new UserDataInvalidException(request.getParameterMap().toString(), UrlMapper.User.getUserInfo);
-        } catch(Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public UserInfoDTO getUserInfo(
+            HttpServletRequest request, 
+            Authentication authentication){
+        UserInfoDTO userInfoDTO = new UserInfoDTO();
+        userEntity = (UserEntity) authentication.getPrincipal();
+        userInfoDTO.setNickName(userEntity.getNickname());
+        userInfoDTO.setUserName(userEntity.getUsername());
+        return userInfoDTO;
     }
 
     @PostMapping(UrlMapper.User.updateUserInfo)
-    public String updateUserInfo(HttpServletRequest request, Authentication authentication, @RequestBody UpdateUserDTO updateUserDTO, Errors errors){
+    public String updateUserInfo(
+            HttpServletRequest request, 
+            Authentication authentication, 
+            @RequestBody UpdateUserDTO updateUserDTO, 
+            Errors errors)
+            throws RequestDataInvalidException, UserExistException{
+        if(errors.hasErrors())
+            throw new RequestDataInvalidException("잘못된 요청 값", request, UrlMapper.User.updateUserInfo);
         try{
-            if(errors.hasErrors())
-                throw new RequestDataInvalidException();
             String newUsername = userService.userinfoUpdate((UserEntity) authentication.getPrincipal(), updateUserDTO);
             return jwtTokenProvider.coreateToken(newUsername);
-        } catch (RequestDataInvalidException e){
-            throw new RequestDataInvalidException();
-        } catch (UserExistException e) {
-            throw new UserExistException();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "false";
-        }              
+        } catch (UserExistException e){
+            throw new UserExistException("이미 존재하는 username", request, UrlMapper.User.updateUserInfo);
+        }
     }
 
     @PostMapping(UrlMapper.User.modifyPassword)
-    public boolean modifyPassword(HttpServletRequest request, Authentication authentication, @RequestParam String newPassword, Errors errors){
-        try{
-            if (errors.hasErrors())
-                throw new RequestDataInvalidException();
-            return userService.modifyPassowrd((UserEntity) authentication.getPrincipal(), newPassword);
-        } catch (RequestDataInvalidException e){
-            throw new RequestDataInvalidException(ControllerLib.getRequestBodyToString(request),UrlMapper.User.modifyPassword);
-        } catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
+    public boolean modifyPassword(
+            HttpServletRequest request, 
+            Authentication authentication, 
+            @RequestParam String newPassword, 
+            Errors errors)
+            throws RequestDataInvalidException{
+        if (errors.hasErrors())
+            throw new RequestDataInvalidException("잘못된 요청 값", request, UrlMapper.User.modifyPassword);
+        return userService.modifyPassowrd((UserEntity) authentication.getPrincipal(), newPassword);
     }
 }

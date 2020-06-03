@@ -15,19 +15,19 @@ public class ErrorController{
     
     @ExceptionHandler(UserDataInvalidException.class)
     public String userDataInvalidException(UserDataInvalidException exception) {
-        log.error(exception.getErrorConfig().toString());
+        log.error(exception.getMessage());
         return exception.getErrorMessage();
     }
 
     @ExceptionHandler(RequestDataInvalidException.class)
     public String requestDataInvalidException(RequestDataInvalidException exception) {
-        log.error(exception.getErrorConfig().toString());
+        log.error(exception.getMessage());
         return exception.getErrorMessage();
     }
 
     @ExceptionHandler(UserExistException.class)
     public String requestDataInvalidException(UserExistException exception) {
-        log.error(exception.getErrorConfig().toString());
+        log.error(exception.getMessage());
         return exception.getErrorMessage();
     }
 }

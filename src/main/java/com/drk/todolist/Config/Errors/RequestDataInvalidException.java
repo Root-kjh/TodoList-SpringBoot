@@ -1,19 +1,20 @@
 package com.drk.todolist.Config.Errors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import lombok.Getter;
 
 @Getter
-public class RequestDataInvalidException extends RuntimeException{
+public class RequestDataInvalidException extends BusinessException{
     
+    private static final long serialVersionUID = 1L;
     final private String errorMessage = "RequestDataInvalid";
     final private int errorCode = 405;
 
-    @Getter
-    private ErrorConfig errorConfig;
-
-    public RequestDataInvalidException(String requestData, String url){
-        this.errorConfig = new ErrorConfig(this.errorCode, requestData, url);
+    public RequestDataInvalidException(){}
+    
+    public RequestDataInvalidException(String info, HttpServletRequest request, String url){
+        super(info, request, url);
     }   
 
-    public RequestDataInvalidException(){}
 }

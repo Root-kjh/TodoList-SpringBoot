@@ -13,6 +13,7 @@ import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.TodoRepository;
 import com.drk.todolist.Repositories.UserRepository;
+import com.drk.todolist.lib.LogLib;
 
 @Service
 public class TodoServicelmpl implements TodoService{
@@ -25,54 +26,84 @@ public class TodoServicelmpl implements TodoService{
 
     @Override
     @Transactional
-    public boolean checkTodoOwnership(Long todoIdx, Long userIdx) throws Exception {
-        UserEntity userEntity = userRepository.findById(userIdx).get();
-        for (TodoEntity todoEntity : userEntity.getTodoEntityList()) {
-            if (todoEntity.getIdx().equals(todoIdx))
-                return true;
+    public boolean checkTodoOwnership(Long todoIdx, Long userIdx) {
+        try{
+            UserEntity userEntity = userRepository.findById(userIdx).get();
+            for (TodoEntity todoEntity : userEntity.getTodoEntityList()) {
+                if (todoEntity.getIdx().equals(todoIdx))
+                    return true;
+            }
+        } catch (Exception e){
+            String errorMsg = "todoIdx : "+todoIdx.toString()+", userIdx : "+userIdx.toString();
+            LogLib.ErrorLogging(errorMsg, e);
+            return false;
         }
         return false;
     }
 
     @Override
     @Transactional
-    public List<TodoEntity> selectTodolist(Long userIdx) throws Exception {
-        return userRepository.findById(userIdx).get().getTodoEntityList();
+    public List<TodoEntity> selectTodolist(Long userIdx) {
+        try{
+            return userRepository.findById(userIdx).get().getTodoEntityList();
+        } catch (Exception e){
+            String errorMsg = "userIdx : "+userIdx.toString();
+            LogLib.ErrorLogging(errorMsg, e);
+            return null;
+        }
     }
 
     @Override
     @Transactional
-    public boolean insertTodo(Long userIdx, InsertTodoDTO insertTodoDTO) throws Exception {
-        UserEntity loginUser = userRepository.findById(userIdx).get();
-        List<TodoEntity> todoList = loginUser.getTodoEntityList();
-        TodoEntity new_todo = new TodoEntity();
-        new_todo.setTitle(insertTodoDTO.getTitle());
-        new_todo.setContext(insertTodoDTO.getContext());
-        todoList.add(new_todo);
-        loginUser.setTodoEntityList(todoList);
-        userRepository.save(loginUser);
-        return true;
+    public boolean insertTodo(Long userIdx, InsertTodoDTO insertTodoDTO) {
+        try{
+            UserEntity loginUser = userRepository.findById(userIdx).get();
+            List<TodoEntity> todoList = loginUser.getTodoEntityList();
+            TodoEntity new_todo = new TodoEntity();
+            new_todo.setTitle(insertTodoDTO.getTitle());
+            new_todo.setContext(insertTodoDTO.getContext());
+            todoList.add(new_todo);
+            loginUser.setTodoEntityList(todoList);
+            userRepository.save(loginUser);
+            return true;
+        } catch(Exception e) {
+            String errorMsg = "userIdx : "+userIdx.toString()+", InserTodoDTO : "+insertTodoDTO.toString();
+            LogLib.ErrorLogging(errorMsg, e);
+            return false;
+        }
     }
 
     @Override
     @Transactional
-    public boolean deleteTodo(Long todoIdx, Long userIdx) throws Exception {
-        TodoEntity todoEntity = todoRepository.findById(todoIdx).get();
-        UserEntity userEntity = userRepository.findById(userIdx).get();
-        userEntity.getTodoEntityList().remove(todoEntity);
-        this.todoRepository.delete(todoEntity);
-        userRepository.save(userEntity);
-        return true;
+    public boolean deleteTodo(Long todoIdx, Long userIdx) {
+        try{
+            TodoEntity todoEntity = todoRepository.findById(todoIdx).get();
+            UserEntity userEntity = userRepository.findById(userIdx).get();
+            userEntity.getTodoEntityList().remove(todoEntity);
+            this.todoRepository.delete(todoEntity);
+            userRepository.save(userEntity);
+            return true;
+        } catch (Exception e){
+            String errorMsg = "todoIdx : "+todoIdx.toString()+", userIdx : "+userIdx.toString();
+            LogLib.ErrorLogging(errorMsg, e);
+            return false;
+        }
     }
 
     @Override
     @Transactional
-    public boolean updateTodo(UpdateTodoDTO updateTodoDTO) throws Exception {
+    public boolean updateTodo(UpdateTodoDTO updateTodoDTO) {
+        try{
         TodoEntity todo = new TodoEntity();
         todo.setIdx(updateTodoDTO.getIdx());
         todo.setTitle(updateTodoDTO.getNewTitle());
         todo.setContext(updateTodoDTO.getNewContext());
         todoRepository.save(todo);
         return true;
+        } catch (Exception e){
+            String errorMsg = "updateTodoDTO : "+updateTodoDTO.toString();
+            LogLib.ErrorLogging(errorMsg, e);
+            return false;
+        }
     }
 }
