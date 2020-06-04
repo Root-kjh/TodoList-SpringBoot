@@ -31,10 +31,6 @@ public class UserServicelmpl implements UserService {
     @Autowired
     AuthenticationManager authenticationManager;
 
-    public boolean isSet(Object object) {
-        return object != null;
-    }
-
     public boolean isExistUser(String user_name) {
         return userRepository.isExistUser(user_name);
     }
@@ -58,13 +54,16 @@ public class UserServicelmpl implements UserService {
     }
 
     @Override
-    public String userinfoUpdate(UserEntity loginedUser, UpdateUserDTO updateUserDTO) throws UserExistException{
-        loginedUser.setNickname(updateUserDTO.getNewNickName());
+    public String userinfoUpdate(UserEntity loginedUser, UpdateUserDTO updateUserDTO) 
+            throws UserExistException{
         if (!loginedUser.getUsername().equals(updateUserDTO.getNewUserName()))
             if (userRepository.isExistUser(updateUserDTO.getNewUserName()))
                 throw new UserExistException();
             else
                 loginedUser.setUsername(updateUserDTO.getNewUserName());
+
+        loginedUser.setNickname(updateUserDTO.getNewNickName());
+        
         try{
             userRepository.save(loginedUser);
             return loginedUser.getUsername();

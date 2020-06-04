@@ -61,7 +61,7 @@ public class UserRepoTest extends RepositoryTest{
         this.testUserEntity = testLib.makeTestUser();
         log.info(String.format("testUser Idx : %d",this.testUserEntity.getIdx()));
         this.userRepository.deleteById(this.testUserEntity.getIdx());
-        final boolean isUserSelected = this.userRepository.findById(this.testUserEntity.getIdx()).isPresent();
-        assertFalse(isUserSelected);
+        final boolean isUserExist = this.userRepository.findById(this.testUserEntity.getIdx()).isPresent();
+        assertFalse(isUserExist);
     }
 }

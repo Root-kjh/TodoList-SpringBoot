@@ -1,4 +1,4 @@
-package com.drk.todolist.Service;
+package com.drk.todolist.Service.Basic;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 import com.drk.todolist.DTO.Todo.InsertTodoDTO;
 import com.drk.todolist.DTO.Todo.UpdateTodoDTO;
 import com.drk.todolist.Entitis.TodoEntity;
+import com.drk.todolist.Service.ServiceTestConfigure;
 import com.drk.todolist.lib.TestLib;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-public class TodoServiceTest extends ServiceTest{
+public class TodoServiceTest extends ServiceTestConfigure {
 
     @BeforeEach
     public void makeTestUser() throws Exception{

@@ -75,14 +75,7 @@ public class UserController {
     }
 
     @PostMapping(UrlMapper.User.modifyPassword)
-    public boolean modifyPassword(
-            HttpServletRequest request, 
-            Authentication authentication, 
-            @RequestParam String newPassword, 
-            Errors errors)
-            throws RequestDataInvalidException{
-        if (errors.hasErrors())
-            throw new RequestDataInvalidException("잘못된 요청 값", request, UrlMapper.User.modifyPassword);
+    public boolean modifyPassword(Authentication authentication, @RequestParam String newPassword){
         return userService.modifyPassowrd((UserEntity) authentication.getPrincipal(), newPassword);
     }
 }

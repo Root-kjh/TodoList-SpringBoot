@@ -1,9 +1,11 @@
-package com.drk.todolist.Controller;
+package com.drk.todolist.Controller.Basic;
 
+import com.drk.todolist.DTO.User.SigninDTO;
 import com.drk.todolist.DTO.User.UpdateUserDTO;
 import com.drk.todolist.DTO.User.UserDTO;
 import com.drk.todolist.lib.TestLib;
 import com.drk.todolist.Config.Controller.UrlMapper;
+import com.drk.todolist.Controller.ControllerTestConfigure;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -132,5 +134,24 @@ public class UserControllerTest extends ControllerTestConfigure {
         .andExpect(content().string("true"));
 
         assertNull(userRepository.findByUsername(TestLib.testUser.name));
+    }
+
+    @Test
+    public void modifyPassword() throws Exception {
+        this.testUserEntity = this.testLib.makeTestUser();
+        String jwt = this.getJwt();
+        this.mockMvc.perform(post(UrlMapper.User.modifyPassword)
+            .header(TOKEN_HEADER, jwt)
+            .param("newPassword", TestLib.newTestUser.password))
+            .andExpect(status().isOk())
+            .andExpect(content().string("true"));
+
+        SigninDTO signinDTO = new SigninDTO();
+        signinDTO.setUserName(TestLib.testUser.name);
+        signinDTO.setPassword(TestLib.newTestUser.password);
+        log.info("signinDTO");
+        log.info(signinDTO.toString());
+
+        assertTrue(this.userService.isCanLogin(signinDTO));
     }
 }

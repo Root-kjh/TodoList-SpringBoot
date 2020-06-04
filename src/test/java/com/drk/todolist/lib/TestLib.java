@@ -4,6 +4,7 @@ import com.drk.todolist.DTO.Todo.InsertTodoDTO;
 import com.drk.todolist.DTO.Todo.TodoDTO;
 import com.drk.todolist.DTO.Todo.UpdateTodoDTO;
 import com.drk.todolist.DTO.User.SignupDTO;
+import com.drk.todolist.DTO.User.UpdateUserDTO;
 import com.drk.todolist.DTO.User.UserDTO;
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
@@ -106,6 +107,15 @@ public class TestLib {
         return true;
     }
 
+    public boolean compareUserEntity(UserEntity userEntity, UpdateUserDTO updateUserDTO) throws Exception {
+        if (!userEntity.getUsername().equals(updateUserDTO.getNewUserName()))
+            throw new Exception("userName is not equals");
+
+        if (!userEntity.getNickname().equals(updateUserDTO.getNewNickName()))
+            throw new Exception("userNickName is not equals");
+
+        return true;
+    }
 
     public boolean compareTodoEntity(TodoEntity todoEntityA, TodoEntity todoEntityB) throws Exception {
         if (!todoEntityA.getTitle().equals(todoEntityB.getTitle()))

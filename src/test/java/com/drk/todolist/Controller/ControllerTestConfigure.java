@@ -26,29 +26,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ControllerTestConfigure {
 
     @Autowired
-    MockMvc mockMvc;
+    protected MockMvc mockMvc;
 
     @Autowired
-    UserService userService;
+    protected UserService userService;
 
     @Autowired
-    TodoService todoService;
+    protected TodoService todoService;
 
     @Autowired
-    UserRepository userRepository;
+    protected UserRepository userRepository;
 
     @Autowired
-    TodoRepository todoRepository;
+    protected TodoRepository todoRepository;
 
-    UserEntity testUserEntity;
-    TodoEntity testTodoEntity;
+    protected UserEntity testUserEntity;
+    protected TodoEntity testTodoEntity;
 
-    SigninDTO signinDTO;
-    TodoDTO todoDTO;
+    protected SigninDTO signinDTO;
+    protected TodoDTO todoDTO;
 
-    TestLib testLib;
+    protected TestLib testLib;
 
-    final static String TOKEN_HEADER = "X-AUTH-TOKEN";
+    protected final static String TOKEN_HEADER = "X-AUTH-TOKEN";
 
     @BeforeEach
     public void settingLibs(){

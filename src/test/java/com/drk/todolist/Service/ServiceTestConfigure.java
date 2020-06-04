@@ -12,24 +12,24 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ServiceTest {
+public class ServiceTestConfigure {
 
     @Autowired
-    UserService userService;
+    protected UserService userService;
 
     @Autowired
-    TodoService todoService;
+    protected TodoService todoService;
 
     @Autowired
-    UserRepository userRepository;
+    protected UserRepository userRepository;
 
     @Autowired
-    TodoRepository todoRepository;
+    protected TodoRepository todoRepository;
 
-    UserEntity testUserEntity;
-    TodoEntity testTodoEntity;
+    protected UserEntity testUserEntity;
+    protected TodoEntity testTodoEntity;
 
-    TestLib testLib;
+    protected TestLib testLib;
 
     @BeforeEach
     public void settingLibs(){
