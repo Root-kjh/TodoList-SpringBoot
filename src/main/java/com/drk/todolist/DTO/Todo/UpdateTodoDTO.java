@@ -1,6 +1,5 @@
 package com.drk.todolist.DTO.Todo;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
@@ -15,9 +14,9 @@ public class UpdateTodoDTO {
     @NotNull
     private Long idx;
 
-    @NotEmpty
+    @NotNull
     private String newTitle;
 
-    @NotEmpty
+    @NotNull
     private String newContext;
 }

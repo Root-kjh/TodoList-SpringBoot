@@ -44,7 +44,11 @@ public class TodoController {
     }
 
     @PostMapping(UrlMapper.Todo.insertTodo)
-    public boolean insertTodo(HttpServletRequest request,Authentication authentication, @RequestBody @Valid InsertTodoDTO insertTodoDTO, Errors errors)
+    public boolean insertTodo(
+            HttpServletRequest request,
+            Authentication authentication, 
+            @RequestBody @Valid InsertTodoDTO insertTodoDTO, 
+            Errors errors)
             throws RequestDataInvalidException{
         if (errors.hasErrors())
             throw new RequestDataInvalidException("잘못된 요청 값", request, UrlMapper.Todo.insertTodo);
@@ -53,8 +57,11 @@ public class TodoController {
     }
 
     @GetMapping(UrlMapper.Todo.deleteTodo)
-    public boolean deleteTodo(HttpServletRequest request, Authentication authentication, @RequestParam Long todoIdx) 
-            throws UserDataInvalidException{
+    public boolean deleteTodo(
+            HttpServletRequest request,
+            Authentication authentication, 
+            @RequestParam Long todoIdx) 
+                throws UserDataInvalidException{
         userEntity = (UserEntity) authentication.getPrincipal();
         if(todoService.checkTodoOwnership(todoIdx, userEntity.getIdx()))
             return todoService.deleteTodo(todoIdx, userEntity.getIdx());
@@ -63,8 +70,12 @@ public class TodoController {
     }
     
     @PostMapping(UrlMapper.Todo.updateTodo)
-    public boolean updateTodo(HttpServletRequest request, Authentication authentication, @RequestBody @Valid UpdateTodoDTO updateTodoDTO, Errors errors)
-            throws RequestDataInvalidException, UserDataInvalidException{
+    public boolean updateTodo(
+            HttpServletRequest request, 
+            Authentication authentication, 
+            @RequestBody @Valid UpdateTodoDTO updateTodoDTO, 
+            Errors errors)
+                throws RequestDataInvalidException, UserDataInvalidException{
         if (errors.hasErrors())
             throw new RequestDataInvalidException();
         userEntity = (UserEntity) authentication.getPrincipal();

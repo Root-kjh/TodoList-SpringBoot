@@ -7,6 +7,7 @@ import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Services.User.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import com.drk.todolist.Config.Controller.UrlMapper;
 import com.drk.todolist.Config.Errors.RequestDataInvalidException;
@@ -48,7 +49,6 @@ public class UserController {
 
     @GetMapping(UrlMapper.User.getUserInfo)
     public UserInfoDTO getUserInfo(
-            HttpServletRequest request, 
             Authentication authentication){
         UserInfoDTO userInfoDTO = new UserInfoDTO();
         userEntity = (UserEntity) authentication.getPrincipal();
@@ -61,7 +61,7 @@ public class UserController {
     public String updateUserInfo(
             HttpServletRequest request, 
             Authentication authentication, 
-            @RequestBody UpdateUserDTO updateUserDTO, 
+            @RequestBody @Valid UpdateUserDTO updateUserDTO, 
             Errors errors)
             throws RequestDataInvalidException, UserExistException{
         if(errors.hasErrors())

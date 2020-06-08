@@ -1,6 +1,6 @@
 package com.drk.todolist.DTO.User;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,9 +11,9 @@ import lombok.ToString;
 @ToString
 public class UpdateUserDTO {
 
-    @NotEmpty
+    @NotNull
     private String newUserName;
     
-    @NotEmpty
+    @NotNull
     private String newNickName;
 }

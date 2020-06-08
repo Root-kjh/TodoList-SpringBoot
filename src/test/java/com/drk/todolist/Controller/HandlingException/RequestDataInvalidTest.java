@@ -1,0 +1,119 @@
+package com.drk.todolist.Controller.HandlingException;
+
+import com.drk.todolist.Config.Controller.UrlMapper;
+import com.drk.todolist.Config.Errors.RequestDataInvalidException;
+import com.drk.todolist.Controller.ControllerTestConfigure;
+import com.drk.todolist.DTO.Todo.InsertTodoDTO;
+import com.drk.todolist.DTO.Todo.UpdateTodoDTO;
+import com.drk.todolist.DTO.User.SigninDTO;
+import com.drk.todolist.DTO.User.SignupDTO;
+import com.drk.todolist.lib.TestLib;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+
+import lombok.extern.slf4j.Slf4j;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@Slf4j
+public class RequestDataInvalidTest extends ControllerTestConfigure{
+    
+    final static int METHOD_NOT_ALLOWED = 405;
+
+    RequestDataInvalidException requestDataInvalidException = new RequestDataInvalidException();
+
+    @Test
+    public void signupTest() throws Exception {
+        
+        SigninDTO signinDTO = new SigninDTO();
+        signinDTO.setUserName(TestLib.testUser.name);
+        signinDTO.setPassword(TestLib.testUser.password);
+
+        mockMvc.perform(post(UrlMapper.Auth.signup)
+            .content(TestLib.asJsonString(signinDTO))
+            .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().is(METHOD_NOT_ALLOWED))
+        .andExpect(content().string(this.requestDataInvalidException.getErrorMessage()));
+
+        assertEquals(this.userRepository.count(), 0);
+    }
+
+    @Test
+    public void signinTest() throws Exception {
+        InsertTodoDTO insertTodoDTO = new InsertTodoDTO();
+        insertTodoDTO.setTitle(TestLib.testTodo.title);
+        insertTodoDTO.setContext(TestLib.testTodo.context);
+
+        mockMvc.perform(post(UrlMapper.Auth.signin)
+            .content(TestLib.asJsonString(insertTodoDTO))
+            .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().is(METHOD_NOT_ALLOWED))
+        .andExpect(content().string(this.requestDataInvalidException.getErrorMessage()));
+    }
+
+    @Test
+    public void updateUserInfoTest() throws Exception {
+        testLib.makeTestUser();
+        String jwt = getJwt();
+
+        SignupDTO signupDTO = new SignupDTO();
+        signupDTO.setUserName(TestLib.testUser.name);
+        signupDTO.setNickName(TestLib.testUser.nickName);
+        signupDTO.setPassword(TestLib.testUser.password);
+
+        mockMvc.perform(post(UrlMapper.User.updateUserInfo)
+            .header(TOKEN_HEADER, jwt)
+            .content(TestLib.asJsonString(signupDTO))
+            .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().is(METHOD_NOT_ALLOWED))
+        .andExpect(content().string(this.requestDataInvalidException.getErrorMessage()));
+    }
+
+    @Test
+    public void insertTodoTest() throws Exception {
+        testLib.makeTestUser();
+        String jwt = getJwt();
+
+        UpdateTodoDTO updateTodoDTO = new UpdateTodoDTO();
+        updateTodoDTO.setIdx(0L);
+        updateTodoDTO.setNewTitle(TestLib.testTodo.title);
+        updateTodoDTO.setNewContext(TestLib.testTodo.context);
+
+        mockMvc.perform(post(UrlMapper.Todo.insertTodo)
+            .header(TOKEN_HEADER, jwt)
+            .content(TestLib.asJsonString(updateTodoDTO))
+            .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().is(METHOD_NOT_ALLOWED))
+        .andExpect(content().string(this.requestDataInvalidException.getErrorMessage()));
+    }
+
+    @Test
+    public void updateTodoTest() throws Exception {
+        testLib.makeTestUser();
+        String jwt = getJwt();
+
+        InsertTodoDTO insertTodoDTO = new InsertTodoDTO();
+        insertTodoDTO.setTitle(TestLib.testTodo.title);
+        insertTodoDTO.setContext(TestLib.testTodo.context);
+
+        mockMvc.perform(post(UrlMapper.Todo.updateTodo)
+            .header(TOKEN_HEADER, jwt)
+            .content(TestLib.asJsonString(insertTodoDTO))
+            .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().is(METHOD_NOT_ALLOWED))
+        .andExpect(content().string(this.requestDataInvalidException.getErrorMessage()));
+    }
+}
