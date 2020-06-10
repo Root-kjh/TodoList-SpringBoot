@@ -1,17 +1,12 @@
-package com.drk.todolist.Controller;
+package com.drk.todolist.Config;
 
 import com.drk.todolist.Config.Controller.UrlMapper;
 import com.drk.todolist.DTO.Todo.TodoDTO;
 import com.drk.todolist.DTO.User.SigninDTO;
-import com.drk.todolist.Entitis.TodoEntity;
-import com.drk.todolist.Entitis.UserEntity;
-import com.drk.todolist.Repositories.TodoRepository;
-import com.drk.todolist.Repositories.UserRepository;
 import com.drk.todolist.Services.ToDoList.TodoService;
 import com.drk.todolist.Services.User.UserService;
 import com.drk.todolist.lib.TestLib;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -23,7 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
-public class ControllerTestConfigure {
+public class ControllerTest extends TestInit{
 
     @Autowired
     protected MockMvc mockMvc;
@@ -34,47 +29,26 @@ public class ControllerTestConfigure {
     @Autowired
     protected TodoService todoService;
 
-    @Autowired
-    protected UserRepository userRepository;
-
-    @Autowired
-    protected TodoRepository todoRepository;
-
-    protected UserEntity testUserEntity;
-    protected TodoEntity testTodoEntity;
-
-    protected SigninDTO signinDTO;
-    protected TodoDTO todoDTO;
-
-    protected TestLib testLib;
-
     protected final static String TOKEN_HEADER = "X-AUTH-TOKEN";
 
     @BeforeEach
-    public void settingLibs(){
-        testLib = new TestLib(userRepository, todoRepository);
-    }
-
-    @BeforeEach
-    @AfterEach
-    public void clearDB(){
-        userRepository.deleteAll();
-        todoRepository.deleteAll();
-    }
-
-    @BeforeEach
     public void setTestDTO() {
-        signinDTO = new SigninDTO();
+        SigninDTO signinDTO = new SigninDTO();
         signinDTO.setUserName(TestLib.testUser.name);
         signinDTO.setPassword(TestLib.testUser.password);
-
-        todoDTO = new TodoDTO();
+        
+        TodoDTO todoDTO = new TodoDTO();
         todoDTO.setTitle(TestLib.testTodo.title);
         todoDTO.setContext(TestLib.testTodo.context);
     }
 
     public String getJwt() throws Exception {
-        String jwt = mockMvc.perform(post(UrlMapper.Auth.signin)
+
+        SigninDTO signinDTO = new SigninDTO();
+        signinDTO.setUserName(TestLib.testUser.name);
+        signinDTO.setPassword(TestLib.testUser.password);
+
+        String jwt = this.mockMvc.perform(post(UrlMapper.Auth.signin)
             .content(TestLib.asJsonString(signinDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
@@ -82,6 +56,20 @@ public class ControllerTestConfigure {
         .getResponse()
         .getContentAsString(); 
         log.info("jwt : " + jwt);
+
+        return jwt;
+    }
+
+    public String getJwt(SigninDTO signinDTO) throws Exception {
+        String jwt = this.mockMvc.perform(post(UrlMapper.Auth.signin)
+            .content(TestLib.asJsonString(signinDTO))
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andReturn()
+        .getResponse()
+        .getContentAsString(); 
+        log.info("jwt : " + jwt);
+
         return jwt;
     }
 }

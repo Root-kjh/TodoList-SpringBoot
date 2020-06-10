@@ -5,12 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.transaction.Transactional;
 
+import com.drk.todolist.Config.ServiceTest;
 import com.drk.todolist.Config.JWT.JwtTokenProvider;
 import com.drk.todolist.DTO.User.SigninDTO;
 import com.drk.todolist.DTO.User.SignupDTO;
 import com.drk.todolist.DTO.User.UpdateUserDTO;
 import com.drk.todolist.Entitis.UserEntity;
-import com.drk.todolist.Service.ServiceTestConfigure;
 import com.drk.todolist.Services.JWT.JwtService;
 import com.drk.todolist.lib.TestLib;
 
@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @Slf4j
-public class UserServiceTest extends ServiceTestConfigure {
+public class UserServiceTest extends ServiceTest {
 
     @Autowired
     JwtService jwtService;
@@ -42,18 +42,18 @@ public class UserServiceTest extends ServiceTestConfigure {
         log.info(signupDTO.toString());
 
         this.userService.signup(signupDTO);
-        this.testUserEntity = this.userRepository.findByUsername(TestLib.testUser.name);
+        UserEntity testUserEntity = this.userRepository.findByUsername(TestLib.testUser.name);
         log.info("Signup User Entity");
-        log.info(this.testUserEntity.toString());
+        log.info(testUserEntity.toString());
 
-        assertTrue(this.testLib.compareUserEntity(this.testUserEntity, signupDTO));
+        assertTrue(TestLib.compareUserEntity(testUserEntity, signupDTO));
     }
 
     @Test
     @Transactional
     public void signin() throws Exception {
         final JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(jwtService);
-        this.testUserEntity = this.testLib.makeTestUser();
+        UserEntity testUserEntity = this.makeTestUser();
         SigninDTO signinDTO = new SigninDTO();
         signinDTO.setUserName(TestLib.testUser.name);
         signinDTO.setPassword(TestLib.testUser.password);
@@ -65,15 +65,15 @@ public class UserServiceTest extends ServiceTestConfigure {
 
         Authentication authentication = jwtTokenProvider.getAuthentication(token);
         log.info("jwt userEntity");
-        log.info(this.testUserEntity.toString());
-        assertTrue(this.testLib.compareUserEntity(this.testUserEntity, 
+        log.info(testUserEntity.toString());
+        assertTrue(TestLib.compareUserEntity(testUserEntity, 
             ((UserEntity) authentication.getPrincipal())));
     }
 
     @Test
     @Transactional
     public void userinfoUpdate() throws Exception {
-        this.testUserEntity = this.testLib.makeTestUser();
+        UserEntity testUserEntity = this.makeTestUser();
         log.info("testUser");
         log.info(testUserEntity.toString());
 
@@ -84,31 +84,31 @@ public class UserServiceTest extends ServiceTestConfigure {
         log.info(updateUserDTO.toString());
         
         this.userService.userinfoUpdate(testUserEntity, updateUserDTO);
-        this.testUserEntity = this.userRepository.getOne(this.testUserEntity.getIdx());
+        testUserEntity = this.userRepository.getOne(testUserEntity.getIdx());
 
-        assertTrue(this.testLib.compareUserEntity(this.testUserEntity, updateUserDTO));
+        assertTrue(TestLib.compareUserEntity(testUserEntity, updateUserDTO));
     }
 
     @Test
     @Transactional
     public void userinfoDelete() throws Exception {
-        this.testUserEntity = this.testLib.makeTestUser();
+        UserEntity testUserEntity = this.makeTestUser();
         log.info("testUser");
-        log.info(this.testUserEntity.toString());
+        log.info(testUserEntity.toString());
 
-        this.userService.userinfoDelete(this.testUserEntity, TestLib.testUser.password);
-        final boolean isUserExist = this.userRepository.findById(this.testUserEntity.getIdx()).isPresent();
+        this.userService.userinfoDelete(testUserEntity, TestLib.testUser.password);
+        final boolean isUserExist = this.userRepository.findById(testUserEntity.getIdx()).isPresent();
         assertFalse(isUserExist);
     }
 
     @Test
     @Transactional
     public void modifyPassword() throws Exception {
-        this.testUserEntity = this.testLib.makeTestUser();
+        UserEntity testUserEntity = this.makeTestUser();
         log.info("testUser");
-        log.info(this.testUserEntity.toString());
+        log.info(testUserEntity.toString());
 
-        this.userService.modifyPassowrd(this.testUserEntity, TestLib.newTestUser.password);
+        this.userService.modifyPassowrd(testUserEntity, TestLib.newTestUser.password);
         
         SigninDTO signinDTO = new SigninDTO();
         signinDTO.setUserName(TestLib.testUser.name);

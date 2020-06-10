@@ -1,8 +1,8 @@
 package com.drk.todolist.Controller.HandlingException;
 
+import com.drk.todolist.Config.ControllerTest;
 import com.drk.todolist.Config.Controller.UrlMapper;
 import com.drk.todolist.Config.Errors.RequestDataInvalidException;
-import com.drk.todolist.Controller.ControllerTestConfigure;
 import com.drk.todolist.DTO.Todo.InsertTodoDTO;
 import com.drk.todolist.DTO.Todo.UpdateTodoDTO;
 import com.drk.todolist.DTO.User.SigninDTO;
@@ -19,12 +19,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 
-import lombok.extern.slf4j.Slf4j;
-
 @SpringBootTest
 @AutoConfigureMockMvc
-@Slf4j
-public class RequestDataInvalidTest extends ControllerTestConfigure{
+public class RequestDataInvalidTest extends ControllerTest{
     
     final static int METHOD_NOT_ALLOWED = 405;
 
@@ -37,7 +34,7 @@ public class RequestDataInvalidTest extends ControllerTestConfigure{
         signinDTO.setUserName(TestLib.testUser.name);
         signinDTO.setPassword(TestLib.testUser.password);
 
-        mockMvc.perform(post(UrlMapper.Auth.signup)
+        this.mockMvc.perform(post(UrlMapper.Auth.signup)
             .content(TestLib.asJsonString(signinDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
@@ -53,7 +50,7 @@ public class RequestDataInvalidTest extends ControllerTestConfigure{
         insertTodoDTO.setTitle(TestLib.testTodo.title);
         insertTodoDTO.setContext(TestLib.testTodo.context);
 
-        mockMvc.perform(post(UrlMapper.Auth.signin)
+        this.mockMvc.perform(post(UrlMapper.Auth.signin)
             .content(TestLib.asJsonString(insertTodoDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
@@ -63,15 +60,15 @@ public class RequestDataInvalidTest extends ControllerTestConfigure{
 
     @Test
     public void updateUserInfoTest() throws Exception {
-        testLib.makeTestUser();
-        String jwt = getJwt();
+        this.makeTestUser();
+        String jwt = this.getJwt();
 
         SignupDTO signupDTO = new SignupDTO();
         signupDTO.setUserName(TestLib.testUser.name);
         signupDTO.setNickName(TestLib.testUser.nickName);
         signupDTO.setPassword(TestLib.testUser.password);
 
-        mockMvc.perform(post(UrlMapper.User.updateUserInfo)
+        this.mockMvc.perform(post(UrlMapper.User.updateUserInfo)
             .header(TOKEN_HEADER, jwt)
             .content(TestLib.asJsonString(signupDTO))
             .contentType(MediaType.APPLICATION_JSON))
@@ -82,15 +79,15 @@ public class RequestDataInvalidTest extends ControllerTestConfigure{
 
     @Test
     public void insertTodoTest() throws Exception {
-        testLib.makeTestUser();
-        String jwt = getJwt();
+        this.makeTestUser();
+        String jwt = this.getJwt();
 
         UpdateTodoDTO updateTodoDTO = new UpdateTodoDTO();
         updateTodoDTO.setIdx(0L);
         updateTodoDTO.setNewTitle(TestLib.testTodo.title);
         updateTodoDTO.setNewContext(TestLib.testTodo.context);
 
-        mockMvc.perform(post(UrlMapper.Todo.insertTodo)
+        this.mockMvc.perform(post(UrlMapper.Todo.insertTodo)
             .header(TOKEN_HEADER, jwt)
             .content(TestLib.asJsonString(updateTodoDTO))
             .contentType(MediaType.APPLICATION_JSON))
@@ -101,14 +98,14 @@ public class RequestDataInvalidTest extends ControllerTestConfigure{
 
     @Test
     public void updateTodoTest() throws Exception {
-        testLib.makeTestUser();
-        String jwt = getJwt();
+        this.makeTestUser();
+        String jwt = this.getJwt();
 
         InsertTodoDTO insertTodoDTO = new InsertTodoDTO();
         insertTodoDTO.setTitle(TestLib.testTodo.title);
         insertTodoDTO.setContext(TestLib.testTodo.context);
 
-        mockMvc.perform(post(UrlMapper.Todo.updateTodo)
+        this.mockMvc.perform(post(UrlMapper.Todo.updateTodo)
             .header(TOKEN_HEADER, jwt)
             .content(TestLib.asJsonString(insertTodoDTO))
             .contentType(MediaType.APPLICATION_JSON))
