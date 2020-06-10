@@ -25,11 +25,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
-import lombok.extern.slf4j.Slf4j;
-
 @SpringBootTest
 @AutoConfigureMockMvc
-@Slf4j
 public class UserDataInvalidTest extends ControllerTest{
     
     public static final int FORBIDDEN = 403;

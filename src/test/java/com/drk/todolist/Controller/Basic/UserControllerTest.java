@@ -1,8 +1,8 @@
 package com.drk.todolist.Controller.Basic;
 
 import com.drk.todolist.DTO.User.SigninDTO;
+import com.drk.todolist.DTO.User.SignupDTO;
 import com.drk.todolist.DTO.User.UpdateUserDTO;
-import com.drk.todolist.DTO.User.UserDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.lib.TestLib;
 import com.drk.todolist.Config.ControllerTest;
@@ -37,12 +37,12 @@ public class UserControllerTest extends ControllerTest {
     @Test
     @Transactional
     public void signup() throws Exception {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUserName(TestLib.testUser.name);
-        userDTO.setNickName(TestLib.testUser.nickName);
-        userDTO.setPassword(TestLib.testUser.password);
+        SignupDTO signupDTO = new SignupDTO();
+        signupDTO.setUserName(TestLib.testUser.name);
+        signupDTO.setNickName(TestLib.testUser.nickName);
+        signupDTO.setPassword(TestLib.testUser.password);
         this.mockMvc.perform(post(UrlMapper.Auth.signup)
-            .content(TestLib.asJsonString(userDTO))
+            .content(TestLib.asJsonString(signupDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().string("true"));
@@ -52,10 +52,10 @@ public class UserControllerTest extends ControllerTest {
             this.userRepository.findByUsername(TestLib.testUser.name);
 
         log.info("user DTO");
-        log.info(userDTO.toString());
+        log.info(signupDTO.toString());
         log.info("signup User Entity");
         log.info(testUserEntity.toString());
-        assertTrue(TestLib.compareUserEntity(testUserEntity, userDTO));
+        assertTrue(TestLib.compareUserEntity(testUserEntity, signupDTO));
     }
 
     @Test

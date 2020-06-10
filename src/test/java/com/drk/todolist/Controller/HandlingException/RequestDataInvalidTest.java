@@ -32,7 +32,6 @@ public class RequestDataInvalidTest extends ControllerTest{
 
     @Test
     public void signupTest() throws Exception {
-        
         SigninDTO signinDTO = new SigninDTO();
         signinDTO.setUserName(TestLib.testUser.name);
         signinDTO.setPassword(TestLib.testUser.password);
