@@ -13,6 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import javax.transaction.Transactional;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -78,6 +81,7 @@ public class RequestDataInvalidTest extends ControllerTest{
     }
 
     @Test
+    @Transactional
     public void insertTodoTest() throws Exception {
         this.makeTestUser();
         String jwt = this.getJwt();
@@ -97,6 +101,7 @@ public class RequestDataInvalidTest extends ControllerTest{
     }
 
     @Test
+    @Transactional
     public void updateTodoTest() throws Exception {
         this.makeTestUser();
         String jwt = this.getJwt();

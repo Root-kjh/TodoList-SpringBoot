@@ -59,6 +59,7 @@ public class UserControllerTest extends ControllerTest {
     }
 
     @Test
+    @Transactional
     public void signin() throws Exception {
         this.makeTestUser();
         
@@ -80,6 +81,7 @@ public class UserControllerTest extends ControllerTest {
     }
 
     @Test
+    @Transactional
     public void getUserInfo() throws Exception {
         UserEntity testUserEntity = this.makeTestUser();
 
@@ -99,6 +101,7 @@ public class UserControllerTest extends ControllerTest {
         }
 
     @Test
+    @Transactional
     public void updateUserInfo() throws Exception {
         this.makeTestUser();
         String jwt = this.getJwt();
@@ -131,6 +134,7 @@ public class UserControllerTest extends ControllerTest {
     }
 
     @Test
+    @Transactional
     public void deleteUser() throws Exception {
         this.makeTestUser();
         String jwt = this.getJwt();
@@ -144,6 +148,7 @@ public class UserControllerTest extends ControllerTest {
     }
 
     @Test
+    @Transactional
     public void modifyPassword() throws Exception {
         this.makeTestUser();
         String jwt = this.getJwt();

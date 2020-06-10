@@ -1,5 +1,7 @@
 package com.drk.todolist.Config;
 
+import javax.transaction.Transactional;
+
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.TodoRepository;
@@ -48,13 +50,14 @@ public class TestInit {
             throw new Exception("userEntity was not save nomarlly");
     }
 
+    @Transactional
     public TodoEntity makeTodo(final UserEntity userEntity) throws Exception{
         TodoEntity todo = new TodoEntity();
         todo.setTitle(TestLib.testTodo.title);
         todo.setContext(TestLib.testTodo.context);
         userEntity.addTodo(todo);
         this.userRepository.saveAndFlush(userEntity);
-        return userEntity.getTodoEntityList().get(0);
+        return this.userRepository.findById(userEntity.getIdx()).get().getTodoEntityList().get(0);
     }
 
 }

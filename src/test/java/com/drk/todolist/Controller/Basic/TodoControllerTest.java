@@ -62,6 +62,7 @@ public class TodoControllerTest extends ControllerTest {
     }
 
     @Test
+    @Transactional
     public void showTodo() throws Exception {
         UserEntity testUserEntity = this.makeTestUser();
         String jwt = this.getJwt();
