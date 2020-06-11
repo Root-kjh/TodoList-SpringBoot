@@ -21,6 +21,7 @@ import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.lib.TestLib;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -32,6 +33,12 @@ public class UserDataInvalidTest extends ControllerTest{
     public static final int FORBIDDEN = 403;
 
     public final UserDataInvalidException userDataInvalidException = new UserDataInvalidException();
+    private String errorMessage;
+
+    @BeforeEach
+    public void errorMessageInit(){
+        this.errorMessage = this.userDataInvalidException.getErrorMessage();
+    }
 
     @Test
     public void signinTest() throws Exception {
@@ -46,7 +53,7 @@ public class UserDataInvalidTest extends ControllerTest{
             .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().is(FORBIDDEN))
-        .andExpect(content().string(this.userDataInvalidException.getErrorMessage()));
+        .andExpect(content().string(this.errorMessage));
     }
 
     @Test
@@ -71,7 +78,7 @@ public class UserDataInvalidTest extends ControllerTest{
             .param("todoIdx", testTodoEntity.getIdx().toString()))
         .andDo(print())
         .andExpect(status().is(FORBIDDEN))
-        .andExpect(content().string(this.userDataInvalidException.getErrorMessage()));
+        .andExpect(content().string(this.errorMessage));
         }
 
     @Test
@@ -102,6 +109,6 @@ public class UserDataInvalidTest extends ControllerTest{
             .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().is(FORBIDDEN))
-        .andExpect(content().string(this.userDataInvalidException.getErrorMessage()));
+        .andExpect(content().string(this.errorMessage));
     }
 }

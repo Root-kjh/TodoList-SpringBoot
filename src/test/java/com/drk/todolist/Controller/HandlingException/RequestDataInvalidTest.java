@@ -17,6 +17,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import javax.transaction.Transactional;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,7 +31,12 @@ public class RequestDataInvalidTest extends ControllerTest{
     final static int METHOD_NOT_ALLOWED = 405;
 
     RequestDataInvalidException requestDataInvalidException = new RequestDataInvalidException();
+    private String errorMessage;
 
+    @ BeforeEach
+    public void errorMessageInit(){
+        this.errorMessage = this.requestDataInvalidException.getErrorMessage();
+    }
     @Test
     public void signupTest() throws Exception {
         SigninDTO signinDTO = new SigninDTO();
@@ -41,7 +48,7 @@ public class RequestDataInvalidTest extends ControllerTest{
             .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().is(METHOD_NOT_ALLOWED))
-        .andExpect(content().string(this.requestDataInvalidException.getErrorMessage()));
+        .andExpect(content().string(this.errorMessage));
 
         assertEquals(this.userRepository.count(), 0);
     }
@@ -57,7 +64,7 @@ public class RequestDataInvalidTest extends ControllerTest{
             .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().is(METHOD_NOT_ALLOWED))
-        .andExpect(content().string(this.requestDataInvalidException.getErrorMessage()));
+        .andExpect(content().string(this.errorMessage));
     }
 
     @Test
@@ -76,7 +83,7 @@ public class RequestDataInvalidTest extends ControllerTest{
             .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().is(METHOD_NOT_ALLOWED))
-        .andExpect(content().string(this.requestDataInvalidException.getErrorMessage()));
+        .andExpect(content().string(this.errorMessage));
     }
 
     @Test
@@ -96,7 +103,7 @@ public class RequestDataInvalidTest extends ControllerTest{
             .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().is(METHOD_NOT_ALLOWED))
-        .andExpect(content().string(this.requestDataInvalidException.getErrorMessage()));
+        .andExpect(content().string(this.errorMessage));
     }
 
     @Test
@@ -115,6 +122,6 @@ public class RequestDataInvalidTest extends ControllerTest{
             .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().is(METHOD_NOT_ALLOWED))
-        .andExpect(content().string(this.requestDataInvalidException.getErrorMessage()));
+        .andExpect(content().string(this.errorMessage));
     }
 }
