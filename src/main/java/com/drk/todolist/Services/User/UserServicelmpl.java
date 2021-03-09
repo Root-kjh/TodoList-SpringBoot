@@ -2,7 +2,7 @@ package com.drk.todolist.Services.User;
 
 import javax.transaction.Transactional;
 
-import com.drk.todolist.Config.Errors.NotLoginedException;
+import com.drk.todolist.Config.Errors.LoginFailedException;
 import com.drk.todolist.Config.Errors.UserExistException;
 import com.drk.todolist.Config.JWT.JwtTokenProvider;
 import com.drk.todolist.DTO.User.SigninDTO;
@@ -39,6 +39,21 @@ public class UserServicelmpl implements UserService {
 
     public boolean isExistUser(String user_name) {
         return userRepository.isExistUser(user_name);
+    }
+
+    @Override
+    public UserInfoDTO signin(SigninDTO signinDTO) throws LoginFailedException{
+            UserEntity userEntity = userRepository.findByUsername(signinDTO.getUserName());
+            if (VariablesLib.isSet(userEntity) && passwordEncoder.matches(signinDTO.getPassword(), userEntity.getPassword())){
+                UserInfoDTO userInfoDTO = new UserInfoDTO(
+                    userEntity.getIdx(), 
+                    userEntity.getUsername(), 
+                    userEntity.getNickname(), 
+                    jwtTokenProvider.coreateToken(userEntity.getUsername())
+                );
+                return userInfoDTO;
+            }else
+                throw new LoginFailedException();
     }
 
     @Override
@@ -93,21 +108,6 @@ public class UserServicelmpl implements UserService {
             return false;
         }
     }
-
-    @Override
-    public UserInfoDTO signin(SigninDTO signinDTO) throws NotLoginedException{
-            UserEntity userEntity = userRepository.findByUsername(signinDTO.getUserName());
-            if (VariablesLib.isSet(userEntity) && passwordEncoder.matches(signinDTO.getPassword(), userEntity.getPassword())){
-                UserInfoDTO userInfoDTO = new UserInfoDTO(
-                    userEntity.getIdx(), 
-                    userEntity.getUsername(), 
-                    userEntity.getNickname(), 
-                    jwtTokenProvider.coreateToken(userEntity.getUsername())
-                );
-                return userInfoDTO;
-            }else
-                throw new NotLoginedException();
-    }
     
     @Override
     public UserEntity findUserByUsername(String username) {
@@ -132,5 +132,11 @@ public class UserServicelmpl implements UserService {
             LogLib.ErrorLogging(errorMsg, e);
             return false;
         }
+    }
+
+    @Override
+    public UserInfoDTO getUserInfo(UserEntity userEntity, int userId) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

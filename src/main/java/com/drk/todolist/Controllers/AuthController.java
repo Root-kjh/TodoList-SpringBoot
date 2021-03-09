@@ -7,7 +7,6 @@ import com.drk.todolist.DTO.User.UserInfoDTO;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import com.drk.todolist.Config.Errors.NotLoginedException;
 import com.drk.todolist.Config.Errors.RequestDataInvalidException;
 import com.drk.todolist.Config.Errors.UserExistException;
 import com.drk.todolist.Services.User.UserService;
@@ -28,27 +27,16 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public boolean signup(HttpServletRequest request, @RequestBody @Valid SignupDTO signupDTO, Errors errors)
-            throws RequestDataInvalidException, UserExistException {
+    public boolean signup(HttpServletRequest request, @RequestBody @Valid SignupDTO signupDTO, Errors errors){
         if (errors.hasErrors())
-            throw new RequestDataInvalidException(request, "/auth/signup");
-        try {
-            userService.signup(signupDTO);
-            return true;
-        } catch (UserExistException e) {
-            throw new UserExistException(request, "/auth/signup");
-        }
+            throw new RequestDataInvalidException();
+        return userService.signup(signupDTO);
     }
 
     @PostMapping("/signin")
-    public UserInfoDTO signin(HttpServletRequest request, @RequestBody @Valid SigninDTO signinDTO, Errors errors)
-            throws RequestDataInvalidException, NotLoginedException {
+    public UserInfoDTO signin(HttpServletRequest request, @RequestBody @Valid SigninDTO signinDTO, Errors errors){
         if (errors.hasErrors())
-            throw new RequestDataInvalidException(request, "/auth/signin");
-        try {
-            return userService.signin(signinDTO);
-        } catch (NotLoginedException e) {
-            throw new NotLoginedException(request);
-        }
+            throw new RequestDataInvalidException();
+        return userService.signin(signinDTO);
     }
 }

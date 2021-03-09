@@ -1,7 +1,8 @@
 package com.drk.todolist.Config.Errors;
 
-public class UserExistException extends BaseException{    
+public class BaseException extends Exception{
+    
     private static final long serialVersionUID = 1L;
 
-    public UserExistException(){}
+    public BaseException() {}
 }
