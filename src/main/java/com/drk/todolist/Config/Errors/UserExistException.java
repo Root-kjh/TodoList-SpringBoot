@@ -13,7 +13,7 @@ public class UserExistException extends BusinessException{
 
     public UserExistException(){}
 
-    public UserExistException(String info, HttpServletRequest request, String url){
-        super(info, request, url);
+    public UserExistException(HttpServletRequest request, String url){
+        super("User Exist", request, url);
     }   
 }

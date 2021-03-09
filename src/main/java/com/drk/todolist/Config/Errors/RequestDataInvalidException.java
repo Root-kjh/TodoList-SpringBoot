@@ -13,8 +13,8 @@ public class RequestDataInvalidException extends BusinessException{
 
     public RequestDataInvalidException(){}
     
-    public RequestDataInvalidException(String info, HttpServletRequest request, String url){
-        super(info, request, url);
+    public RequestDataInvalidException(HttpServletRequest request, String url){
+        super("Request Data Invalid", request, url);
     }   
 
 }

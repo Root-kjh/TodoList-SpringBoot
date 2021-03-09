@@ -11,7 +11,6 @@ import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Services.ToDoList.TodoService;
 import com.drk.todolist.Services.User.UserService;
-import com.drk.todolist.Config.Controller.UrlMapper;
 import com.drk.todolist.Config.Errors.RequestDataInvalidException;
 import com.drk.todolist.Config.Errors.UserDataInvalidException;
 

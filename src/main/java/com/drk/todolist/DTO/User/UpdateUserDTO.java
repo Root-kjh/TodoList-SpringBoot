@@ -12,8 +12,8 @@ import lombok.ToString;
 public class UpdateUserDTO {
 
     @NotNull
-    private String newUserName;
+    private String userName;
     
     @NotNull
-    private String newNickName;
+    private String nickName;
 }
