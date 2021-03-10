@@ -29,7 +29,7 @@ SpringBoot을 이용한 ToDoList웹
 * EditUserInfo(/user/{userId}):
     * Request(PUT)
         * Auth: jwt
-        * Json: userName, nickName
+        * Json: nickName
     * Response: UserInfo
 
 * PasswordModify(/user/{userId}):
@@ -60,6 +60,7 @@ SpringBoot을 이용한 ToDoList웹
     * Request(PUT)
         * Auth: jwt
         * Json: title, context
+    * Response: Todo
 
 * DeleteTodo(/todo/{todoId})
     * Request(DELETE)
