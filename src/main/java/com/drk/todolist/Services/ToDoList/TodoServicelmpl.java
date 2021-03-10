@@ -1,109 +1,73 @@
 package com.drk.todolist.Services.ToDoList;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
 import com.drk.todolist.DTO.Todo.InsertTodoDTO;
+import com.drk.todolist.DTO.Todo.TodoInfoDTO;
 import com.drk.todolist.DTO.Todo.UpdateTodoDTO;
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.TodoRepository;
 import com.drk.todolist.Repositories.UserRepository;
-import com.drk.todolist.lib.LogLib;
 
 @Service
+@RequiredArgsConstructor
 public class TodoServicelmpl implements TodoService{
 
-    @Autowired
-    TodoRepository todoRepository;
+    private final TodoRepository todoRepository;
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
-    @Transactional
-    public boolean checkTodoOwnership(Long todoIdx, Long userIdx) {
-        try{
-            UserEntity userEntity = userRepository.findById(userIdx).get();
-            for (TodoEntity todoEntity : userEntity.getTodoEntityList()) {
-                if (todoEntity.getIdx().equals(todoIdx))
-                    return true;
-            }
-        } catch (Exception e){
-            String errorMsg = "todoIdx : "+todoIdx.toString()+", userIdx : "+userIdx.toString();
-            LogLib.ErrorLogging(errorMsg, e);
-            return false;
+    public List<TodoInfoDTO> showTodoList(Long userIdx) {
+        List<TodoEntity> todoList = userRepository.findById(userIdx).get().getTodoEntityList();
+        List<TodoInfoDTO> todoInfoList = new ArrayList<>();
+        for (TodoEntity todoEntity: todoList) {
+                todoInfoList.add(new TodoInfoDTO(todoEntity.getIdx(), todoEntity.getTitle(), todoEntity.getContext()));
         }
-        return false;
+        return todoInfoList;
     }
 
     @Override
     @Transactional
-    public List<TodoEntity> selectTodolist(Long userIdx) {
-        try{
-            return userRepository.findById(userIdx).get().getTodoEntityList();
-        } catch (Exception e){
-            String errorMsg = "userIdx : "+userIdx.toString();
-            LogLib.ErrorLogging(errorMsg, e);
-            return null;
-        }
-    }
-
-    @Override
-    @Transactional
-    public boolean insertTodo(Long userIdx, InsertTodoDTO insertTodoDTO) {
-        try{
-            UserEntity loginUser = userRepository.findById(userIdx).get();
-            List<TodoEntity> todoList = loginUser.getTodoEntityList();
-            TodoEntity new_todo = new TodoEntity();
-            new_todo.setTitle(insertTodoDTO.getTitle());
-            new_todo.setContext(insertTodoDTO.getContext());
-            todoList.add(new_todo);
-            loginUser.setTodoEntityList(todoList);
-            userRepository.save(loginUser);
-            return true;
-        } catch(Exception e) {
-            String errorMsg = "userIdx : "+userIdx.toString()+", InserTodoDTO : "+insertTodoDTO.toString();
-            LogLib.ErrorLogging(errorMsg, e);
-            return false;
-        }
-    }
-
-    @Override
-    @Transactional
-    public boolean deleteTodo(Long todoIdx, Long userIdx) {
-        try{
-            TodoEntity todoEntity = todoRepository.findById(todoIdx).get();
-            UserEntity userEntity = userRepository.findById(userIdx).get();
-            userEntity.getTodoEntityList().remove(todoEntity);
-            this.todoRepository.delete(todoEntity);
-            userRepository.save(userEntity);
-            return true;
-        } catch (Exception e){
-            String errorMsg = "todoIdx : "+todoIdx.toString()+", userIdx : "+userIdx.toString();
-            LogLib.ErrorLogging(errorMsg, e);
-            return false;
-        }
-    }
-
-    @Override
-    @Transactional
-    public boolean updateTodo(UpdateTodoDTO updateTodoDTO) {
-        try{
-        TodoEntity todo = new TodoEntity();
-        todo.setIdx(updateTodoDTO.getIdx());
-        todo.setTitle(updateTodoDTO.getNewTitle());
-        todo.setContext(updateTodoDTO.getNewContext());
-        todoRepository.save(todo);
+    public boolean insertTodo(Long userId, InsertTodoDTO insertTodoDTO) {
+        UserEntity userEntity = userRepository.findById(userId).get();
+        List<TodoEntity> todoList = userEntity.getTodoEntityList();
+        TodoEntity new_todo = new TodoEntity();
+        new_todo.setTitle(insertTodoDTO.getTitle());
+        new_todo.setContext(insertTodoDTO.getContext());
+        todoList.add(new_todo);
+        userEntity.setTodoEntityList(todoList);
+        userRepository.save(userEntity);
         return true;
-        } catch (Exception e){
-            String errorMsg = "updateTodoDTO : "+updateTodoDTO.toString();
-            LogLib.ErrorLogging(errorMsg, e);
-            return false;
-        }
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteTodo(Long todoId, Long userId) {
+        TodoEntity todoEntity = todoRepository.findById(todoId).get();
+        UserEntity userEntity = userRepository.findById(userId).get();
+        userEntity.getTodoEntityList().remove(todoEntity);
+        this.todoRepository.delete(todoEntity);
+        userRepository.save(userEntity);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public TodoInfoDTO updateTodo(UpdateTodoDTO updateTodoDTO, Long todoId) {
+        TodoEntity todoEntity = todoRepository.findById(todoId).get();
+        todoEntity.setTitle(updateTodoDTO.getNewTitle());
+        todoEntity.setContext(updateTodoDTO.getNewContext());
+        todoRepository.save(todoEntity);
+        TodoInfoDTO todoInfoDTO = new TodoInfoDTO(todoEntity.getIdx(), todoEntity.getTitle(), todoEntity.getContext());
+        return todoInfoDTO;
     }
 }

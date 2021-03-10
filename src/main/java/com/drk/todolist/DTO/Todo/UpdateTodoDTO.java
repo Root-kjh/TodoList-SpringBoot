@@ -12,9 +12,6 @@ import lombok.ToString;
 public class UpdateTodoDTO {
 
     @NotNull
-    private Long idx;
-
-    @NotNull
     private String newTitle;
 
     @NotNull

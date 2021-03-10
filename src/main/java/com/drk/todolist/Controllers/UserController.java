@@ -1,6 +1,5 @@
 package com.drk.todolist.Controllers;
 
-import com.drk.todolist.Config.JWT.JwtTokenProvider;
 import com.drk.todolist.DTO.User.UpdateUserDTO;
 import com.drk.todolist.DTO.User.UserInfoDTO;
 import com.drk.todolist.Entitis.UserEntity;
@@ -11,9 +10,7 @@ import javax.validation.Valid;
 import javax.websocket.server.PathParam;
 
 import com.drk.todolist.Config.Errors.RequestDataInvalidException;
-import com.drk.todolist.Config.Errors.UserExistException;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.drk.todolist.Config.Errors.UserDataInvalidException;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,50 +35,55 @@ public class UserController {
 
     private UserEntity userEntity;
 
+    public UserEntity userPermissionCheck(Authentication authentication, Long userId) throws UserDataInvalidException{
+        userEntity = (UserEntity) authentication.getPrincipal();
+        if (userEntity.getIdx().equals(userId))
+            return userEntity;
+        else
+            throw new UserDataInvalidException();
+    }
+
     @GetMapping()
     public UserInfoDTO getUserInfo(
             Authentication authentication,
-            @PathParam("userId") int userId
+            @PathParam("userId") Long userId
         ){
-        UserInfoDTO userInfoDTO = new UserInfoDTO();
-        userEntity = (UserEntity) authentication.getPrincipal();
-        userInfoDTO.setNickName(userEntity.getNickname());
-        userInfoDTO.setUserName(userEntity.getUsername());
+        userEntity = userPermissionCheck(authentication, userId);
+        UserInfoDTO userInfoDTO = userService.getUserInfo(userEntity);
         return userInfoDTO;
     }
 
     @PutMapping()
-    public String updateUserInfo(
+    public UserInfoDTO updateUserInfo(
             HttpServletRequest request, 
             Authentication authentication, 
-            @PathParam("userId") int userId,
+            @PathParam("userId") Long userId,
             @RequestBody @Valid UpdateUserDTO updateUserDTO, 
-            Errors errors)
-            throws RequestDataInvalidException, UserExistException{
+            Errors errors){
         if(errors.hasErrors())
-            throw new RequestDataInvalidException("잘못된 요청 값", request, "PUT(/user)");
-        try{
-            String newUsername = userService.userUpdate((UserEntity) authentication.getPrincipal(), userId, updateUserDTO);
-            return jwtTokenProvider.coreateToken(newUsername);
-        } catch (UserExistException e){
-            throw new UserExistException("이미 존재하는 username", request, "PUT(/user)");
-        }
+            throw new RequestDataInvalidException();
+        userEntity = userPermissionCheck(authentication, userId);
+        UserInfoDTO newUserInfo = userService.userUpdate(userEntity, updateUserDTO);
+        return newUserInfo;
     }
 
     @PatchMapping()
-    public boolean modifyPassword(
+    public String modifyPassword(
         Authentication authentication, 
-        @PathParam("userId") int userId,
+        @PathParam("userId") Long userId,
         @RequestParam String password
     ){
-        return userService.modifyPassowrd((UserEntity) authentication.getPrincipal(), userId, password);
+        userEntity = userPermissionCheck(authentication, userId);
+        userService.modifyPassowrd(userEntity, password);
+        return "{'Message': 'Success'}";
     }
 
     @DeleteMapping()
-    public boolean withdraw(
+    public String withdraw(
             Authentication authentication, 
-            @PathParam("userId") int userId){
-        userEntity = (UserEntity) authentication.getPrincipal();
-        return userService.userDelete(userEntity, userId);
+            @PathParam("userId") Long userId){
+        userEntity = userPermissionCheck(authentication, userId);
+        userService.userDelete(userEntity);
+        return "{'Message': 'Success'}";
     }
 }

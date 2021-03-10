@@ -3,12 +3,12 @@ package com.drk.todolist.Services.User;
 import javax.transaction.Transactional;
 
 import com.drk.todolist.Config.Errors.LoginFailedException;
+import com.drk.todolist.Config.Errors.UserDataInvalidException;
 import com.drk.todolist.Config.Errors.UserExistException;
 import com.drk.todolist.Config.JWT.JwtTokenProvider;
 import com.drk.todolist.DTO.User.SigninDTO;
 import com.drk.todolist.DTO.User.SignupDTO;
 import com.drk.todolist.DTO.User.UpdateUserDTO;
-import com.drk.todolist.DTO.User.UserDTO;
 import com.drk.todolist.DTO.User.UserInfoDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.UserRepository;
@@ -72,41 +72,20 @@ public class UserServicelmpl implements UserService {
 
     @Override
     @Transactional
-    public String userUpdate(UserEntity loginedUser, int userId, UpdateUserDTO updateUserDTO) 
-            throws UserExistException{
-        if (!loginedUser.getUsername().equals(updateUserDTO.getUserName()))
-            if (userRepository.isExistUser(updateUserDTO.getUserName()))
-                throw new UserExistException();
-            else
-                loginedUser.setUsername(updateUserDTO.getUserName());
-
+    public UserInfoDTO userUpdate(UserEntity loginedUser, UpdateUserDTO updateUserDTO) {
         loginedUser.setNickname(updateUserDTO.getNickName());
-        
-        try{
-            userRepository.save(loginedUser);
-            return loginedUser.getUsername();
-        } catch (Exception e){
-            String errorMsg = "loginedUser : "+loginedUser.toString()+", updateUserDTO : "+updateUserDTO.toString();
-            LogLib.ErrorLogging(errorMsg, e);
-            return null;
-        }
+        userRepository.save(loginedUser);
+        String jwt = jwtTokenProvider.coreateToken(loginedUser.getUsername());
+        UserInfoDTO userInfoDTO = new UserInfoDTO(loginedUser.getIdx(), loginedUser.getUsername(), loginedUser.getNickname(), jwt);
+        return userInfoDTO;
     }
 
     @Override
     @Transactional
-    public boolean userDelete(UserEntity loginedUser, int userId){
-        try{
-            UserEntity userEntity = userRepository.findByUsername(loginedUser.getUsername());
-            if (passwordEncoder.matches(password, userEntity.getPassword())) {
-                userRepository.deleteByIdx(userEntity.getIdx());
-                return true;
-            } else
-                return false;
-        } catch (Exception e){
-            String errorMsg = "loginedUser : "+loginedUser.toString()+", password : "+password;
-            LogLib.ErrorLogging(errorMsg, e);
-            return false;
-        }
+    public boolean userDelete(UserEntity loginedUser){
+        UserEntity userEntity = userRepository.findByUsername(loginedUser.getUsername());
+        userRepository.deleteByIdx(userEntity.getIdx());
+        return true;
     }
     
     @Override
@@ -122,21 +101,16 @@ public class UserServicelmpl implements UserService {
 
     @Override
     @Transactional
-    public boolean modifyPassowrd(UserEntity loginedUser, int userId, String password) {
-        try{
-            loginedUser.setPassword(passwordEncoder.encode(password));
-            userRepository.save(loginedUser);
-            return true;
-        } catch (Exception e){
-            String errorMsg = "loginedUser : "+loginedUser+", newPassword : "+password;
-            LogLib.ErrorLogging(errorMsg, e);
-            return false;
-        }
+    public boolean modifyPassowrd(UserEntity loginedUser, String password) {
+        loginedUser.setPassword(passwordEncoder.encode(password));
+        userRepository.save(loginedUser);
+        return true;
     }
 
     @Override
-    public UserInfoDTO getUserInfo(UserEntity userEntity, int userId) {
-        // TODO Auto-generated method stub
-        return null;
+    public UserInfoDTO getUserInfo(UserEntity loginedUser){
+        String jwt = jwtTokenProvider.coreateToken(loginedUser.getUsername()); 
+        UserInfoDTO userInfoDTO = new UserInfoDTO(loginedUser.getIdx(), loginedUser.getUsername(), loginedUser.getNickname(), jwt);
+        return userInfoDTO;
     }
 }
