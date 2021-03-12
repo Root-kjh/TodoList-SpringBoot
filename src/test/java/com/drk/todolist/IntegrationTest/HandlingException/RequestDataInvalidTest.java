@@ -1,6 +1,6 @@
 package com.drk.todolist.Controller.HandlingException;
 
-import com.drk.todolist.Config.ControllerTest;
+import com.drk.todolist.Config.IntegrationTest;
 import com.drk.todolist.Config.Controller.UrlMapper;
 import com.drk.todolist.Config.Errors.RequestDataInvalidException;
 import com.drk.todolist.DTO.Todo.InsertTodoDTO;
@@ -26,7 +26,7 @@ import org.springframework.http.MediaType;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class RequestDataInvalidTest extends ControllerTest{
+public class RequestDataInvalidTest extends IntegrationTest{
     
     final static int METHOD_NOT_ALLOWED = 405;
 

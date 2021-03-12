@@ -1,6 +1,6 @@
 package com.drk.todolist.Controller.Basic;
 
-import com.drk.todolist.Config.ControllerTest;
+import com.drk.todolist.Config.IntegrationTest;
 import com.drk.todolist.Config.Controller.UrlMapper;
 import com.drk.todolist.DTO.Todo.TodoDTO;
 import com.drk.todolist.DTO.Todo.UpdateTodoDTO;
@@ -32,7 +32,7 @@ import javax.transaction.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Slf4j
-public class TodoControllerTest extends ControllerTest {
+public class TodoControllerTest extends IntegrationTest {
 
     @Test
     @Transactional

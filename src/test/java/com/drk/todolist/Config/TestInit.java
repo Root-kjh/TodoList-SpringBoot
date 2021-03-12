@@ -10,18 +10,18 @@ import com.drk.todolist.lib.TestLib;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public class TestInit {
 
     // Repositories
-    @Autowired
-    protected UserRepository userRepository;
+    protected final UserRepository userRepository;
 
-    @Autowired
-    protected TodoRepository todoRepository;
+    protected final TodoRepository todoRepository;
     
 
     // Services
@@ -57,7 +57,8 @@ public class TestInit {
         todo.setContext(TestLib.testTodo.context);
         userEntity.addTodo(todo);
         this.userRepository.saveAndFlush(userEntity);
-        return this.userRepository.findById(userEntity.getIdx()).get().getTodoEntityList().get(0);
+        this.todoRepository.save(todo);
+        return todo;
     }
 
 }

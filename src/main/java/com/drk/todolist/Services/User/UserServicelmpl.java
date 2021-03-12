@@ -1,9 +1,6 @@
 package com.drk.todolist.Services.User;
 
-import javax.transaction.Transactional;
-
 import com.drk.todolist.Config.Errors.LoginFailedException;
-import com.drk.todolist.Config.Errors.UserDataInvalidException;
 import com.drk.todolist.Config.Errors.UserExistException;
 import com.drk.todolist.Config.JWT.JwtTokenProvider;
 import com.drk.todolist.DTO.User.SigninDTO;
@@ -13,12 +10,10 @@ import com.drk.todolist.DTO.User.UserInfoDTO;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.UserRepository;
 import com.drk.todolist.lib.VariablesLib;
-import com.drk.todolist.lib.LogLib;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,20 +23,17 @@ public class UserServicelmpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
     
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
 
     private final JwtTokenProvider jwtTokenProvider;
-    
-    @Autowired
-    AuthenticationManager authenticationManager;
 
     public boolean isExistUser(String user_name) {
         return userRepository.isExistUser(user_name);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserInfoDTO signin(SigninDTO signinDTO) throws LoginFailedException{
             UserEntity userEntity = userRepository.findByUsername(signinDTO.getUserName());
             if (VariablesLib.isSet(userEntity) && passwordEncoder.matches(signinDTO.getPassword(), userEntity.getPassword())){
@@ -89,14 +81,9 @@ public class UserServicelmpl implements UserService {
     }
     
     @Override
+    @Transactional(readOnly = true)
     public UserEntity findUserByUsername(String username) {
-        try{
             return userRepository.findByUsername(username);
-        } catch (Exception e){
-            String errorMsg = "username : "+username;
-            LogLib.ErrorLogging(errorMsg, e);
-            return null;
-        }
     }
 
     @Override
@@ -108,6 +95,7 @@ public class UserServicelmpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserInfoDTO getUserInfo(UserEntity loginedUser){
         String jwt = jwtTokenProvider.coreateToken(loginedUser.getUsername()); 
         UserInfoDTO userInfoDTO = new UserInfoDTO(loginedUser.getIdx(), loginedUser.getUsername(), loginedUser.getNickname(), jwt);

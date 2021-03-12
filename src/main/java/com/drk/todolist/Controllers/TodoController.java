@@ -75,7 +75,7 @@ public class TodoController {
         return todoService.deleteTodo(todoId, userEntity.getIdx());
     }
     
-    @PostMapping("/{todoId}"))
+    @PostMapping("/{todoId}")
     public TodoInfoDTO updateTodo(
             HttpServletRequest request, 
             Authentication authentication, 

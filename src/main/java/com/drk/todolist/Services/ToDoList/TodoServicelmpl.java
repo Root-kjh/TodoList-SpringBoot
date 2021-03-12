@@ -1,13 +1,13 @@
 package com.drk.todolist.Services.ToDoList;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.transaction.Transactional;
 
 import com.drk.todolist.DTO.Todo.InsertTodoDTO;
 import com.drk.todolist.DTO.Todo.TodoInfoDTO;
@@ -26,6 +26,7 @@ public class TodoServicelmpl implements TodoService{
     private final UserRepository userRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<TodoInfoDTO> showTodoList(Long userIdx) {
         List<TodoEntity> todoList = userRepository.findById(userIdx).get().getTodoEntityList();
         List<TodoInfoDTO> todoInfoList = new ArrayList<>();

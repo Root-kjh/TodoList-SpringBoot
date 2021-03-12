@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import javax.transaction.Transactional;
 
-import com.drk.todolist.Config.ControllerTest;
+import com.drk.todolist.Config.IntegrationTest;
 import com.drk.todolist.Config.Controller.UrlMapper;
 import com.drk.todolist.Config.Errors.UserDataInvalidException;
 import com.drk.todolist.DTO.Todo.UpdateTodoDTO;
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserDataInvalidTest extends ControllerTest{
+public class UserDataInvalidTest extends IntegrationTest{
     
     public static final int FORBIDDEN = 403;
 

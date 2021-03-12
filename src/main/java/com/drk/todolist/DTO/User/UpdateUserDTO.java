@@ -10,10 +10,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class UpdateUserDTO {
-
-    @NotNull
-    private String userName;
-    
     @NotNull
     private String nickName;
 }

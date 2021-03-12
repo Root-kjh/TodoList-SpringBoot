@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
-@RestController("/user/{userId}")
+@RestController("/user")
 @CrossOrigin
 @RequiredArgsConstructor
 public class UserController {
@@ -43,7 +43,7 @@ public class UserController {
             throw new UserDataInvalidException();
     }
 
-    @GetMapping()
+    @GetMapping("/{userId}")
     public UserInfoDTO getUserInfo(
             Authentication authentication,
             @PathParam("userId") Long userId
@@ -53,7 +53,7 @@ public class UserController {
         return userInfoDTO;
     }
 
-    @PutMapping()
+    @PutMapping("/{userId}")
     public UserInfoDTO updateUserInfo(
             HttpServletRequest request, 
             Authentication authentication, 
@@ -67,7 +67,7 @@ public class UserController {
         return newUserInfo;
     }
 
-    @PatchMapping()
+    @PatchMapping("/{userId}")
     public String modifyPassword(
         Authentication authentication, 
         @PathParam("userId") Long userId,
@@ -78,7 +78,7 @@ public class UserController {
         return "{'Message': 'Success'}";
     }
 
-    @DeleteMapping()
+    @DeleteMapping("/{userId}")
     public String withdraw(
             Authentication authentication, 
             @PathParam("userId") Long userId){

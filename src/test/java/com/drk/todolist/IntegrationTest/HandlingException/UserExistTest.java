@@ -1,6 +1,6 @@
 package com.drk.todolist.Controller.HandlingException;
 
-import com.drk.todolist.Config.ControllerTest;
+import com.drk.todolist.Config.IntegrationTest;
 import com.drk.todolist.Config.Controller.UrlMapper;
 import com.drk.todolist.Config.Errors.UserExistException;
 import com.drk.todolist.DTO.User.SignupDTO;
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserExistTest extends ControllerTest{
+public class UserExistTest extends IntegrationTest{
     
     private UserExistException userExistException = new UserExistException();
     private static final int NOT_ACCEPTABLE = 406;

@@ -74,4 +74,12 @@ public class UserEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if (this==obj) return true;
+        if(!(obj instanceof UserEntity)) return false;
+        UserEntity objUserEntity = (UserEntity)obj;
+        return this.idx==objUserEntity.getIdx() && this.username.equals(objUserEntity.getUsername()) && this.nickname.equals(objUserEntity.getNickname());
+    }
 }

@@ -1,14 +1,12 @@
 package com.drk.todolist.Config.Errors;
 
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.http.HttpStatus;  
 
-@ControllerAdvice
-@RestController
-public class GlobalExceptionHandler {
+@RestControllerAdvice
+public class GlobalExceptionHandler{
     
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(RequestDataInvalidException.class)

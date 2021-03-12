@@ -1,5 +1,6 @@
 package com.drk.todolist.Config.JWT;
 
+import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.Date;
 
@@ -27,12 +28,11 @@ public class JwtTokenProvider {
 
     private final long tokenValidTime = 60 * 60 * 1000L;
 
-    @Autowired
     private final UserDetailsService userDetailsService;
 
     @PostConstruct
     protected void init(){
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes(Charset.forName("UTF-8")));
     }
 
     public String coreateToken(final String userName) {
@@ -53,7 +53,7 @@ public class JwtTokenProvider {
     }
 
     public String getUserNameByToken(final String token){
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(secretKey.getBytes(Charset.forName("UTF-8"))).parseClaimsJws(token).getBody().getSubject();
     }
 
     public String resolveToken(HttpServletRequest request){
@@ -62,7 +62,7 @@ public class JwtTokenProvider {
 
     public boolean valiDateToken(final String jwtToken) {
         try{
-            final Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+            final Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey.getBytes(Charset.forName("UTF-8"))).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
         }catch (final Exception e){
             e.printStackTrace();
