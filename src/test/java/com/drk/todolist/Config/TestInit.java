@@ -38,6 +38,7 @@ public class TestInit {
 
 
     // Make Test user&todo methods
+    @Transactional
     public UserEntity makeTestUser() throws Exception{
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(TestLib.testUser.name);
@@ -57,8 +58,7 @@ public class TestInit {
         todo.setContext(TestLib.testTodo.context);
         userEntity.addTodo(todo);
         this.userRepository.saveAndFlush(userEntity);
-        this.todoRepository.save(todo);
-        return todo;
+        return this.todoRepository.findAll().get(0);
     }
 
 }

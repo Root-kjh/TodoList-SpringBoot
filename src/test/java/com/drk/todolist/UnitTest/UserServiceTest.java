@@ -32,13 +32,13 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceTest extends UnitTest {
 
 
-    private final JwtService jwtService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     public UserServiceTest(UserRepository userRepository, TodoRepository todoRepository, UserService userService,
-            TodoService todoService, JwtService jwtService) {
+            TodoService todoService, JwtTokenProvider jwtTokenProvider) {
         super(userRepository, todoRepository, userService, todoService);
-        this.jwtService = jwtService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Test
@@ -57,7 +57,6 @@ public class UserServiceTest extends UnitTest {
 
     @Test
     public void signin() throws Exception {
-        final JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(jwtService);
         UserEntity testUserEntity = this.makeTestUser();
         SigninDTO signinDTO = new SigninDTO();
         signinDTO.setUserName(TestLib.testUser.name);

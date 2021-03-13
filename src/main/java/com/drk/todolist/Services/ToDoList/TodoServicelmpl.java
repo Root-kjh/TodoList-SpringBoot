@@ -1,5 +1,6 @@
 package com.drk.todolist.Services.ToDoList;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import com.drk.todolist.Config.Errors.UserDataInvalidException;
 import com.drk.todolist.DTO.Todo.InsertTodoDTO;
 import com.drk.todolist.DTO.Todo.TodoInfoDTO;
 import com.drk.todolist.DTO.Todo.UpdateTodoDTO;
@@ -46,7 +47,6 @@ public class TodoServicelmpl implements TodoService{
         new_todo.setContext(insertTodoDTO.getContext());
         todoList.add(new_todo);
         userEntity.setTodoEntityList(todoList);
-        userRepository.save(userEntity);
         return true;
     }
 
@@ -70,5 +70,17 @@ public class TodoServicelmpl implements TodoService{
         todoRepository.save(todoEntity);
         TodoInfoDTO todoInfoDTO = new TodoInfoDTO(todoEntity.getIdx(), todoEntity.getTitle(), todoEntity.getContext());
         return todoInfoDTO;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserEntity checkOwnerShip(Authentication authentication, Long todoId) throws UserDataInvalidException{
+        Long userId = ((UserEntity) authentication.getPrincipal()).getIdx();
+        UserEntity userEntity = this.userRepository.findById(userId).get();
+        for (TodoEntity todoEntity : userEntity.getTodoEntityList()) {
+            if (todoEntity.getIdx().equals(todoId))
+                return userEntity;
+        }
+        throw new UserDataInvalidException();
     }
 }

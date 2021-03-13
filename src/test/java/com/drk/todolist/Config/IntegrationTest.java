@@ -1,5 +1,6 @@
 package com.drk.todolist.Config;
 
+import com.drk.todolist.Config.JWT.JwtTokenProvider;
 import com.drk.todolist.DTO.Todo.TodoDTO;
 import com.drk.todolist.DTO.User.SigninDTO;
 import com.drk.todolist.Repositories.TodoRepository;
@@ -10,16 +11,10 @@ import com.drk.todolist.lib.TestLib;
 
 import org.json.simple.parser.JSONParser;
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import lombok.Builder;
-import lombok.extern.slf4j.Slf4j;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@Slf4j
 public class IntegrationTest extends TestInit{
 
     protected final MockMvc mockMvc;
@@ -27,6 +22,8 @@ public class IntegrationTest extends TestInit{
     protected final UserService userService;
 
     protected final TodoService todoService;
+    
+    protected final JwtTokenProvider jwtTokenProvider;
 
     protected final JSONParser jsonParser = new JSONParser();
 
@@ -38,11 +35,13 @@ public class IntegrationTest extends TestInit{
         TodoRepository todoRepository, 
         MockMvc mockmMvc, 
         UserService userService, 
-        TodoService todoService) {
+        TodoService todoService,
+        JwtTokenProvider jwtTokenProvider) {
         super(userRepository, todoRepository);
         this.mockMvc = mockmMvc;
         this.userService = userService;
         this.todoService = todoService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @BeforeEach
@@ -56,34 +55,11 @@ public class IntegrationTest extends TestInit{
         todoDTO.setContext(TestLib.testTodo.context);
     }
 
-    public String getJwt() throws Exception {
-
-        SigninDTO signinDTO = new SigninDTO();
-        signinDTO.setUserName(TestLib.testUser.name);
-        signinDTO.setPassword(TestLib.testUser.password);
-
-        String jwt = this.mockMvc.perform(post("/auth/signin")
-            .content(TestLib.asJsonString(signinDTO))
-            .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andReturn()
-        .getResponse()
-        .getContentAsString(); 
-        log.info("jwt : " + jwt);
-
-        return jwt;
+    public String getJwt(){
+        return jwtTokenProvider.coreateToken(TestLib.testUser.name);
     }
 
-    public String getJwt(SigninDTO signinDTO) throws Exception {
-        String jwt = this.mockMvc.perform(post("/auth/signin")
-            .content(TestLib.asJsonString(signinDTO))
-            .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andReturn()
-        .getResponse()
-        .getContentAsString(); 
-        log.info("jwt : " + jwt);
-
-        return jwt;
+    public String getJwt(String userName){
+        return jwtTokenProvider.coreateToken(userName);
     }
 }

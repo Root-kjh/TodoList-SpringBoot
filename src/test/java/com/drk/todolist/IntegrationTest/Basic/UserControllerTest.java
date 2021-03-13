@@ -15,7 +15,6 @@ import com.drk.todolist.Config.JWT.JwtTokenProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,6 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -39,13 +39,11 @@ public class UserControllerTest extends IntegrationTest {
 
     private UserEntity testUserEntity;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     public UserControllerTest(UserRepository userRepository, TodoRepository todoRepository, MockMvc mockmMvc,
             UserService userService, TodoService todoService, JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder) {
-        super(userRepository, todoRepository, mockmMvc, userService, todoService);
-        this.jwtTokenProvider = jwtTokenProvider;
+        super(userRepository, todoRepository, mockmMvc, userService, todoService, jwtTokenProvider);
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -86,7 +84,7 @@ public class UserControllerTest extends IntegrationTest {
         .andReturn().getResponse().getContentAsString();
         JSONObject responseJson = (JSONObject) this.jsonParser.parse(response);
         System.out.println((String) responseJson.get("jwt"));
-        Authentication authentication = jwtTokenProvider.getAuthentication((String) responseJson.get("jwt"));
+        Authentication authentication = this.jwtTokenProvider.getAuthentication((String) responseJson.get("jwt"));
         
         assertEquals(responseJson.get("userName"), TestLib.testUser.name);
         assertEquals(responseJson.get("nickName"), TestLib.testUser.nickName);
@@ -150,9 +148,10 @@ public class UserControllerTest extends IntegrationTest {
         testUserEntity = this.makeTestUser();
         String jwt = this.getJwt();
         String response = this.mockMvc.perform(patch("/user/"+testUserEntity.getIdx())
-            .content(String.format("{password: '%s'}", TestLib.newTestUser.password)) 
-            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\"password\": \""+TestLib.newTestUser.password+"\"}")
+            .contentType(MediaType.APPLICATION_JSON) 
             .header(TOKEN_HEADER, jwt))
+            .andDo(print())
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
         JSONObject responseJson = (JSONObject) this.jsonParser.parse(response);

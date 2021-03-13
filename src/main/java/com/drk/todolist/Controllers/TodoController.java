@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 
 import com.drk.todolist.DTO.Todo.InsertTodoDTO;
 import com.drk.todolist.DTO.Todo.TodoInfoDTO;
@@ -15,19 +16,23 @@ import com.drk.todolist.Services.User.UserService;
 import com.drk.todolist.Config.Errors.RequestDataInvalidException;
 import com.drk.todolist.Config.Errors.UserDataInvalidException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 
-@RestController("/todo")
+@RestController
+@RequestMapping("/todo")
 @RequiredArgsConstructor
 @CrossOrigin
 public class TodoController {
@@ -35,21 +40,12 @@ public class TodoController {
     
     private final TodoService todoService;
 
-    private final UserService userService;
-
     private UserEntity userEntity;
 
-    private UserEntity checkOwnerShip(Authentication authentication, Long todoId) throws UserDataInvalidException{
-        userEntity = (UserEntity) authentication.getPrincipal();
-        for (TodoEntity todoEntity : userEntity.getTodoEntityList()) {
-            if (todoEntity.getIdx().equals(todoId))
-                return userEntity;
-        }
-        throw new UserDataInvalidException();
-    }
+    private final String successMessage = "{\"Message\": \"Success\"}";
 
     @GetMapping()
-    public List<TodoInfoDTO> showTodoList(Authentication authentication){
+    public List<TodoInfoDTO> showTodoList(Authentication authentication) throws Exception{
         userEntity = (UserEntity) authentication.getPrincipal();
         return todoService.showTodoList(userEntity.getIdx());
     }
@@ -59,32 +55,33 @@ public class TodoController {
             HttpServletRequest request,
             Authentication authentication, 
             @RequestBody @Valid InsertTodoDTO insertTodoDTO, 
-            Errors errors) {
+            Errors errors) throws Exception{
         if (errors.hasErrors())
             throw new RequestDataInvalidException();
         userEntity = (UserEntity) authentication.getPrincipal();
         return todoService.insertTodo(userEntity.getIdx(), insertTodoDTO);
     }
 
-    @GetMapping("/{todoId}")
-    public boolean deleteTodo(
+    @DeleteMapping("/{todoId}")
+    public String deleteTodo(
             HttpServletRequest request,
             Authentication authentication, 
-            @RequestParam Long todoId){
-        userEntity = checkOwnerShip(authentication, todoId);
-        return todoService.deleteTodo(todoId, userEntity.getIdx());
+            @PathVariable Long todoId) throws Exception{
+        userEntity = this.todoService.checkOwnerShip(authentication, todoId);
+        todoService.deleteTodo(todoId, userEntity.getIdx());
+        return this.successMessage;
     }
     
-    @PostMapping("/{todoId}")
+    @PutMapping("/{todoId}")
     public TodoInfoDTO updateTodo(
             HttpServletRequest request, 
             Authentication authentication, 
-            @RequestParam Long todoId,
-            @RequestBody @Valid UpdateTodoDTO updateTodoDTO, 
-            Errors errors){
+            @PathVariable Long todoId,
+            @RequestBody UpdateTodoDTO updateTodoDTO, 
+            Errors errors) throws Exception{
         if (errors.hasErrors())
             throw new RequestDataInvalidException();
-        userEntity = checkOwnerShip(authentication, todoId);
+        userEntity = this.todoService.checkOwnerShip(authentication, todoId);
         return todoService.updateTodo(updateTodoDTO, todoId);
     }
 }

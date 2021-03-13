@@ -54,7 +54,7 @@ public class TodoServiceTest extends UnitTest{
 
     @Test
     public void showTodoTest() throws Exception {
-        int todoCount = 5;
+        final int todoCount = 5;
         for(int i=0; i<todoCount; i++){
             this.makeTodo(this.testUserEntity);
         }
@@ -77,7 +77,6 @@ public class TodoServiceTest extends UnitTest{
     @Test
     public void updateTodoTest() throws Exception {
         Long testTodoIdx = this.makeTodo(this.testUserEntity).getIdx();
-        System.out.println(testTodoIdx);
         UpdateTodoDTO updateTodoDTO = new UpdateTodoDTO();
         updateTodoDTO.setNewTitle(TestLib.newTestTodo.title);
         updateTodoDTO.setNewContext(TestLib.newTestTodo.context);

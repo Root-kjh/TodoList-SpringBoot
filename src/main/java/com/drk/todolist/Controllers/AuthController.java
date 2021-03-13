@@ -7,9 +7,7 @@ import com.drk.todolist.DTO.User.UserInfoDTO;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import com.drk.todolist.Config.Errors.LoginFailedException;
 import com.drk.todolist.Config.Errors.RequestDataInvalidException;
-import com.drk.todolist.Config.Errors.UserExistException;
 import com.drk.todolist.Services.User.UserService;
 
 import org.json.simple.JSONObject;
@@ -29,21 +27,20 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 
     private final UserService userService;
+    private final String successMessage = "{\"Message\": \"Success\"}";
 
     @PostMapping("/signup")
-    public JSONObject signup(HttpServletRequest request, @RequestBody @Valid SignupDTO signupDTO, Errors errors)
-        throws RequestDataInvalidException, UserExistException{
+    public String signup(HttpServletRequest request, @RequestBody @Valid SignupDTO signupDTO, Errors errors)
+        throws Exception{
         if (errors.hasErrors())
             throw new RequestDataInvalidException();
         userService.signup(signupDTO);
-        JSONObject response = new JSONObject();
-        response.put("Message", "Success");
-        return response;
+        return this.successMessage;
     }
 
     @PostMapping("/signin")
     public UserInfoDTO signin(HttpServletRequest request, @RequestBody @Valid SigninDTO signinDTO, Errors errors)
-        throws RequestDataInvalidException, LoginFailedException{
+        throws Exception{
         if (errors.hasErrors())
             throw new RequestDataInvalidException();
         return userService.signin(signinDTO);
