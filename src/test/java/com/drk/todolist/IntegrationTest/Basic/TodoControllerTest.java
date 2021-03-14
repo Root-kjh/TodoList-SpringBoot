@@ -1,25 +1,19 @@
 package com.drk.todolist.IntegrationTest.Basic;
 
 import com.drk.todolist.Config.IntegrationTest;
-import com.drk.todolist.Config.JWT.JwtTokenProvider;
 import com.drk.todolist.DTO.Todo.TodoDTO;
 import com.drk.todolist.DTO.Todo.UpdateTodoDTO;
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
-import com.drk.todolist.Repositories.TodoRepository;
-import com.drk.todolist.Repositories.UserRepository;
-import com.drk.todolist.Services.ToDoList.TodoService;
-import com.drk.todolist.Services.User.UserService;
 import com.drk.todolist.lib.TestLib;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,23 +29,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class TodoControllerTest extends IntegrationTest {
 
-    @Autowired
-    public TodoControllerTest(UserRepository userRepository, TodoRepository todoRepository, MockMvc mockmMvc,
-            UserService userService, TodoService todoService, JwtTokenProvider jwtTokenProvider) {
-        super(userRepository, todoRepository, mockmMvc, userService, todoService, jwtTokenProvider);
+    String jwt;
+    UserEntity testUserEntity;
+
+    @BeforeEach
+    public void setTestUser() throws Exception{
+        this.testUserEntity = this.makeTestUser();
+        this.jwt = this.getJwt();
     }
 
     @Test
     public void insertTodo() throws Exception {
-        this.makeTestUser();
-        String jwt = this.getJwt();
-
         TodoDTO newTodoDTO = new TodoDTO();
         newTodoDTO.setTitle(TestLib.testTodo.title);
         newTodoDTO.setContext(TestLib.testTodo.context);
 
         this.mockMvc.perform(post("/todo")
-            .header(TOKEN_HEADER, jwt)
+            .header(TOKEN_HEADER, this.jwt)
             .content(TestLib.asJsonString(newTodoDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
@@ -68,16 +62,14 @@ public class TodoControllerTest extends IntegrationTest {
     public void showTodo() throws Exception {
         final int todoCount = 5;
 
-        UserEntity testUserEntity = this.makeTestUser();
-        String jwt = this.getJwt();
-
+        
         for(int i=0;i<todoCount;i++){
-            this.makeTodo(testUserEntity);
+            this.makeTodo(this.testUserEntity);
         }
 
         String response = 
         this.mockMvc.perform(get("/todo")
-                .header(TOKEN_HEADER, jwt))
+                .header(TOKEN_HEADER, this.jwt))
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
 
@@ -92,16 +84,14 @@ public class TodoControllerTest extends IntegrationTest {
 
     @Test
     public void updateTodo() throws Exception {
-        UserEntity testUserEntity = this.makeTestUser();
-        String jwt = this.getJwt();
-        Long testTodoIdx = this.makeTodo(testUserEntity).getIdx();
+        Long testTodoIdx = this.makeTodo(this.testUserEntity).getIdx();
 
         UpdateTodoDTO updateTodoDTO = new UpdateTodoDTO();
         updateTodoDTO.setNewTitle(TestLib.newTestTodo.title);
         updateTodoDTO.setNewContext(TestLib.newTestTodo.context);
 
         String response = this.mockMvc.perform(put("/todo/"+testTodoIdx)
-            .header(TOKEN_HEADER, jwt)
+            .header(TOKEN_HEADER, this.jwt)
             .content(TestLib.asJsonString(updateTodoDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
@@ -118,12 +108,9 @@ public class TodoControllerTest extends IntegrationTest {
 
     @Test
     public void deleteTodo() throws Exception {
-        UserEntity testUserEntity = this.makeTestUser();
-        String jwt = this.getJwt();
-
-        Long testTodoIdx = this.makeTodo(testUserEntity).getIdx();
+        Long testTodoIdx = this.makeTodo(this.testUserEntity).getIdx();
         String response = this.mockMvc.perform(delete("/todo/"+testTodoIdx)
-            .header(TOKEN_HEADER, jwt))
+            .header(TOKEN_HEADER, this.jwt))
         .andExpect(status().isOk())
         .andReturn().getResponse().getContentAsString();
 

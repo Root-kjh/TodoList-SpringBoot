@@ -3,44 +3,50 @@ package com.drk.todolist.Config;
 import com.drk.todolist.Config.JWT.JwtTokenProvider;
 import com.drk.todolist.DTO.Todo.TodoDTO;
 import com.drk.todolist.DTO.User.SigninDTO;
-import com.drk.todolist.Repositories.TodoRepository;
-import com.drk.todolist.Repositories.UserRepository;
 import com.drk.todolist.Services.ToDoList.TodoService;
 import com.drk.todolist.Services.User.UserService;
 import com.drk.todolist.lib.TestLib;
 
 import org.json.simple.parser.JSONParser;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Service;
 import org.springframework.test.web.servlet.MockMvc;
 
-import lombok.Builder;
-
+@Service
+@Configurable
 public class IntegrationTest extends TestInit{
 
-    protected final MockMvc mockMvc;
+    public MockMvc mockMvc;
 
-    protected final UserService userService;
+    public UserService userService;
 
-    protected final TodoService todoService;
+    public TodoService todoService;
     
-    protected final JwtTokenProvider jwtTokenProvider;
+    public JwtTokenProvider jwtTokenProvider;
 
-    protected final JSONParser jsonParser = new JSONParser();
+    public final JSONParser jsonParser = new JSONParser();
 
-    protected final static String TOKEN_HEADER= "X-AUTH-TOKEN";
+    public final String TOKEN_HEADER= "X-AUTH-TOKEN";
 
-    @Builder
-    public IntegrationTest(
-        UserRepository userRepository, 
-        TodoRepository todoRepository, 
-        MockMvc mockmMvc, 
-        UserService userService, 
-        TodoService todoService,
-        JwtTokenProvider jwtTokenProvider) {
-        super(userRepository, todoRepository);
-        this.mockMvc = mockmMvc;
+    @Autowired
+    public void setMockMvc(MockMvc mockMvc) {
+        this.mockMvc = mockMvc;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    @Autowired
+    public void setTodoService(TodoService todoService) {
         this.todoService = todoService;
+    }
+
+    @Autowired
+    public void setJwtTokenProvider(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 

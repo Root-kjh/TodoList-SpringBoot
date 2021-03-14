@@ -11,24 +11,24 @@ public class GlobalExceptionHandler{
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(RequestDataInvalidException.class)
     public String handleRequestDataInvalidException(){
-        return "{'Message': 'Request Data Invalid'}";
+        return "{\"Message\": \"Request Data Invalid\"}";
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(UserDataInvalidException.class)
     public String handleUserDataInvalidException(){
-        return "{'Messaage': 'Permission Denied'}";
+        return "{\"Messaage\": \"Permission Denied\"}";
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserExistException.class)
     public String handleUserExiseExcecption(){
-        return "{'Message': 'User Exist'}";
+        return "{\"Message\": \"User Exist\"}";
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(LoginFailedException.class)
     public String handleLoginFailedException(){
-        return "{'Message': 'Login Failed'}";
+        return "{\"Message\": \"Login Failed\"}";
     }
 }

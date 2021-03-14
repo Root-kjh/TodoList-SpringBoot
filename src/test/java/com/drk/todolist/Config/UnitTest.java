@@ -1,23 +1,24 @@
 package com.drk.todolist.Config;
 
-import com.drk.todolist.Repositories.TodoRepository;
-import com.drk.todolist.Repositories.UserRepository;
 import com.drk.todolist.Services.ToDoList.TodoService;
 import com.drk.todolist.Services.User.UserService;
 
-import lombok.Builder;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 public class UnitTest extends TestInit {
 
-    protected final UserService userService;
+    protected UserService userService;
 
-    protected final TodoService todoService;
+    protected TodoService todoService;
 
-    @Builder
-    public UnitTest(UserRepository userRepository, TodoRepository todoRepository, UserService userService, TodoService todoService) {
-        super(userRepository, todoRepository);
+    @Autowired
+    public void setUserService(UserService userService){
         this.userService = userService;
+    }
+    
+    @Autowired
+    public void setTodoService(TodoService todoService){
         this.todoService = todoService;
     }
-
 }

@@ -10,21 +10,26 @@ import com.drk.todolist.lib.TestLib;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 public class TestInit {
 
     // Repositories
-    protected final UserRepository userRepository;
+    public UserRepository userRepository;
 
-    protected final TodoRepository todoRepository;
+    public TodoRepository todoRepository;
     
-
-    // Services
+    @Autowired
+    public void setUserRepository(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }    
+    
+    @Autowired
+    public void setTodoRepository(TodoRepository todoRepository){
+        this.todoRepository = todoRepository;
+    }
 
     protected final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 

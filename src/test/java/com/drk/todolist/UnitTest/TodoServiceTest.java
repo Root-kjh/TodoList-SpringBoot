@@ -11,15 +11,10 @@ import com.drk.todolist.DTO.Todo.TodoInfoDTO;
 import com.drk.todolist.DTO.Todo.UpdateTodoDTO;
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
-import com.drk.todolist.Repositories.TodoRepository;
-import com.drk.todolist.Repositories.UserRepository;
-import com.drk.todolist.Services.ToDoList.TodoService;
-import com.drk.todolist.Services.User.UserService;
 import com.drk.todolist.lib.TestLib;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,12 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class TodoServiceTest extends UnitTest{
-    
-    @Autowired
-    public TodoServiceTest(UserRepository userRepository, TodoRepository todoRepository, UserService userService,
-            TodoService todoService) {
-        super(userRepository, todoRepository, userService, todoService);
-    }
 
     UserEntity testUserEntity;
 

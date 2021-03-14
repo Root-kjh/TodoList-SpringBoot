@@ -4,13 +4,8 @@ import com.drk.todolist.DTO.User.SigninDTO;
 import com.drk.todolist.DTO.User.SignupDTO;
 import com.drk.todolist.DTO.User.UpdateUserDTO;
 import com.drk.todolist.Entitis.UserEntity;
-import com.drk.todolist.Repositories.TodoRepository;
-import com.drk.todolist.Repositories.UserRepository;
-import com.drk.todolist.Services.ToDoList.TodoService;
-import com.drk.todolist.Services.User.UserService;
 import com.drk.todolist.lib.TestLib;
 import com.drk.todolist.Config.IntegrationTest;
-import com.drk.todolist.Config.JWT.JwtTokenProvider;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,12 +32,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 public class UserControllerTest extends IntegrationTest {
 
     private UserEntity testUserEntity;
-    private final PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserControllerTest(UserRepository userRepository, TodoRepository todoRepository, MockMvc mockmMvc,
-            UserService userService, TodoService todoService, JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder) {
-        super(userRepository, todoRepository, mockmMvc, userService, todoService, jwtTokenProvider);
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder){
         this.passwordEncoder = passwordEncoder;
     }
 

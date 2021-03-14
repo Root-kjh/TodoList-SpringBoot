@@ -1,5 +1,6 @@
 package com.drk.todolist.UnitTest;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -10,11 +11,6 @@ import com.drk.todolist.DTO.User.SignupDTO;
 import com.drk.todolist.DTO.User.UpdateUserDTO;
 import com.drk.todolist.DTO.User.UserInfoDTO;
 import com.drk.todolist.Entitis.UserEntity;
-import com.drk.todolist.Repositories.TodoRepository;
-import com.drk.todolist.Repositories.UserRepository;
-import com.drk.todolist.Services.JWT.JwtService;
-import com.drk.todolist.Services.ToDoList.TodoService;
-import com.drk.todolist.Services.User.UserService;
 import com.drk.todolist.lib.TestLib;
 
 import org.junit.jupiter.api.Test;
@@ -32,12 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceTest extends UnitTest {
 
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public UserServiceTest(UserRepository userRepository, TodoRepository todoRepository, UserService userService,
-            TodoService todoService, JwtTokenProvider jwtTokenProvider) {
-        super(userRepository, todoRepository, userService, todoService);
+    public void setJwtTokenProvider(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -98,9 +92,7 @@ public class UserServiceTest extends UnitTest {
         SigninDTO signinDTO = new SigninDTO();
         signinDTO.setUserName(TestLib.testUser.name);
         signinDTO.setPassword(TestLib.newTestUser.password);
-        log.info("signinDTO");
-        log.info(signinDTO.toString());
 
-        this.userService.signin(signinDTO);
+        assertDoesNotThrow(()->this.userService.signin(signinDTO));
     }
 }
