@@ -2,6 +2,7 @@ package com.drk.todolist.Config;
 
 import javax.transaction.Transactional;
 
+import com.drk.todolist.DTO.User.SignupDTO;
 import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Repositories.TodoRepository;
@@ -49,6 +50,19 @@ public class TestInit {
         userEntity.setUsername(TestLib.testUser.name);
         userEntity.setNickname(TestLib.testUser.nickName);
         userEntity.setPassword(passwordEncoder.encode(TestLib.testUser.password));
+        UserEntity saveUserEntity = this.userRepository.save(userEntity);
+        if (userEntity.getIdx() == saveUserEntity.getIdx())
+            return saveUserEntity;
+        else
+            throw new Exception("userEntity was not save nomarlly");
+    }
+
+    @Transactional
+    public UserEntity makeTestUser(SignupDTO signupDTO) throws Exception{
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUsername(signupDTO.getUserName());
+        userEntity.setNickname(signupDTO.getNickName());
+        userEntity.setPassword(passwordEncoder.encode(signupDTO.getPassword()));
         UserEntity saveUserEntity = this.userRepository.save(userEntity);
         if (userEntity.getIdx() == saveUserEntity.getIdx())
             return saveUserEntity;

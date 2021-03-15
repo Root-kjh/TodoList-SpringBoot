@@ -25,7 +25,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -75,7 +74,6 @@ public class UserControllerTest extends IntegrationTest {
         .andExpect(status().isOk())
         .andReturn().getResponse().getContentAsString();
         JSONObject responseJson = (JSONObject) this.jsonParser.parse(response);
-        System.out.println((String) responseJson.get("jwt"));
         Authentication authentication = this.jwtTokenProvider.getAuthentication((String) responseJson.get("jwt"));
         
         assertEquals(responseJson.get("userName"), TestLib.testUser.name);
@@ -143,7 +141,6 @@ public class UserControllerTest extends IntegrationTest {
             .content("{\"password\": \""+TestLib.newTestUser.password+"\"}")
             .contentType(MediaType.APPLICATION_JSON) 
             .header(TOKEN_HEADER, jwt))
-            .andDo(print())
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
         JSONObject responseJson = (JSONObject) this.jsonParser.parse(response);

@@ -4,17 +4,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 
 import com.drk.todolist.DTO.Todo.InsertTodoDTO;
 import com.drk.todolist.DTO.Todo.TodoInfoDTO;
 import com.drk.todolist.DTO.Todo.UpdateTodoDTO;
-import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.Services.ToDoList.TodoService;
-import com.drk.todolist.Services.User.UserService;
 import com.drk.todolist.Config.Errors.RequestDataInvalidException;
-import com.drk.todolist.Config.Errors.UserDataInvalidException;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
@@ -26,7 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -47,7 +42,7 @@ public class TodoController {
     @GetMapping()
     public List<TodoInfoDTO> showTodoList(Authentication authentication) throws Exception{
         userEntity = (UserEntity) authentication.getPrincipal();
-        return todoService.showTodoList(userEntity.getIdx());
+        return this.todoService.showTodoList(userEntity.getIdx());
     }
 
     @PostMapping()
@@ -59,7 +54,7 @@ public class TodoController {
         if (errors.hasErrors())
             throw new RequestDataInvalidException();
         userEntity = (UserEntity) authentication.getPrincipal();
-        return todoService.insertTodo(userEntity.getIdx(), insertTodoDTO);
+        return this.todoService.insertTodo(userEntity.getIdx(), insertTodoDTO);
     }
 
     @DeleteMapping("/{todoId}")
@@ -68,7 +63,7 @@ public class TodoController {
             Authentication authentication, 
             @PathVariable Long todoId) throws Exception{
         userEntity = this.todoService.checkOwnerShip(authentication, todoId);
-        todoService.deleteTodo(todoId, userEntity.getIdx());
+        this.todoService.deleteTodo(todoId, userEntity.getIdx());
         return this.successMessage;
     }
     
@@ -77,11 +72,11 @@ public class TodoController {
             HttpServletRequest request, 
             Authentication authentication, 
             @PathVariable Long todoId,
-            @RequestBody UpdateTodoDTO updateTodoDTO, 
+            @RequestBody @Valid UpdateTodoDTO updateTodoDTO, 
             Errors errors) throws Exception{
         if (errors.hasErrors())
             throw new RequestDataInvalidException();
         userEntity = this.todoService.checkOwnerShip(authentication, todoId);
-        return todoService.updateTodo(updateTodoDTO, todoId);
+        return this.todoService.updateTodo(updateTodoDTO, todoId);
     }
 }

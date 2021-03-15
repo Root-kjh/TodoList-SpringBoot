@@ -10,7 +10,6 @@ import javax.validation.Valid;
 import com.drk.todolist.Config.Errors.RequestDataInvalidException;
 import com.drk.todolist.Services.User.UserService;
 
-import org.json.simple.JSONObject;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;

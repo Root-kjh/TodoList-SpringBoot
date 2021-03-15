@@ -76,7 +76,7 @@ public class UserController {
     public String modifyPassword(
         Authentication authentication, 
         @PathVariable("userId") Long userId,
-        @RequestBody ModifyPasswordDTO passwordDTO
+        @RequestBody @Valid ModifyPasswordDTO passwordDTO
     ) throws Exception{
         userEntity = userPermissionCheck(authentication, userId);
         userService.modifyPassowrd(userEntity, passwordDTO.getPassword());

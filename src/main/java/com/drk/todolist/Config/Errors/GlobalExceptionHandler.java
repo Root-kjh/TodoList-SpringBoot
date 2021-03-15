@@ -8,26 +8,26 @@ import org.springframework.http.HttpStatus;
 @RestControllerAdvice
 public class GlobalExceptionHandler{
     
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(RequestDataInvalidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleRequestDataInvalidException(){
         return "{\"Message\": \"Request Data Invalid\"}";
     }
 
-    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(UserDataInvalidException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleUserDataInvalidException(){
-        return "{\"Messaage\": \"Permission Denied\"}";
+        return "{\"Message\": \"Permission Denied\"}";
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserExistException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleUserExiseExcecption(){
         return "{\"Message\": \"User Exist\"}";
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(LoginFailedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleLoginFailedException(){
         return "{\"Message\": \"Login Failed\"}";
     }
