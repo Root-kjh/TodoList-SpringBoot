@@ -10,12 +10,8 @@ import com.drk.todolist.lib.TestLib;
 import org.json.simple.parser.JSONParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.stereotype.Service;
 import org.springframework.test.web.servlet.MockMvc;
 
-@Service
-@Configurable
 public class IntegrationTest extends TestInit{
 
     public MockMvc mockMvc;
@@ -29,6 +25,9 @@ public class IntegrationTest extends TestInit{
     public final JSONParser jsonParser = new JSONParser();
 
     public final String TOKEN_HEADER= "X-AUTH-TOKEN";
+
+    public final int BAD_REQUEST = 400;
+    public final int FORBIDDEN = 403;
 
     @Autowired
     public void setMockMvc(MockMvc mockMvc) {
