@@ -20,11 +20,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
 
-import lombok.extern.slf4j.Slf4j;
-
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@Slf4j
 public class UserServiceTest extends UnitTest {
 
 
