@@ -26,7 +26,7 @@ public class RequestDataInvalidTest extends IntegrationTest{
     String jwt;
 
     @BeforeEach
-    public void makeUser() throws Exception{
+    public void setUser() throws Exception{
         this.testUserEntity = this.makeTestUser();
         this.jwt = this.getJwt();
     }

@@ -76,8 +76,11 @@ public class UserController {
     public String modifyPassword(
         Authentication authentication, 
         @PathVariable("userId") Long userId,
-        @RequestBody @Valid ModifyPasswordDTO passwordDTO
+        @RequestBody @Valid ModifyPasswordDTO passwordDTO,
+        Errors errors
     ) throws Exception{
+        if(errors.hasErrors())
+            throw new RequestDataInvalidException();
         userEntity = userPermissionCheck(authentication, userId);
         userService.modifyPassowrd(userEntity, passwordDTO.getPassword());
         return this.successMessage;

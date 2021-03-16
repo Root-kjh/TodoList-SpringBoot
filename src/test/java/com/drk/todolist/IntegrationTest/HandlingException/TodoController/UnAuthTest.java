@@ -3,9 +3,11 @@ package com.drk.todolist.IntegrationTest.HandlingException.TodoController;
 import com.drk.todolist.Config.IntegrationTest;
 import com.drk.todolist.DTO.Todo.InsertTodoDTO;
 import com.drk.todolist.DTO.Todo.UpdateTodoDTO;
+import com.drk.todolist.Entitis.TodoEntity;
 import com.drk.todolist.Entitis.UserEntity;
 import com.drk.todolist.lib.TestLib;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +15,7 @@ import org.springframework.http.MediaType;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,6 +23,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class UnAuthTest extends IntegrationTest{
 
+    UserEntity testUser;
+    Long todoIdx;
+
+    @BeforeEach
+    public void setTodo() throws Exception{
+        this.testUser = this.makeTestUser();
+        this.todoIdx = this.makeTodo(testUser).getIdx();
+    }
 
     @Test
     public void showTodoList() throws Exception{
@@ -36,27 +47,31 @@ public class UnAuthTest extends IntegrationTest{
             .content(TestLib.asJsonString(insertTodoDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().is(FORBIDDEN));
+
+        assertEquals(this.todoRepository.count(), 1);
     }
 
     @Test
     public void deleteTodo() throws Exception{
-        UserEntity testUser = this.makeTestUser();
-        Long testTodoIdx = this.makeTodo(testUser).getIdx();
-        this.mockMvc.perform(delete("/todo/"+testTodoIdx))
+        this.mockMvc.perform(delete("/todo/"+this.todoIdx))
         .andExpect(status().is(FORBIDDEN));
+
+        assertEquals(this.todoRepository.count(), 1);
     }
 
     @Test
     public void updateTodo() throws Exception{
-        UserEntity testUser = this.makeTestUser();
-        Long testTodoIdx = this.makeTodo(testUser).getIdx();
         UpdateTodoDTO updateTodoDTO = new UpdateTodoDTO();
         updateTodoDTO.setNewTitle(TestLib.newTestTodo.title);
         updateTodoDTO.setNewContext(TestLib.newTestTodo.context);
 
-        this.mockMvc.perform(delete("/todo/"+testTodoIdx)
+        this.mockMvc.perform(delete("/todo/"+this.todoIdx)
             .content(TestLib.asJsonString(updateTodoDTO))
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().is(FORBIDDEN));
+
+        TodoEntity todo = this.todoRepository.findById(this.todoIdx).get();
+        assertEquals(todo.getTitle(), TestLib.testTodo.title);
+        assertEquals(todo.getContext(), TestLib.testTodo.context);
     }
 }

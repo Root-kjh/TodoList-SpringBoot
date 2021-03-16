@@ -29,7 +29,7 @@ public class PermissionDeniedTest extends IntegrationTest{
     Long newUserTodoIdx;
 
     @BeforeEach
-    public void makeUser() throws Exception{
+    public void setUsers() throws Exception{
         this.testUserEntity = this.makeTestUser();
         
         SignupDTO signupDTO = new SignupDTO();

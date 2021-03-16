@@ -32,7 +32,7 @@ public class TodoControllerTest extends IntegrationTest {
     UserEntity testUserEntity;
 
     @BeforeEach
-    public void setTestUser() throws Exception{
+    public void setUser() throws Exception{
         this.testUserEntity = this.makeTestUser();
         this.jwt = this.getJwt();
     }
